@@ -5,6 +5,8 @@
     <main>
       <HeroSection />
 
+      <SocialProofGallery />
+
       <section class="flex min-h-screen items-center bg-white py-24">
         <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
           <div class="mb-10 text-center">
@@ -18,3 +20,15 @@
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+useHead({
+  title: 'Inaka Moments',
+  meta: [
+    {
+      name: 'description',
+      content: 'Diseñamos experiencias únicas para bodas, comuniones, cumpleaños y eventos corporativos. Cada detalle cuidado con mimo.',
+    },
+  ],
+})
+</script>
