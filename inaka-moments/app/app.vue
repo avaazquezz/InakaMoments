@@ -1,6 +1,9 @@
 <template>
-  <div>
+  <div class="bg-inaka-cream text-inaka-terra min-h-screen font-sans">
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <TheHeader />
+    <main>
+      <HeroSection />
+    </main>
   </div>
 </template>
