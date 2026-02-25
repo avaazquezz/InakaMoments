@@ -49,19 +49,6 @@
           </a>
         </div>
 
-        <!-- Col 2: Servicios -->
-        <div>
-          <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-inaka-gold/70">Servicios</p>
-          <ul class="flex flex-col gap-3">
-            <li v-for="servicio in servicios" :key="servicio">
-              <a href="#" class="group inline-flex items-center gap-2 text-sm text-inaka-cream/65 transition-colors hover:text-inaka-cream">
-                <span class="h-px w-3 bg-inaka-gold/40 transition-all group-hover:w-5 group-hover:bg-inaka-gold" />
-                {{ servicio }}
-              </a>
-            </li>
-          </ul>
-        </div>
-
         <!-- Col 3: Contacto -->
         <div>
           <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-inaka-gold/70">Contacto</p>
