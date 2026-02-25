@@ -28,12 +28,13 @@
               Diseñar mi evento
             </button>
 
-            <button
-              type="button"
-              class="rounded-md border border-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
+            <a
+              href="/catalogo-inaka-moments-2026.pdf"
+              download="Catalogo-InakaMoments-2026.pdf"
+              class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
             >
               Descargar Catálogo
-            </button>
+            </a>
           </div>
         </div>
 

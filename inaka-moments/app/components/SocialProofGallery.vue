@@ -174,8 +174,13 @@ const gallery = ref([
   },
   {
     id: 5,
-    src: 'https://picsum.photos/seed/boda-elegante/800/1000',
+    src: 'https://picsum.photos/seed/boda-romantica/800/1000',
     alt: 'Boda Elegante',
+  },
+  {
+    id: 6,
+    src: 'https://picsum.photos/seed/boda-elegante/800/1000',
+    alt: 'Boda Romántica',
   },
 ])
 </script>

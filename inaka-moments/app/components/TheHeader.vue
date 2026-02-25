@@ -41,9 +41,8 @@
 
       <!-- CTA -->
       <a
-        href="/catalogo.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/catalogo-inaka-moments-2026.pdf"
+        download="Catalogo-InakaMoments-2026.pdf"
         class="rounded-md border border-inaka-terra px-4 py-2 text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
       >
         Catálogo PDF
