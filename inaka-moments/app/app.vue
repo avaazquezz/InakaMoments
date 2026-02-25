@@ -5,6 +5,8 @@
     <main>
       <HeroSection />
 
+      <AboutSection />
+
       <SocialProofGallery />
 
       <section class="flex min-h-screen items-center bg-white py-24">
