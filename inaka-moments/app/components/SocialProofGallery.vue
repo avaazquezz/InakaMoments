@@ -16,7 +16,15 @@
     </div>
 
     <!-- Carousel -->
-    <div class="carousel flex overflow-x-auto gap-6 pb-6 px-6 md:px-12 snap-x snap-mandatory cursor-grab active:cursor-grabbing">
+    <div
+      ref="carouselRef"
+      class="carousel flex overflow-x-auto gap-6 pb-6 px-6 md:px-12 select-none"
+      :class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
+      @mousedown="onMouseDown"
+      @mousemove="onMouseMove"
+      @mouseup="onMouseUp"
+      @mouseleave="onMouseLeave"
+    >
       <div
         v-for="item in gallery"
         :key="item.id"
@@ -26,7 +34,8 @@
           :src="item.src"
           :alt="item.alt"
           loading="lazy"
-          class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+          draggable="false"
+          class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 pointer-events-none"
         />
 
         <!-- Overlay label -->
@@ -65,6 +74,83 @@
 </template>
 
 <script setup lang="ts">
+const carouselRef = ref<HTMLElement | null>(null)
+const isDragging = ref(false)
+
+let startX = 0
+let scrollStart = 0
+let lastX = 0
+let lastTime = 0
+let velocity = 0
+let rafId: number | null = null
+
+const FRICTION = 0.93
+const MIN_VELOCITY = 0.4
+
+function cancelMomentum() {
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
+}
+
+function onMouseDown(e: MouseEvent) {
+  if (!carouselRef.value) return
+  cancelMomentum()
+  isDragging.value = true
+  startX = e.pageX
+  lastX = e.pageX
+  lastTime = performance.now()
+  scrollStart = carouselRef.value.scrollLeft
+  velocity = 0
+}
+
+function onMouseMove(e: MouseEvent) {
+  if (!isDragging.value || !carouselRef.value) return
+  e.preventDefault()
+  const now = performance.now()
+  const dt = now - lastTime
+  if (dt > 0) {
+    // Velocity en px/ms normalizado a ~16ms (un frame)
+    velocity = ((lastX - e.pageX) / dt) * 16
+  }
+  lastX = e.pageX
+  lastTime = now
+  carouselRef.value.scrollLeft = scrollStart + (startX - e.pageX)
+}
+
+function onMouseUp() {
+  if (!isDragging.value) return
+  isDragging.value = false
+  launchMomentum()
+}
+
+function onMouseLeave() {
+  if (!isDragging.value) return
+  isDragging.value = false
+  launchMomentum()
+}
+
+function launchMomentum() {
+  if (!carouselRef.value || Math.abs(velocity) < MIN_VELOCITY) return
+  const el = carouselRef.value
+
+  const tick = () => {
+    velocity *= FRICTION
+    if (Math.abs(velocity) < MIN_VELOCITY) {
+      velocity = 0
+      rafId = null
+      return
+    }
+    el.scrollLeft += velocity
+    rafId = requestAnimationFrame(tick)
+  }
+
+  rafId = requestAnimationFrame(tick)
+}
+
+onUnmounted(() => cancelMomentum())
+
 const gallery = ref([
   {
     id: 1,
@@ -98,6 +184,8 @@ const gallery = ref([
 .carousel {
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
 }
 .carousel::-webkit-scrollbar {
   display: none;
