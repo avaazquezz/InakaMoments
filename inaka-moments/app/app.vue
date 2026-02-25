@@ -9,7 +9,7 @@
 
       <SocialProofGallery />
 
-      <section class="flex min-h-screen items-center bg-white py-24">
+      <section id="lead-wizard" class="flex min-h-screen items-center bg-white py-24">
         <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
           <div class="mb-10 text-center">
             <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-2">Sin compromiso</p>
@@ -20,6 +20,7 @@
         </div>
       </section>
     </main>
+    <TheFooter />
   </div>
 </template>
 

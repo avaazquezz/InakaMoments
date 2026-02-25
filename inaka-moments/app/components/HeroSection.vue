@@ -4,7 +4,7 @@
       <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
 
         <!-- Text column -->
-        <div class="flex flex-col gap-6">
+        <div class="order-2 flex flex-col gap-6 lg:order-1">
           <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold">
             Eventos con alma
           </p>
@@ -21,19 +21,20 @@
 
           <!-- CTA buttons -->
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              class="rounded-md bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
+            <a
+              href="#lead-wizard"
+              class="rounded-md bg-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
             >
               Diseñar mi evento
-            </button>
+            </a>
 
-            <button
-              type="button"
-              class="rounded-md border border-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
+            <a
+              href="/catalogo-inaka-moments-2026.pdf"
+              download="Catalogo-InakaMoments-2026.pdf"
+              class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
             >
               Descargar Catálogo
-            </button>
+            </a>
           </div>
         </div>
 
@@ -41,7 +42,7 @@
              posicionado absolute respecto a este div que es relative -->
         <div
           ref="logoCol"
-          class="relative flex items-center justify-center"
+          class="order-1 relative flex items-center justify-center lg:order-2"
         >
           <img
             src="/logo.png"
