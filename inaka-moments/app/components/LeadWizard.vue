@@ -209,14 +209,19 @@
           <strong class="font-semibold">Importante:</strong> Para bloquear la fecha y confirmar tu evento, será necesario realizar el pago de una señal al momento de agendar.
         </p>
 
+        <p v-if="submitError" class="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+          Hubo un problema al enviar tu solicitud. Por favor, inténtalo de nuevo o escríbenos directamente.
+        </p>
+
         <div class="mt-2">
           <button
             type="button"
-            :disabled="!formData.nombre || !formData.email || !formData.telefono"
+            :disabled="!formData.nombre || !formData.email || !formData.telefono || isSubmitting"
             class="rounded-lg bg-inaka-terra px-8 py-3 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="submitForm"
           >
-            Solicitar Presupuesto ✨
+            <span v-if="isSubmitting">Enviando…</span>
+            <span v-else>Solicitar Presupuesto ✨</span>
           </button>
         </div>
       </div>
@@ -303,10 +308,25 @@ function selectEstilo(value: string) {
   currentStep.value++
 }
 
-function submitForm() {
-  // TODO: connect to backend / email service
-  console.log('Lead data:', toRaw(formData))
-  currentStep.value = TOTAL_STEPS + 1
+const isSubmitting = ref(false)
+const submitError = ref(false)
+
+async function submitForm() {
+  isSubmitting.value = true
+  submitError.value = false
+  try {
+    await $fetch('/api/leads', {
+      method: 'POST',
+      body: toRaw(formData),
+    })
+    currentStep.value = TOTAL_STEPS + 1
+  }
+  catch {
+    submitError.value = true
+  }
+  finally {
+    isSubmitting.value = false
+  }
 }
 
 function resetForm() {
