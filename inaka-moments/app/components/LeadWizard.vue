@@ -209,14 +209,23 @@
           <strong class="font-semibold">Importante:</strong> Para bloquear la fecha y confirmar tu evento, será necesario realizar el pago de una señal al momento de agendar.
         </p>
 
+        <!-- Error state -->
+        <div
+          v-if="submitError"
+          class="mt-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+        >
+          {{ submitError }}
+        </div>
+
         <div class="mt-2">
           <button
             type="button"
-            :disabled="!formData.nombre || !formData.email || !formData.telefono"
-            class="rounded-lg bg-inaka-terra px-8 py-3 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+            :disabled="!formData.nombre || !formData.email || !formData.telefono || isSending"
+            class="flex items-center gap-2 rounded-lg bg-inaka-terra px-8 py-3 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="submitForm"
           >
-            Solicitar Presupuesto ✨
+            <span v-if="isSending" class="animate-spin">⏳</span>
+            {{ isSending ? 'Enviando…' : 'Solicitar Presupuesto ✨' }}
           </button>
         </div>
       </div>
@@ -242,9 +251,14 @@
 </template>
 
 <script setup lang="ts">
-const TOTAL_STEPS = 5
+import emailjs from '@emailjs/browser'
 
+const config = useRuntimeConfig()
+
+const TOTAL_STEPS = 5
 const currentStep = ref(1)
+const isSending = ref(false)
+const submitError = ref('')
 
 const minDate = computed(() => {
   const d = new Date()
@@ -303,10 +317,58 @@ function selectEstilo(value: string) {
   currentStep.value++
 }
 
-function submitForm() {
-  // TODO: connect to backend / email service
-  console.log('Lead data:', toRaw(formData))
-  currentStep.value = TOTAL_STEPS + 1
+const estiloLabels: Record<string, string> = {
+  boho: 'Boho Chic',
+  clasico: 'Clásico Elegante',
+  colorido: 'Colorido',
+}
+
+async function submitForm() {
+  if (isSending.value) return
+  isSending.value = true
+  submitError.value = ''
+
+  const labels: Record<string, string> = {
+    boda: 'Boda',
+    comunion: 'Comunión',
+    cumple: 'Cumpleaños',
+    empresa: 'Evento corporativo',
+  }
+
+  const espacioLabels: Record<string, string> = {
+    photocall: 'Photocall',
+    'mesa-dulce': 'Mesa Dulce',
+    'centros-mesa': 'Centros de Mesa',
+    bienvenida: 'Bienvenida',
+  }
+
+  const templateParams = {
+    nombre: formData.nombre,
+    email: formData.email,
+    telefono: formData.telefono,
+    tipo_evento: labels[formData.tipo] || formData.tipo,
+    fecha: formData.fecha || 'No especificada',
+    invitados: formData.invitados,
+    espacios: formData.espacios.map(e => espacioLabels[e] || e).join(', ') || 'No especificados',
+    estilo: estiloLabels[formData.estilo] || formData.estilo || 'No especificado',
+    ideas_extra: formData.ideasExtra || 'Sin ideas adicionales',
+    reply_to: formData.email,
+  }
+
+  try {
+    await emailjs.send(
+      config.public.emailjsServiceId,
+      config.public.emailjsTemplateId,
+      templateParams,
+      config.public.emailjsPublicKey,
+    )
+    currentStep.value = TOTAL_STEPS + 1
+  } catch (err) {
+    console.error('EmailJS error:', err)
+    submitError.value = 'Ha ocurrido un error al enviar tu solicitud. Por favor, intenta de nuevo o contáctanos directamente por WhatsApp.'
+  } finally {
+    isSending.value = false
+  }
 }
 
 function resetForm() {
@@ -314,6 +376,7 @@ function resetForm() {
     tipo: '', invitados: '', fecha: '', espacios: [],
     estilo: '', nombre: '', telefono: '', email: '', ideasExtra: '',
   })
+  submitError.value = ''
   currentStep.value = 1
 }
 </script>

@@ -4,6 +4,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sitemap'],
+  runtimeConfig: {
+    public: {
+      emailjsServiceId: process.env.EMAILJS_SERVICE_ID || '',
+      emailjsTemplateId: process.env.EMAILJS_TEMPLATE_ID || '',
+      emailjsPublicKey: process.env.EMAILJS_PUBLIC_KEY || '',
+    },
+  },
   app: {
     head: {
       title: 'Inaka Moments — Decoración de eventos con alma',
