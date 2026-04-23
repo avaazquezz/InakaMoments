@@ -1,9 +1,26 @@
+import { defineNuxtConfig } from 'nuxt/config'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: true,
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/sitemap'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    [
+      '@nuxtjs/sitemap',
+      {
+        urls: [
+          { loc: '/', changefreq: 'weekly', priority: 1.0 },
+          { loc: '/servicios', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/galeria', changefreq: 'weekly', priority: 0.9 },
+          { loc: '/contacto', changefreq: 'monthly', priority: 0.7 },
+          { loc: '/politica-privacidad', changefreq: 'yearly', priority: 0.3 },
+          { loc: '/aviso-legal', changefreq: 'yearly', priority: 0.3 },
+        ],
+      },
+    ],
+  ],
   app: {
     head: {
       title: 'Inaka Moments — Decoración de eventos con alma',
@@ -20,16 +37,5 @@ export default defineNuxtConfig({
         { rel: 'canonical', href: 'https://inakamoments.com' },
       ],
     },
-  },
-  sitemap: {
-    hostname: 'https://inakamoments.com',
-    routes: [
-      { url: '/', changefreq: 'weekly', priority: 1.0 },
-      { url: '/servicios', changefreq: 'monthly', priority: 0.8 },
-      { url: '/galeria', changefreq: 'weekly', priority: 0.9 },
-      { url: '/contacto', changefreq: 'monthly', priority: 0.7 },
-      { url: '/politica-privacidad', changefreq: 'yearly', priority: 0.3 },
-      { url: '/aviso-legal', changefreq: 'yearly', priority: 0.3 },
-    ],
   },
 })
