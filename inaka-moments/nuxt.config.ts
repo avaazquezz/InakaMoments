@@ -28,8 +28,22 @@ export default defineNuxtConfig({
       ],
     },
   },
+  // Admin panel = SPA (no SSR, no SEO)
+  routeRules: {
+    '/admin/**': { ssr: false },
+  },
+  nitro: {
+    // Serve uploaded files from public/uploads
+    publicAssets: [
+      {
+        baseURL: '/uploads',
+        dir: 'public/uploads',
+        maxAge: 60 * 60 * 24 * 30, // 30 days cache
+      },
+    ],
+  },
   sitemap: {
-    hostname: 'https://inakamoments.com',
+    hostname: 'https://inakathoments.com',
     routes: [
       { url: '/', changefreq: 'weekly', priority: 1.0 },
       { url: '/servicios', changefreq: 'monthly', priority: 0.8 },

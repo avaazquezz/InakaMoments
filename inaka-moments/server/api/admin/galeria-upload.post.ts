@@ -1,4 +1,4 @@
-import { readMultipartFormData } from 'h3'
+import { readMultipartFormData, getQuery } from 'h3'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
@@ -10,6 +10,9 @@ const GALERIA_DIR = join(__dirname, '../../../public/uploads/inaka/galeria')
 const THUMB_DIR = join(__dirname, '../../../public/uploads/inaka/galeria/thumbs')
 
 export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  const slot = query.slot ? parseInt(query.slot as string) : 0
+
   const formData = await readMultipartFormData(event)
   if (!formData || formData.length === 0) {
     throw createError({ statusCode: 400, message: 'No file received' })
@@ -24,12 +27,12 @@ export default defineEventHandler(async (event) => {
   if (!existsSync(THUMB_DIR)) mkdirSync(THUMB_DIR, { recursive: true })
 
   const ext = file.filename.split('.').pop() || 'jpg'
-  const base = `img-${Date.now()}`
+  const base = `img-slot${String(slot).padStart(2, '0')}-${Date.now()}`
   const thumbPath = join(THUMB_DIR, `${base}-thumb.${ext}`)
   const fullPath = join(GALERIA_DIR, `${base}-full.${ext}`)
 
   // Generate thumbnail (300x375 cropped)
-  const thumb = await sharp(file.data).resize(300, 375, { fit: 'cover' }).toFile(thumbPath)
+  await sharp(file.data).resize(300, 375, { fit: 'cover' }).toFile(thumbPath)
   // Keep full size (max 1200px wide)
   await sharp(file.data).resize(1200, null, { withoutEnlargement: true }).toFile(fullPath)
 

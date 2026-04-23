@@ -43,20 +43,22 @@
       <section class="py-16 bg-white">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <TransitionGroup
+            v-if="imagenesFiltradas.length > 0"
             name="gallery-fade"
             tag="div"
             class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             <div
               v-for="item in imagenesFiltradas"
-              :key="item.id"
+              :key="item.url"
               class="group relative overflow-hidden rounded-2xl shadow-md aspect-[4/5] bg-inaka-beige"
             >
               <img
-                :src="item.src"
+                :src="item.url"
                 :alt="item.alt"
                 loading="lazy"
-                class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+                draggable="false"
+                class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 pointer-events-none"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-inaka-terra/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 opacity-0 group-hover:opacity-100">
@@ -68,7 +70,7 @@
 
           <!-- Empty state -->
           <div
-            v-if="imagenesFiltradas.length === 0"
+            v-else
             class="flex flex-col items-center justify-center py-20 text-center"
           >
             <span class="text-5xl mb-4">📷</span>
@@ -122,38 +124,26 @@ useHead({
 })
 
 const filtroActivo = ref('todos')
-
 const filtros = [
   { label: 'Todos', value: 'todos' },
   { label: 'Boda', value: 'boda' },
   { label: 'Comunión', value: 'comunion' },
-  { label: 'Cumpleaños', value: 'cumpleanos' },
-  { label: 'Corporativo', value: 'corporativo' },
+  { label: 'Cumpleaños', value: 'cumple' },
+  { label: 'Corporativo', value: 'corp' },
 ]
 
-interface GalleryItem {
-  id: number
-  src: string
-  alt: string
-  categoria: string
-}
+// Fetch galeria from admin config API
+const { fetchConfig } = useInakaConfig()
+const config = await fetchConfig()
 
-const gallery = ref<GalleryItem[]>([
-  // PLACEHOLDER — Reemplazar con fotos reales de tu prima en Fase 4
-  { id: 1, src: 'https://picsum.photos/seed/boda-boho/800/1000', alt: 'Boda Boho', categoria: 'Boda' },
-  { id: 2, src: 'https://picsum.photos/seed/comunion-clasica/800/1000', alt: 'Comunión Clásica', categoria: 'Comunión' },
-  { id: 3, src: 'https://picsum.photos/seed/cumple-colorido/800/1000', alt: 'Cumpleaños Colorido', categoria: 'Cumpleaños' },
-  { id: 4, src: 'https://picsum.photos/seed/evento-corp/800/1000', alt: 'Evento Corporativo', categoria: 'Corporativo' },
-  { id: 5, src: 'https://picsum.photos/seed/boda-romantica/800/1000', alt: 'Boda Elegante', categoria: 'Boda' },
-  { id: 6, src: 'https://picsum.photos/seed/boda-elegante/800/1000', alt: 'Boda Romántica', categoria: 'Boda' },
-])
+const galeria = computed(() => config?.galeria || [])
 
 const imagenesFiltradas = computed(() => {
-  if (filtroActivo.value === 'todos') return gallery.value
-  return gallery.value.filter(img => {
-    const cat = img.categoria.toLowerCase()
-    if (filtroActivo.value === 'cumpleanos') return cat === 'cumpleaños'
-    if (filtroActivo.value === 'corporativo') return cat === 'corporativo'
+  if (filtroActivo.value === 'todos') return galeria.value
+  return galeria.value.filter(img => {
+    const cat = img.categoria?.toLowerCase() || ''
+    if (filtroActivo.value === 'cumple') return cat.includes('cumple')
+    if (filtroActivo.value === 'corp') return cat.includes('corporativo')
     return cat === filtroActivo.value
   })
 })
