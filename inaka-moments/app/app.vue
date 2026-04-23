@@ -34,4 +34,9 @@ useHead({
     },
   ],
 })
+
+// Smooth scroll for anchor links
+onMounted(() => {
+  document.documentElement.style.scrollBehavior = 'smooth'
+})
 </script>
