@@ -21,6 +21,14 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  runtimeConfig: {
+    public: {
+      emailjsServiceId: '',
+      emailjsTemplateId: '',
+      emailjsPublicKey: '',
+      emailjsRecipient: 'nadine.tcae@gmail.com',
+    },
+  },
   app: {
     head: {
       title: 'Inaka Moments — Decoración de eventos con alma',
