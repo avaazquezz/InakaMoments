@@ -1,0 +1,34 @@
+services:
+  inaka-moments:
+    image: inaka-moments:latest
+    container_name: inaka-moments
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.inaka-moments.rule=Host(`inakamoments.com`)"
+      - "traefik.http.routers.inaka-moments.entrypoints=websecure"
+      - "traefik.http.routers.inaka-moments.tls=true"
+      - "traefik.http.routers.inaka-moments.tls.certResolver=le"
+      - "traefik.http.services.inaka-moments.loadbalancer.server.port=3000"
+      - "traefik.http.routers.admin-inaka.rule=Host(`admin.inakamoments.com`)"
+      - "traefik.http.routers.admin-inaka.entrypoints=websecure"
+      - "traefik.http.routers.admin-inaka.tls=true"
+      - "traefik.http.routers.admin-inaka.tls.certResolver=le"
+      - "traefik.http.services.admin-inaka.loadbalancer.server.port=3000"
+    networks:
+      - web
+    volumes:
+      # Persistent storage for uploads and config data
+      - inaka-data:/home/vazquezdev/uploads/inaka
+      - inaka-config:/app/server/data
+
+networks:
+  web:
+    external: true
+
+volumes:
+  inaka-data:
+  inaka-config:

@@ -32,18 +32,20 @@ export default defineNuxtConfig({
   routeRules: {
     '/admin/**': { ssr: false },
   },
+  // Serve uploaded files from the host-mounted uploads directory at runtime
+  // (not bundled at build time — we need dynamic content persistence)
   nitro: {
-    // Serve uploaded files from public/uploads
-    publicAssets: [
-      {
-        baseURL: '/uploads',
-        dir: 'public/uploads',
-        maxAge: 60 * 60 * 24 * 30, // 30 days cache
+    routes: {
+      '/uploads': {
+        keepalive: true,
+        cache: {
+          maxAge: 60 * 60 * 24 * 30, // 30 days cache for uploaded images
+        },
       },
-    ],
+    },
   },
   sitemap: {
-    hostname: 'https://inakathoments.com',
+    hostname: 'https://inakamoments.com',
     routes: [
       { url: '/', changefreq: 'weekly', priority: 1.0 },
       { url: '/servicios', changefreq: 'monthly', priority: 0.8 },

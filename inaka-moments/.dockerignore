@@ -1,0 +1,11 @@
+node_modules
+.output
+.nuxt
+dist
+.git
+*.log
+.env
+.env.*
+!.env.example
+!.env.production
+docker/.env.production

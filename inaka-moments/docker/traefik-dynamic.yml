@@ -1,0 +1,67 @@
+# Inaka Moments — Production Traefik dynamic config
+# Location: /home/vazquezdev/servicios/traefik/dynamic/inaka-moments.yml
+#
+# Adri: cuando apuntes los dominios inakamoments.com y admin.inakamoments.com
+# a tu VPS, estos routers se activarán automáticamente.
+
+http:
+  # ─── Landing: inakamoments.com ───────────────────────────────────────────
+  routers:
+    inaka-landing-http:
+      entryPoints:
+        - web
+      rule: "Host(`inakamoments.com`)"
+      middlewares:
+        - inaka-https-redirect
+      service: inaka-landing-svc
+      priority: 100
+
+    inaka-landing-https:
+      entryPoints:
+        - websecure
+      rule: "Host(`inakamoments.com`)"
+      tls:
+        certResolver: le
+      service: inaka-landing-svc
+      priority: 100
+
+    # ─── Admin: admin.inakamoments.com ────────────────────────────────────
+    admin-inaka-http:
+      entryPoints:
+        - web
+      rule: "Host(`admin.inakamoments.com`)"
+      middlewares:
+        - admin-inaka-https-redirect
+      service: admin-inaka-svc
+      priority: 100
+
+    admin-inaka-https:
+      entryPoints:
+        - websecure
+      rule: "Host(`admin.inakamoments.com`)"
+      tls:
+        certResolver: le
+      service: admin-inaka-svc
+      priority: 100
+
+  middlewares:
+    inaka-https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+    admin-inaka-https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+  services:
+    inaka-landing-svc:
+      loadBalancer:
+        servers:
+          - url: "http://inaka-moments:3000"
+
+    admin-inaka-svc:
+      loadBalancer:
+        servers:
+          - url: "http://inaka-moments:3000"
