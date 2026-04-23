@@ -1,0 +1,36 @@
+{
+  "contact": {
+    "email": "nadine.tcae@gmail.com",
+    "whatsapp": "+34000000000",
+    "ubicacion": "Abrera, Cataluña, España",
+    "instagram": "https://www.instagram.com/inaka.moments"
+  },
+  "texts": {
+    "hero": {
+      "tagline": "Eventos con alma",
+      "titulo": "Momentos que ",
+      "titulo_span": "perduran",
+      "subtitulo": "Diseñamos experiencias únicas para bodas, celebraciones y eventos corporativos. Cada detalle cuidado con mimo para que tu historia sea inolvidable.",
+      "cta_principal": "Diseñar mi evento",
+      "cta_secundario": "Descargar Catálogo"
+    },
+    "about": {
+      "titulo_principal": "Cada momento,",
+      "titulo_secundario": "una obra de arte.",
+      "parrafo_1": "En <strong>Inaka Moments</strong> creemos que los eventos más especiales de tu vida merecen ser vividos con todos los sentidos.",
+      "parrafo_2": "Desde una boda íntima en el campo hasta una celebración corporativa de gran escala, cada proyecto lo abordamos con la misma dedicación: escucharte, entender tu visión y convertirla en algo que supere tus expectativas.",
+      "quote": "Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo.",
+      "cta_enlace": "Conoce cómo trabajamos"
+    },
+    "footer": {
+      "tagline_titulo": "Cada detalle,",
+      "tagline_span": "una historia.",
+      "tagline_sub": "Creamos experiencias únicas para los momentos más importantes de tu vida. Con alma, con mimo, con arte."
+    }
+  },
+  "galeria": [],
+  "catalogo": {
+    "filename": "catalogo-inaka-moments-2026.pdf",
+    "updatedAt": null
+  }
+}

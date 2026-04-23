@@ -12,7 +12,10 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@nuxtjs/sitemap": "^8.0.13",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "nuxt": "^4.3.1",
+    "sharp": "^0.34.5",
     "vue": "^3.5.28",
     "vue-router": "^4.6.4"
   },
