@@ -1,25 +1,34 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Inaka Moments — DESARROLLO (hot reload, sin Traefik)
+# Inaka Moments — DESARROLLO (por defecto)
 #
-# Uso (desde inaka-moments/):
-#   docker compose -f docker/docker-compose.dev.yml up
-#   → http://localhost:3000
+#   docker compose up          → http://localhost:3000 con hot reload
+#   docker compose down        → parar
+#   docker compose down -v     → parar y reinstalar deps limpias la próxima vez
 #
-# El código se monta como volumen; node_modules vive en un volumen propio del
-# contenedor (evita pisar los del host y acelera el filesystem).
+# El código se monta desde el host; node_modules/.nuxt/.output viven en
+# volúmenes del contenedor (no ensucian tu working copy con ficheros de root).
+# Las dependencias solo se reinstalan si cambió package-lock.json.
+# Producción: docker compose -f docker-compose.prod.yml up -d --build
 # ─────────────────────────────────────────────────────────────────────────────
 services:
-  inaka-moments-dev:
+  app:
     image: node:22-alpine
     container_name: inaka-moments-dev
     working_dir: /app
-    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 3000"
+    command:
+      - sh
+      - -ec
+      - |
+        if ! cmp -s package-lock.json node_modules/.cached-lock.json 2>/dev/null; then
+          echo "Instalando dependencias (package-lock.json cambio)..."
+          npm ci
+          cp package-lock.json node_modules/.cached-lock.json
+        fi
+        exec npm run dev -- --host 0.0.0.0 --port 3000
     ports:
       - "3000:3000"
     volumes:
-      - ..:/app
-      # Directorios generados en volúmenes propios: no pisan los del host
-      # ni dejan ficheros propiedad de root en tu working copy.
+      - .:/app
       - node_modules:/app/node_modules
       - nuxt_cache:/app/.nuxt
       - nitro_output:/app/.output
@@ -27,7 +36,7 @@ services:
       - NODE_ENV=development
       - NUXT_TELEMETRY_DISABLED=1
     env_file:
-      - path: ../.env
+      - path: .env
         required: false
     init: true
     restart: unless-stopped

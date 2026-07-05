@@ -1,0 +1,7 @@
+# Supabase CLI — configuración del proyecto local
+# Proyecto cloud: inaka-moments (ref kdjsbvvmcilbcycgxygo, eu-west-3)
+# Linkar con: supabase link --project-ref kdjsbvvmcilbcycgxygo
+project_id = "inaka-moments"
+
+[db]
+major_version = 17

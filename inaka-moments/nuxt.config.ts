@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: [
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/supabase',
     [
       '@nuxtjs/sitemap',
       {
@@ -21,6 +22,18 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  // Supabase: URL y claves se leen de SUPABASE_URL / SUPABASE_KEY /
+  // SUPABASE_SERVICE_KEY (esta última SOLO servidor, nunca llega al cliente).
+  supabase: {
+    // Solo el panel /admin requiere sesión; la web pública queda libre.
+    redirectOptions: {
+      login: '/admin/login',
+      callback: '/admin',
+      include: ['/admin(/*)?'],
+      exclude: ['/admin/login'],
+    },
+    types: '~~/app/types/database.ts',
+  },
   runtimeConfig: {
     public: {
       emailjsServiceId: '',

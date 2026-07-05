@@ -1,25 +1,31 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Inaka Moments — PRODUCCIÓN (detrás de Traefik con TLS Let's Encrypt)
 #
-# Uso (desde inaka-moments/):
-#   docker network create web        # una sola vez en el VPS
-#   docker compose -f docker/docker-compose.yml up -d --build
+# En el VPS (una sola vez):  docker network create web
+# Desplegar:                 docker compose -f docker-compose.prod.yml up -d --build
 #
-# Las variables de entorno se leen de .env (junto a package.json) en el VPS.
+# Variables de entorno: .env junto a este fichero (ver .env.example).
 # El panel /admin es una RUTA de la misma app: no necesita router propio.
+# Guía completa: docker/DEPLOY.md
 # ─────────────────────────────────────────────────────────────────────────────
 services:
-  inaka-moments:
+  app:
     image: inaka-moments:latest
     container_name: inaka-moments
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     restart: unless-stopped
     init: true # reaping de señales/zombies correcto con node como proceso principal
     env_file:
-      - path: ../.env
+      - path: .env
         required: false # en el VPS puede inyectarse el entorno por otros medios
+    environment:
+      # Nuxt solo mapea variables NUXT_* sobre runtimeConfig en runtime (la
+      # imagen se construye SIN secretos). Puenteamos las canónicas del .env:
+      - NUXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL:-}
+      - NUXT_PUBLIC_SUPABASE_KEY=${SUPABASE_KEY:-}
+      - NUXT_SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY:-}
     networks:
       - web
     labels:

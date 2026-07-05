@@ -282,17 +282,20 @@ NUXT_PUBLIC_EMAILJS_SERVICE_ID=  NUXT_PUBLIC_EMAILJS_TEMPLATE_ID=  NUXT_PUBLIC_E
 
 ---
 
-## FASE 0 — Reestructura y fundamentos
+## FASE 0 — Reestructura y fundamentos ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026): multipágina activa (`app/pages/*` + layout + `<NuxtPage/>`), `app/error.vue` operativo, menú móvil rescatado, código muerto raíz borrado, footer legal cableado, taxonomía real de ocasiones en wizard/galería/carrusel/servicios/metas, copys corruptos corregidos. **Además se adelantó la dockerización completa** (ver Fase 7): imagen prod 167MB non-root con healthcheck, composes dev (hot reload verificado) y prod (Traefik+HSTS), `/api/health`, scripts npm y `DEPLOY.md`. Criterios de aceptación verificados con build de producción, curl de todas las rutas y navegación real en Chrome.
 **Objetivo:** que el sitio multipágina y la nav móvil funcionen; taxonomía correcta.
 **Por qué:** hoy los enlaces dan 404 y no hay menú móvil; sin base navegable nada funciona.
 **Cómo:** (1) `app/pages/index.vue` con el home; (2) `app/app.vue` → `<NuxtLayout><NuxtPage/></NuxtLayout>`; (3) `app/layouts/default.vue` (header/footer); (4) mover `pages/*` → `app/pages/`; (5) `error/404.vue` → `app/error.vue`; (6) rescatar menú móvil a `app/components/TheHeader.vue` y borrar `components/`+`error/` raíz; (7) footer legal cableado; (8) sustituir taxonomía boda/comunión/cumple/empresa por las **ocasiones reales**.
-**Aceptación:** navegar todas las rutas sin 404; hamburguesa a 375px; `app/error.vue` en ruta inexistente.
+**Aceptación:** navegar todas las rutas sin 404 ✅; hamburguesa a 375px ✅; `app/error.vue` en ruta inexistente ✅.
 
-## FASE 1 — Backend Supabase + modelo de datos completo
+## FASE 1 — Backend Supabase + modelo de datos completo ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). Proyecto Supabase Cloud **`inaka-moments`** (ref `kdjsbvvmcilbcycgxygo`, eu-west-3 París, free tier). 3 migraciones versionadas en `supabase/migrations/` (init: 15 tablas + enums + índices + triggers moddatetime; RLS: todo activado, SELECT anon solo publicado/activo; storage: buckets `gallery`/`catalog-media`/`catalog` con límites MIME/tamaño). Seed real aplicado: **18 productos, 1 pack (Dulce Espera 130€), 8 ocasiones SEO, 8 FAQs, 5 secciones de contenido**. `@nuxtjs/supabase` v2 integrado (redirectOptions solo `/admin`), `server/utils/supabase.ts` (service_role tipado), tipos en `app/types/database.ts`, polyfill WebSocket para Node<22 (`server/plugins/websocket-polyfill.ts`). **Verificado:** advisors sin errores (solo INFO esperados en tablas bloqueadas); REST anon: products/packs/occasions legibles, `leads/quotes/events/payments` → `[]` e INSERT → 401; buckets creados; build y dev OK.
+> **⚠️ Pendiente manual:** copiar la **service_role key** del Dashboard (Settings → API keys) a `SUPABASE_SERVICE_KEY` en `.env` — el MCP no expone claves secretas. Necesaria a partir de Fase 2.
 **Objetivo:** infra de datos lista (proyecto, migraciones §3, RLS, buckets, tipos, cliente server).
 **Por qué:** base de catálogo, presupuestos, pagos, agenda, CRM y contenido.
 **Cómo:** crear proyectos Cloud (dev+prod); `npm i @nuxtjs/supabase @supabase/supabase-js`; configurar módulo + `redirectOptions` para `/admin`; `supabase init`; migraciones (init, RLS, storage); `seed.sql` con productos/packs/reglas reales (§0.1) y textos (desde `config.json`); `server/utils/supabase.ts` (service_role); generar tipos.
-**Aceptación:** tablas creadas; `get_advisors` sin fallos; `select` anónimo a `leads/quotes/events/payments` = 0 filas; buckets creados; seed de productos visible.
+**Aceptación:** tablas creadas ✅; `get_advisors` sin fallos ✅; `select` anónimo a `leads/quotes/events/payments` = 0 filas ✅; buckets creados ✅; seed de productos visible ✅.
 
 ## FASE 2 — Web pública dinámica (catálogo, packs, ocasiones, contenido, leads)
 **Objetivo:** la web lee todo de la BD e incorpora catálogo, packs, landings SEO, FAQ/cómo funciona/reseñas y captura de leads segura.
@@ -339,7 +342,7 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 **Aceptación:** Lighthouse mobile bueno; ca↔es traduce toda la UI; panel instalable; sin regresiones responsive.
 
 ## FASE 7 — Docker + despliegue
-> **✅ ADELANTADA A FASE 0 (dockerización hecha y verificada).** Ya existen: `docker/Dockerfile` (multi-stage node:22-alpine, non-root, caché npm BuildKit, HEALTHCHECK → imagen 167MB), `docker/docker-compose.yml` (prod tras Traefik: apex+www, redirect www→apex, HSTS/nosniff/referrer-policy/frameDeny), `docker/docker-compose.dev.yml` (hot reload verificado; node_modules/.nuxt/.output en volúmenes para no ensuciar el host), `docker/traefik-dynamic.yml` (alternativa proveedor file), `server/api/health.get.ts` (`GET /api/health`), `.dockerignore` (excluye `.env*`), scripts npm `docker:dev|build|prod|down` y `docker/DEPLOY.md`.
+> **✅ ADELANTADA A FASE 0 (dockerización hecha y verificada).** Compose **integrado en la raíz del proyecto**: `docker-compose.yml` (DEV por defecto → `docker compose up`, hot reload, instalación inteligente solo si cambia el lockfile, node_modules/.nuxt/.output en volúmenes) y `docker-compose.prod.yml` (PROD tras Traefik: apex+www, redirect www→apex, HSTS/nosniff/referrer-policy/frameDeny, **puente de env** `SUPABASE_*` → `NUXT_*` porque la imagen se construye sin secretos). Además: `docker/Dockerfile` (multi-stage node:22-alpine, non-root, caché npm BuildKit, HEALTHCHECK → imagen 167MB), `docker/traefik-dynamic.yml` (alternativa proveedor file), `server/api/health.get.ts`, `.dockerignore` (excluye `.env*`, supabase/, docs/), scripts npm `docker:dev|dev:down|build|prod|prod:down` y `docker/DEPLOY.md`.
 > **Pendiente para esta fase:** despliegue real en el VPS (DNS, red `web`, certificado Let's Encrypt emitido), añadir env de Supabase/Stripe/email/turnstile al compose cuando existan, SPF/DKIM del email, webhook de Stripe, y CSP fina (Fase 8).
 **Objetivo:** entornos dev/prod reproducibles; prod tras Traefik con TLS.
 **Cómo:** `docker/Dockerfile` (multi-stage node:22-alpine); `docker-compose.yml` (prod, Nuxt tras Traefik en `inakamoments.com`, `/admin` como ruta, env de Supabase/Stripe/email/turnstile); `docker-compose.dev.yml` (dev, hot reload, `supabase start` para BD local); `traefik-dynamic.yml` (http→https + CSP/HSTS); `DEPLOY.md` (DNS/TLS, SPF/DKIM del email, webhook de Stripe). `.env` fuera de git; secretos solo server.

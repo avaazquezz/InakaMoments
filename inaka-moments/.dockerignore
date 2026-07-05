@@ -18,8 +18,12 @@ dist
 .fleet
 .DS_Store
 
-# Docs y logs (innecesarios en la imagen)
+# Docs, logs e infra (innecesarios en la imagen)
 docs
 logs
 *.log
 README.md
+supabase
+docker-compose*.yml
+docker/DEPLOY.md
+docker/traefik-dynamic.yml
