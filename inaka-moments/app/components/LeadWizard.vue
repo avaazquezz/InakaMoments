@@ -42,7 +42,7 @@
         <h2 class="text-2xl font-bold text-inaka-terra mb-1">¿Qué tipo de evento celebras?</h2>
         <p class="text-sm text-inaka-terra/55 mb-8">Selecciona una opción para continuar. <span class="text-inaka-mauve font-medium">Todos los campos son obligatorios.</span></p>
 
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <button
             v-for="opt in eventoOptions"
             :key="opt.value"
@@ -421,11 +421,17 @@ const formData = reactive({
   ideasExtra: '',
 })
 
+// Ocasiones reales del catálogo Inaka Moments 2026
 const eventoOptions = [
-  { value: 'boda',     label: 'Boda',       icon: '💍' },
-  { value: 'comunion', label: 'Comunión',   icon: '✝️' },
-  { value: 'cumple',   label: 'Cumpleaños', icon: '🎂' },
-  { value: 'empresa',  label: 'Empresa',    icon: '🏢' },
+  { value: 'cumpleanos',  label: 'Cumpleaños',  icon: '🎂' },
+  { value: 'baby_shower', label: 'Baby Shower', icon: '🍼' },
+  { value: 'bautizo',     label: 'Bautizo',     icon: '🕊️' },
+  { value: 'comunion',    label: 'Comunión',    icon: '✨' },
+  { value: 'graduacion',  label: 'Graduación',  icon: '🎓' },
+  { value: 'despedida',   label: 'Despedida',   icon: '🥂' },
+  { value: 'jubilacion',  label: 'Jubilación',  icon: '🌅' },
+  { value: 'corporativo', label: 'Corporativo', icon: '🏢' },
+  { value: 'otro',        label: 'Otro',        icon: '💡' },
 ]
 
 const espacioOptions = [
@@ -478,12 +484,9 @@ async function submitForm() {
   isSending.value = true
   submitError.value = ''
 
-  const labels: Record<string, string> = {
-    boda: 'Boda',
-    comunion: 'Comunión',
-    cumple: 'Cumpleaños',
-    empresa: 'Evento corporativo',
-  }
+  const labels: Record<string, string> = Object.fromEntries(
+    eventoOptions.map(o => [o.value, o.label]),
+  )
 
   const espacioLabels: Record<string, string> = {
     photocall: 'Photocall',

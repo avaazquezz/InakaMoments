@@ -61,7 +61,7 @@
             </div>
             <div>
               <p class="text-sm font-semibold text-inaka-terra">Eventos diseñados a medida</p>
-              <p class="text-xs text-inaka-terra/55 mt-0.5">Bodas · Comuniones · Cumpleaños · Corporativos</p>
+              <p class="text-xs text-inaka-terra/55 mt-0.5">Cumpleaños · Baby Showers · Comuniones · Corporativos</p>
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@
             En <strong class="font-semibold text-inaka-terra">Inaka Moments</strong> creemos que los eventos más especiales de tu vida merecen ser vividos con todos los sentidos. Somos un equipo de decoradoras y coordinadoras apasionadas por crear atmósferas únicas que hablen de ti y de quienes amas.
           </p>
           <p class="text-base leading-relaxed text-inaka-terra/65">
-            Desde una boda íntima en el campo hasta una celebración corporativa de gran escala, cada proyecto lo abordamos con la misma dedicación: escucharte, entender tu visión y convertirla en algo que supere tus expectativas. Cada flor, cada vela, cada detalle tiene un propósito.
+            Desde un baby shower íntimo hasta una celebración corporativa de gran escala, cada proyecto lo abordamos con la misma dedicación: escucharte, entender tu visión y convertirla en algo que supere tus expectativas. Cada flor, cada vela, cada detalle tiene un propósito.
           </p>
 
           <!-- Separador decorativo -->
@@ -90,15 +90,15 @@
 
           <!-- CTA sutil -->
           <div class="pt-2">
-            <a
-              href="#contacto"
+            <NuxtLink
+              to="/contacto"
               class="group inline-flex items-center gap-2 text-sm font-semibold text-inaka-gold transition-gap hover:gap-3"
             >
               Conoce cómo trabajamos
               <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
               </svg>
-            </a>
+            </NuxtLink>
           </div>
         </div>
       </div>

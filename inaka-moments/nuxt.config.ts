@@ -33,7 +33,7 @@ export default defineNuxtConfig({
     head: {
       title: 'Inaka Moments — Decoración de eventos con alma',
       meta: [
-        { name: 'description', content: 'Diseñamos experiencias únicas para bodas, comuniones, cumpleaños y eventos corporativos. Cada detalle cuidado con mimo.' },
+        { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
         { property: 'og:site_name', content: 'Inaka Moments' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://inakamoments.com' },
