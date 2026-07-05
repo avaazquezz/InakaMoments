@@ -97,8 +97,10 @@ const menuAbierto = ref(false)
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
-  { to: '/servicios', label: 'Servicios' },
+  { to: '/catalogo', label: 'Catálogo' },
+  { to: '/packs', label: 'Packs' },
   { to: '/galeria', label: 'Galería' },
+  { to: '/como-funciona', label: 'Cómo funciona' },
   { to: '/contacto', label: 'Contacto' },
 ]
 

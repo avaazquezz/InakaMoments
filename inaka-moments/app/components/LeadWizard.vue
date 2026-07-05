@@ -300,6 +300,32 @@
               class="resize-none rounded-xl border border-inaka-beige bg-inaka-cream px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus:border-inaka-terra"
             />
           </div>
+
+          <!-- Honeypot anti-bots: invisible para humanos, los bots lo rellenan -->
+          <div class="absolute -left-[9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+            <label for="website">No rellenes este campo</label>
+            <input id="website" v-model="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- Consentimiento RGPD -->
+          <label class="flex items-start gap-3 cursor-pointer select-none">
+            <input
+              v-model="consent"
+              type="checkbox"
+              class="mt-0.5 h-4 w-4 shrink-0 accent-inaka-terra"
+            />
+            <span class="text-xs leading-relaxed text-inaka-terra/70">
+              He leído y acepto la
+              <NuxtLink to="/politica-privacidad" target="_blank" class="font-semibold text-inaka-gold hover:underline">política de privacidad</NuxtLink>
+              y consiento el tratamiento de mis datos para gestionar esta solicitud de presupuesto.
+              <span class="text-inaka-mauve font-bold">*</span>
+            </span>
+          </label>
+
+          <!-- Verificación anti-spam (Cloudflare Turnstile) -->
+          <ClientOnly>
+            <NuxtTurnstile v-model="turnstileToken" />
+          </ClientOnly>
         </div>
 
         <!-- Disclaimer señal -->
@@ -322,7 +348,7 @@
         <div class="mt-6">
           <button
             type="button"
-            :disabled="!canSubmit || isSending"
+            :disabled="!canSubmit || !consent || isSending"
             class="inline-flex items-center gap-2 rounded-xl bg-inaka-terra px-8 py-3.5 text-sm font-semibold text-inaka-cream shadow-sm transition-all hover:opacity-90 disabled:opacity-35 disabled:cursor-not-allowed"
             @click="submitForm"
           >
@@ -366,6 +392,22 @@ const TOTAL_STEPS = 5
 const currentStep = ref(1)
 const isSending = ref(false)
 const submitError = ref('')
+
+// Anti-spam + RGPD
+const consent = ref(false)
+const honeypot = ref('')
+const turnstileToken = ref('')
+
+// Origen/UTM para el CRM
+const route = useRoute()
+const utm = computed(() => {
+  const out: Record<string, string> = {}
+  for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']) {
+    const v = route.query[k]
+    if (typeof v === 'string' && v) out[k] = v
+  }
+  return out
+})
 
 // Prefijo teléfono
 const phonePrefijo = ref('+34')
@@ -475,19 +517,16 @@ const estiloLabels: Record<string, string> = {
   colorido: 'Colorido',
 }
 
-async function submitForm() {
-  touched.nombre = true
-  touched.email = true
-  touched.telefono = true
-  if (!canSubmit.value || isSending.value) return
-
-  isSending.value = true
-  submitError.value = ''
+/**
+ * Fallback de notificación por EmailJS (solo si el servidor no pudo avisar
+ * a la dueña por email). El lead YA está persistido en la BD llegados aquí.
+ */
+async function notifyViaEmailJs(fullPhone: string) {
+  if (!config.public.emailjsServiceId) return
 
   const labels: Record<string, string> = Object.fromEntries(
     eventoOptions.map(o => [o.value, o.label]),
   )
-
   const espacioLabels: Record<string, string> = {
     photocall: 'Photocall',
     'mesa-dulce': 'Mesa Dulce',
@@ -495,34 +534,80 @@ async function submitForm() {
     bienvenida: 'Bienvenida',
   }
 
-  const fullPhone = `${phonePrefijo.value} ${phoneNumero.value}`.trim()
-
-  const templateParams = {
-    nombre: formData.nombre,
-    email: formData.email,
-    telefono: fullPhone,
-    tipo_evento: labels[formData.tipo] ?? formData.tipo,
-    fecha: formData.fecha || 'No especificada',
-    invitados: formData.invitados,
-    espacios: formData.espacios.map(e => espacioLabels[e] ?? e).join(', ') || 'No especificados',
-    estilo: estiloLabels[formData.estilo] ?? formData.estilo ?? 'No especificado',
-    ideas_extra: formData.ideasExtra || 'Sin peticiones adicionales',
-    to_email: config.public.emailjsRecipient,
-    reply_to: formData.email,
-  }
-
   try {
     await emailjs.send(
       config.public.emailjsServiceId,
       config.public.emailjsTemplateId,
-      templateParams,
+      {
+        nombre: formData.nombre,
+        email: formData.email,
+        telefono: fullPhone,
+        tipo_evento: labels[formData.tipo] ?? formData.tipo,
+        fecha: formData.fecha || 'No especificada',
+        invitados: formData.invitados,
+        espacios: formData.espacios.map(e => espacioLabels[e] ?? e).join(', ') || 'No especificados',
+        estilo: estiloLabels[formData.estilo] ?? formData.estilo ?? 'No especificado',
+        ideas_extra: formData.ideasExtra || 'Sin peticiones adicionales',
+        to_email: config.public.emailjsRecipient,
+        reply_to: formData.email,
+      },
       config.public.emailjsPublicKey,
     )
+  }
+  catch (err) {
+    // No bloquea: el lead está guardado y visible en el panel
+    console.error('EmailJS fallback error:', err)
+  }
+}
+
+async function submitForm() {
+  touched.nombre = true
+  touched.email = true
+  touched.telefono = true
+  if (!canSubmit.value || isSending.value) return
+  if (!consent.value) {
+    submitError.value = 'Debes aceptar la política de privacidad para continuar.'
+    return
+  }
+
+  isSending.value = true
+  submitError.value = ''
+
+  const fullPhone = `${phonePrefijo.value} ${phoneNumero.value}`.trim()
+
+  try {
+    // Persistencia en BD + aviso a la dueña (server-side, con anti-spam)
+    const res = await $fetch<{ ok: boolean, notified: boolean }>('/api/leads', {
+      method: 'POST',
+      body: {
+        nombre: formData.nombre,
+        email: formData.email,
+        telefono: fullPhone,
+        tipo: formData.tipo,
+        fecha: formData.fecha,
+        invitados: formData.invitados,
+        espacios: formData.espacios,
+        estilo: formData.estilo,
+        ideas_extra: formData.ideasExtra,
+        consent: consent.value,
+        website: honeypot.value,
+        turnstileToken: turnstileToken.value,
+        source: 'lead-wizard',
+        utm: utm.value,
+      },
+    })
+
+    // Si el servidor no pudo notificar (Resend sin configurar), fallback EmailJS
+    if (!res.notified) await notifyViaEmailJs(fullPhone)
+
     currentStep.value = TOTAL_STEPS + 1
-  } catch (err) {
-    console.error('EmailJS error:', err)
-    submitError.value = 'Ha ocurrido un error al enviar tu solicitud. Por favor, inténtalo de nuevo o contáctanos directamente por WhatsApp.'
-  } finally {
+  }
+  catch (err: any) {
+    console.error('Lead submit error:', err)
+    submitError.value = err?.data?.message
+      ?? 'Ha ocurrido un error al enviar tu solicitud. Por favor, inténtalo de nuevo o contáctanos directamente por WhatsApp.'
+  }
+  finally {
     isSending.value = false
   }
 }
@@ -536,6 +621,9 @@ function resetForm() {
   phoneNumero.value = ''
   phonePrefijo.value = '+34'
   submitError.value = ''
+  consent.value = false
+  honeypot.value = ''
+  turnstileToken.value = ''
   currentStep.value = 1
 }
 </script>

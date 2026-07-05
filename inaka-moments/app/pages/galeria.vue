@@ -40,7 +40,10 @@
     <!-- Gallery grid -->
     <section class="py-16 bg-white">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div v-if="pending" class="py-20 text-center text-inaka-terra/50">Cargando galería…</div>
+
         <TransitionGroup
+          v-else
           name="gallery-fade"
           tag="div"
           class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
@@ -50,23 +53,24 @@
             :key="item.id"
             class="group relative overflow-hidden rounded-2xl shadow-md aspect-[4/5] bg-inaka-beige"
           >
-            <img
-              :src="item.src"
-              :alt="item.alt"
+            <NuxtImg
+              :src="storagePublicUrl('gallery', item.storage_path)"
+              :alt="item.alt ?? item.album.title"
               loading="lazy"
+              sizes="sm:100vw md:50vw lg:400px"
               class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-inaka-terra/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 opacity-0 group-hover:opacity-100">
-              <span class="text-inaka-cream text-sm font-semibold">{{ item.alt }}</span>
-              <span class="block text-inaka-cream/70 text-xs mt-1">{{ item.categoriaLabel }}</span>
+              <span class="text-inaka-cream text-sm font-semibold">{{ item.album.title }}</span>
+              <span class="block text-inaka-cream/70 text-xs mt-1">{{ EVENT_TYPE_LABELS[item.album.event_type] ?? item.album.event_type }}</span>
             </div>
           </div>
         </TransitionGroup>
 
         <!-- Empty state -->
         <div
-          v-if="imagenesFiltradas.length === 0"
+          v-if="!pending && imagenesFiltradas.length === 0"
           class="flex flex-col items-center justify-center py-20 text-center"
         >
           <span class="text-5xl mb-4">📷</span>
@@ -107,50 +111,31 @@
 useHead({
   title: 'Galería — Inaka Moments',
   meta: [
-    {
-      name: 'description',
-      content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.',
-    },
+    { name: 'description', content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.' },
     { property: 'og:title', content: 'Galería — Inaka Moments' },
     { property: 'og:description', content: 'Descubre los trabajos reales de Inaka Moments.' },
     { property: 'og:image', content: '/og-galeria.png' },
   ],
 })
 
+const { data: imagenes, pending } = useGalleryImages()
+
 const filtroActivo = ref('todos')
 
-const filtros = [
-  { label: 'Todos', value: 'todos' },
-  { label: 'Cumpleaños', value: 'cumpleanos' },
-  { label: 'Baby Shower', value: 'baby_shower' },
-  { label: 'Bautizos', value: 'bautizo' },
-  { label: 'Comuniones', value: 'comunion' },
-  { label: 'Graduaciones', value: 'graduacion' },
-  { label: 'Corporativo', value: 'corporativo' },
-]
-
-interface GalleryItem {
-  id: number
-  src: string
-  alt: string
-  categoria: string
-  categoriaLabel: string
-}
-
-const gallery = ref<GalleryItem[]>([
-  // PLACEHOLDER — Reemplazar con fotos reales desde la BD en Fase 2 (event_albums/gallery_images)
-  { id: 1, src: 'https://picsum.photos/seed/cumple-colorido/800/1000', alt: 'Cumpleaños Colorido', categoria: 'cumpleanos', categoriaLabel: 'Cumpleaños' },
-  { id: 2, src: 'https://picsum.photos/seed/baby-shower-boho/800/1000', alt: 'Baby Shower "Dulce Espera"', categoria: 'baby_shower', categoriaLabel: 'Baby Shower' },
-  { id: 3, src: 'https://picsum.photos/seed/bautizo-clasico/800/1000', alt: 'Bautizo Clásico', categoria: 'bautizo', categoriaLabel: 'Bautizo' },
-  { id: 4, src: 'https://picsum.photos/seed/comunion-elegante/800/1000', alt: 'Comunión Elegante', categoria: 'comunion', categoriaLabel: 'Comunión' },
-  { id: 5, src: 'https://picsum.photos/seed/graduacion-dorada/800/1000', alt: 'Graduación Dorada', categoria: 'graduacion', categoriaLabel: 'Graduación' },
-  { id: 6, src: 'https://picsum.photos/seed/inauguracion-corp/800/1000', alt: 'Inauguración Corporativa', categoria: 'corporativo', categoriaLabel: 'Corporativo' },
-])
-
-const imagenesFiltradas = computed(() => {
-  if (filtroActivo.value === 'todos') return gallery.value
-  return gallery.value.filter(img => img.categoria === filtroActivo.value)
+/** Filtros derivados de las ocasiones realmente presentes en la galería. */
+const filtros = computed(() => {
+  const present = [...new Set(imagenes.value.map(i => i.album.event_type))]
+  return [
+    { label: 'Todos', value: 'todos' },
+    ...present.map(t => ({ value: t, label: EVENT_TYPE_LABELS[t] ?? t })),
+  ]
 })
+
+const imagenesFiltradas = computed(() =>
+  filtroActivo.value === 'todos'
+    ? imagenes.value
+    : imagenes.value.filter(i => i.album.event_type === filtroActivo.value),
+)
 </script>
 
 <style scoped>

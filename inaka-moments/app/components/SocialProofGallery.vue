@@ -30,11 +30,12 @@
         :key="item.id"
         class="shrink-0 w-64 sm:w-72 md:w-80 snap-center relative group overflow-hidden rounded-2xl shadow-md aspect-[4/5] bg-inaka-beige"
       >
-        <img
-          :src="item.src"
-          :alt="item.alt"
+        <NuxtImg
+          :src="storagePublicUrl('gallery', item.storage_path)"
+          :alt="item.alt ?? item.album.title"
           loading="lazy"
           draggable="false"
+          sizes="256px sm:288px md:320px"
           class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 pointer-events-none"
         />
 
@@ -43,7 +44,7 @@
           class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-inaka-terra/70 to-transparent px-5 py-5 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
         >
           <span class="text-inaka-cream text-sm font-semibold tracking-wide drop-shadow">
-            {{ item.alt }}
+            {{ item.album.title }}
           </span>
         </div>
       </div>
@@ -151,39 +152,8 @@ function launchMomentum() {
 
 onUnmounted(() => cancelMomentum())
 
-// PLACEHOLDER — Reemplazar con fotos reales desde la BD en Fase 2 (gallery_images featured)
-const gallery = ref([
-  {
-    id: 1,
-    src: 'https://picsum.photos/seed/cumple-colorido/800/1000',
-    alt: 'Cumpleaños Colorido',
-  },
-  {
-    id: 2,
-    src: 'https://picsum.photos/seed/baby-shower-boho/800/1000',
-    alt: 'Baby Shower "Dulce Espera"',
-  },
-  {
-    id: 3,
-    src: 'https://picsum.photos/seed/bautizo-clasico/800/1000',
-    alt: 'Bautizo Clásico',
-  },
-  {
-    id: 4,
-    src: 'https://picsum.photos/seed/comunion-elegante/800/1000',
-    alt: 'Comunión Elegante',
-  },
-  {
-    id: 5,
-    src: 'https://picsum.photos/seed/graduacion-dorada/800/1000',
-    alt: 'Graduación Dorada',
-  },
-  {
-    id: 6,
-    src: 'https://picsum.photos/seed/inauguracion-corp/800/1000',
-    alt: 'Inauguración Corporativa',
-  },
-])
+// Imágenes destacadas desde la BD (marcadas como "featured" en el panel)
+const { data: gallery } = useFeaturedImages()
 </script>
 
 <style scoped>

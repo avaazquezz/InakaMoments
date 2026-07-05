@@ -3,21 +3,19 @@
     <div class="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
 
-        <!-- Text column -->
+        <!-- Text column (contenido editable desde el panel: site_content.hero) -->
         <div class="order-2 flex flex-col gap-6 lg:order-1">
           <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold">
-            Eventos con alma
+            {{ hero.tagline }}
           </p>
 
           <h1 class="text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
-            Momentos que <br class="hidden sm:block" />
-            <span class="text-inaka-mauve">perduran</span>
+            {{ hero.titulo }}<br class="hidden sm:block" />
+            <span class="text-inaka-mauve">{{ hero.titulo_span }}</span>
           </h1>
 
           <p class="max-w-prose text-base leading-relaxed text-inaka-terra/80 sm:text-lg">
-            Diseñamos experiencias únicas para cumpleaños, baby showers, comuniones y toda
-            celebración que merezca ser recordada. Cada detalle cuidado con mimo para que
-            tu historia sea inolvidable.
+            {{ hero.subtitulo }}
           </p>
 
           <!-- CTA buttons -->
@@ -26,7 +24,7 @@
               href="#lead-wizard"
               class="rounded-md bg-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
             >
-              Diseñar mi evento
+              {{ hero.cta_principal }}
             </a>
 
             <a
@@ -34,7 +32,7 @@
               download="Catalogo-InakaMoments-2026.pdf"
               class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
             >
-              Descargar Catálogo
+              {{ hero.cta_secundario }}
             </a>
           </div>
         </div>
@@ -68,6 +66,16 @@
 </template>
 
 <script setup lang="ts">
+// Textos editables por la dueña (site_content.hero); defaults = copy actual
+const { data: hero } = useSiteSection('hero', {
+  tagline: 'Eventos con alma',
+  titulo: 'Momentos que ',
+  titulo_span: 'perduran',
+  subtitulo: 'Diseñamos experiencias únicas para cumpleaños, baby showers, comuniones y toda celebración que merezca ser recordada. Cada detalle cuidado con mimo para que tu historia sea inolvidable.',
+  cta_principal: 'Diseñar mi evento',
+  cta_secundario: 'Descargar Catálogo',
+})
+
 const logoCol        = ref<HTMLDivElement | null>(null)
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
 

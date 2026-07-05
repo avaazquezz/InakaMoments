@@ -5,5 +5,6 @@
       <slot />
     </div>
     <TheFooter />
+    <CookieBanner />
   </div>
 </template>
