@@ -339,9 +339,11 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 **Aceptación:** Lighthouse mobile bueno; ca↔es traduce toda la UI; panel instalable; sin regresiones responsive.
 
 ## FASE 7 — Docker + despliegue
+> **✅ ADELANTADA A FASE 0 (dockerización hecha y verificada).** Ya existen: `docker/Dockerfile` (multi-stage node:22-alpine, non-root, caché npm BuildKit, HEALTHCHECK → imagen 167MB), `docker/docker-compose.yml` (prod tras Traefik: apex+www, redirect www→apex, HSTS/nosniff/referrer-policy/frameDeny), `docker/docker-compose.dev.yml` (hot reload verificado; node_modules/.nuxt/.output en volúmenes para no ensuciar el host), `docker/traefik-dynamic.yml` (alternativa proveedor file), `server/api/health.get.ts` (`GET /api/health`), `.dockerignore` (excluye `.env*`), scripts npm `docker:dev|build|prod|down` y `docker/DEPLOY.md`.
+> **Pendiente para esta fase:** despliegue real en el VPS (DNS, red `web`, certificado Let's Encrypt emitido), añadir env de Supabase/Stripe/email/turnstile al compose cuando existan, SPF/DKIM del email, webhook de Stripe, y CSP fina (Fase 8).
 **Objetivo:** entornos dev/prod reproducibles; prod tras Traefik con TLS.
-**Cómo:** `docker/Dockerfile` (reutilizar phase/5, multi-stage node:22-alpine); `docker-compose.yml` (prod, Nuxt tras Traefik en `inakamoments.com`, `/admin` como ruta, env de Supabase/Stripe/email/turnstile); `docker-compose.dev.yml` (dev, hot reload, `supabase start` para BD local); `traefik-dynamic.yml` (http→https + CSP/HSTS); `DEPLOY.md` (DNS/TLS, SPF/DKIM del email, webhook de Stripe). `.env` fuera de git; secretos solo server.
-**Aceptación:** dev sirve en :3000 con hot reload; build+compose prod arranca; Traefik emite certificado.
+**Cómo:** `docker/Dockerfile` (multi-stage node:22-alpine); `docker-compose.yml` (prod, Nuxt tras Traefik en `inakamoments.com`, `/admin` como ruta, env de Supabase/Stripe/email/turnstile); `docker-compose.dev.yml` (dev, hot reload, `supabase start` para BD local); `traefik-dynamic.yml` (http→https + CSP/HSTS); `DEPLOY.md` (DNS/TLS, SPF/DKIM del email, webhook de Stripe). `.env` fuera de git; secretos solo server.
+**Aceptación:** dev sirve en :3000 con hot reload ✅; build+compose prod arranca ✅ (verificado local); Traefik emite certificado (pendiente VPS).
 
 ## FASE 8 — Calidad, legal, SEO avanzado, observabilidad, contenido real
 **Objetivo:** cerrar "al 100%".

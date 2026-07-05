@@ -1,0 +1,60 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Inaka Moments — configuración dinámica de Traefik (proveedor FILE)
+#
+# ⚠️ SOLO necesaria si tu Traefik usa el proveedor de ficheros dinámicos
+#    (p. ej. /home/vazquezdev/servicios/traefik/dynamic/inaka-moments.yml).
+#    Si tu Traefik usa el proveedor Docker, las labels del docker-compose.yml
+#    ya definen todo esto y este fichero NO debe usarse (duplicaría routers).
+#
+# El panel /admin es una ruta de la misma app: un único router basta.
+# ─────────────────────────────────────────────────────────────────────────────
+
+http:
+  routers:
+    inaka-http:
+      entryPoints:
+        - web
+      rule: "Host(`inakamoments.com`) || Host(`www.inakamoments.com`)"
+      middlewares:
+        - inaka-https-redirect
+      service: inaka-svc
+      priority: 100
+
+    inaka-https:
+      entryPoints:
+        - websecure
+      rule: "Host(`inakamoments.com`) || Host(`www.inakamoments.com`)"
+      tls:
+        certResolver: le
+      middlewares:
+        - inaka-www-redirect
+        - inaka-headers
+      service: inaka-svc
+      priority: 100
+
+  middlewares:
+    inaka-https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+    inaka-www-redirect:
+      redirectRegex:
+        regex: "^https?://www\\.inakamoments\\.com/(.*)"
+        replacement: "https://inakamoments.com/${1}"
+        permanent: true
+
+    inaka-headers:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: strict-origin-when-cross-origin
+        frameDeny: true
+
+  services:
+    inaka-svc:
+      loadBalancer:
+        servers:
+          - url: "http://inaka-moments:3000"

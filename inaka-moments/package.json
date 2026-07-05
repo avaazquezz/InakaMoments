@@ -7,7 +7,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "docker:dev": "docker compose -f docker/docker-compose.dev.yml up",
+    "docker:build": "docker build -f docker/Dockerfile -t inaka-moments .",
+    "docker:prod": "docker compose -f docker/docker-compose.yml up -d --build",
+    "docker:down": "docker compose -f docker/docker-compose.yml down"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
