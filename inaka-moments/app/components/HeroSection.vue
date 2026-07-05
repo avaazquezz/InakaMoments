@@ -15,8 +15,9 @@
           </h1>
 
           <p class="max-w-prose text-base leading-relaxed text-inaka-terra/80 sm:text-lg">
-            Diseñamos experiencias únicas para bodas, celebraciones y eventos corporativos.
-            Cada detalle cuidado con mimo para que tu historia sea inolvidable.
+            Diseñamos experiencias únicas para cumpleaños, baby showers, comuniones y toda
+            celebración que merezca ser recordada. Cada detalle cuidado con mimo para que
+            tu historia sea inolvidable.
           </p>
 
           <!-- CTA buttons -->

@@ -1,0 +1,25 @@
+# Dependencias y builds (se generan dentro de la imagen)
+node_modules
+.nuxt
+.nitro
+.output
+.cache
+dist
+
+# Entorno — los secretos NUNCA entran en la imagen; se inyectan en runtime
+.env
+.env.*
+!.env.example
+
+# Git / IDE / SO
+.git
+.gitignore
+.idea
+.fleet
+.DS_Store
+
+# Docs y logs (innecesarios en la imagen)
+docs
+logs
+*.log
+README.md

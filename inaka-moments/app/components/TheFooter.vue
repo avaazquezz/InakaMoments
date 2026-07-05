@@ -64,9 +64,6 @@
                 nadine.tcae@gmail.com
               </a>
             </li>
-            <li>
-
-            </li>
             <li class="inline-flex items-start gap-3 text-sm text-inaka-cream/65">
               <svg class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold/60" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -88,9 +85,9 @@
           © {{ new Date().getFullYear() }} Inaka Moments x <a href="https://www.vazquezdev.pro" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-inaka-cream/70 underline underline-offset-2">VazquezDev</a>. Todos los derechos reservados.
         </p>
         <div class="flex items-center gap-5">
-          <a href="#" class="text-xs text-inaka-cream/40 transition-colors hover:text-inaka-cream/70">Política de privacidad</a>
+          <NuxtLink to="/politica-privacidad" class="text-xs text-inaka-cream/40 transition-colors hover:text-inaka-cream/70">Política de privacidad</NuxtLink>
           <span class="h-3 w-px bg-inaka-cream/20" />
-          <a href="#" class="text-xs text-inaka-cream/40 transition-colors hover:text-inaka-cream/70">Aviso legal</a>
+          <NuxtLink to="/aviso-legal" class="text-xs text-inaka-cream/40 transition-colors hover:text-inaka-cream/70">Aviso legal</NuxtLink>
         </div>
       </div>
 
@@ -99,12 +96,4 @@
 </template>
 
 <script setup lang="ts">
-const servicios = [
-  'Bodas',
-  'Comuniones',
-  'Cumpleaños',
-  'Eventos corporativos',
-  'Decoración temática',
-  'Photocall & atrezzo',
-]
 </script>

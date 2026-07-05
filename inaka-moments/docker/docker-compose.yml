@@ -1,0 +1,52 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Inaka Moments — PRODUCCIÓN (detrás de Traefik con TLS Let's Encrypt)
+#
+# Uso (desde inaka-moments/):
+#   docker network create web        # una sola vez en el VPS
+#   docker compose -f docker/docker-compose.yml up -d --build
+#
+# Las variables de entorno se leen de .env (junto a package.json) en el VPS.
+# El panel /admin es una RUTA de la misma app: no necesita router propio.
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  inaka-moments:
+    image: inaka-moments:latest
+    container_name: inaka-moments
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    init: true # reaping de señales/zombies correcto con node como proceso principal
+    env_file:
+      - path: ../.env
+        required: false # en el VPS puede inyectarse el entorno por otros medios
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+
+      # Router principal: apex + www por HTTPS
+      - "traefik.http.routers.inaka.rule=Host(`inakamoments.com`) || Host(`www.inakamoments.com`)"
+      - "traefik.http.routers.inaka.entrypoints=websecure"
+      - "traefik.http.routers.inaka.tls=true"
+      - "traefik.http.routers.inaka.tls.certresolver=le"
+      - "traefik.http.routers.inaka.middlewares=inaka-www-redirect,inaka-headers"
+      - "traefik.http.services.inaka.loadbalancer.server.port=3000"
+
+      # www → apex
+      - "traefik.http.middlewares.inaka-www-redirect.redirectregex.regex=^https?://www\\.inakamoments\\.com/(.*)"
+      - "traefik.http.middlewares.inaka-www-redirect.redirectregex.replacement=https://inakamoments.com/$${1}"
+      - "traefik.http.middlewares.inaka-www-redirect.redirectregex.permanent=true"
+
+      # Cabeceras de seguridad (CSP fina se añade en Fase 8, cuando el set de
+      # dominios externos —Supabase, Stripe, Turnstile— esté cerrado)
+      - "traefik.http.middlewares.inaka-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.inaka-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.inaka-headers.headers.stsPreload=true"
+      - "traefik.http.middlewares.inaka-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.inaka-headers.headers.referrerPolicy=strict-origin-when-cross-origin"
+      - "traefik.http.middlewares.inaka-headers.headers.frameDeny=true"
+
+networks:
+  web:
+    external: true

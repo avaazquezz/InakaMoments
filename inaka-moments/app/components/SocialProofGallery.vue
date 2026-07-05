@@ -54,12 +54,12 @@
         <p class="text-sm font-semibold text-inaka-terra leading-snug">
           ¿Te imaginas tu evento así de especial?
         </p>
-        <button
-          type="button"
+        <a
+          href="#lead-wizard"
           class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream transition-opacity hover:opacity-90"
         >
           Diseñar el mío
-        </button>
+        </a>
       </div>
     </div>
 
@@ -151,36 +151,37 @@ function launchMomentum() {
 
 onUnmounted(() => cancelMomentum())
 
+// PLACEHOLDER — Reemplazar con fotos reales desde la BD en Fase 2 (gallery_images featured)
 const gallery = ref([
   {
     id: 1,
-    src: 'https://picsum.photos/seed/boda-boho/800/1000',
-    alt: 'Boda Boho',
-  },
-  {
-    id: 2,
-    src: 'https://picsum.photos/seed/comunion-clasica/800/1000',
-    alt: 'Comunión Clásica',
-  },
-  {
-    id: 3,
     src: 'https://picsum.photos/seed/cumple-colorido/800/1000',
     alt: 'Cumpleaños Colorido',
   },
   {
+    id: 2,
+    src: 'https://picsum.photos/seed/baby-shower-boho/800/1000',
+    alt: 'Baby Shower "Dulce Espera"',
+  },
+  {
+    id: 3,
+    src: 'https://picsum.photos/seed/bautizo-clasico/800/1000',
+    alt: 'Bautizo Clásico',
+  },
+  {
     id: 4,
-    src: 'https://picsum.photos/seed/evento-corp/800/1000',
-    alt: 'Evento Corporativo',
+    src: 'https://picsum.photos/seed/comunion-elegante/800/1000',
+    alt: 'Comunión Elegante',
   },
   {
     id: 5,
-    src: 'https://picsum.photos/seed/boda-romantica/800/1000',
-    alt: 'Boda Elegante',
+    src: 'https://picsum.photos/seed/graduacion-dorada/800/1000',
+    alt: 'Graduación Dorada',
   },
   {
     id: 6,
-    src: 'https://picsum.photos/seed/boda-elegante/800/1000',
-    alt: 'Boda Romántica',
+    src: 'https://picsum.photos/seed/inauguracion-corp/800/1000',
+    alt: 'Inauguración Corporativa',
   },
 ])
 </script>
