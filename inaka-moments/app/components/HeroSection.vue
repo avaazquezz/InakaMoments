@@ -20,12 +20,12 @@
 
           <!-- CTA buttons -->
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              href="#lead-wizard"
+            <NuxtLink
+              to="/configurador"
               class="rounded-md bg-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
             >
               {{ hero.cta_principal }}
-            </a>
+            </NuxtLink>
 
             <a
               href="/catalogo-inaka-moments-2026.pdf"

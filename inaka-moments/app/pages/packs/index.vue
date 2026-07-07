@@ -68,15 +68,23 @@
         <h2 class="text-3xl font-bold sm:text-4xl mb-5">¿Prefieres montarlo a tu manera?</h2>
         <p class="text-inaka-cream/70 text-lg mb-8 max-w-2xl mx-auto">
           Todos los productos del catálogo se pueden combinar entre sí. Elige los que más te gusten
-          y nosotros les damos forma.
+          en el configurador y ve el precio al instante.
         </p>
-        <NuxtLink
-          to="/catalogo"
-          class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
-        >
-          Explorar el catálogo
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-        </NuxtLink>
+        <div class="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <NuxtLink
+            to="/configurador"
+            class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
+          >
+            Configurar mi presupuesto
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          </NuxtLink>
+          <NuxtLink
+            to="/catalogo"
+            class="inline-flex items-center gap-2 rounded-md border border-inaka-cream/40 px-8 py-4 text-sm font-semibold text-inaka-cream transition-colors hover:bg-inaka-cream/10"
+          >
+            Explorar el catálogo
+          </NuxtLink>
+        </div>
       </div>
     </section>
   </main>

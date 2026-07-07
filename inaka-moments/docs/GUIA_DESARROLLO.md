@@ -311,11 +311,14 @@ NUXT_PUBLIC_EMAILJS_SERVICE_ID=  NUXT_PUBLIC_EMAILJS_TEMPLATE_ID=  NUXT_PUBLIC_E
 6. `server/api/leads.post.ts`: zod + Turnstile + rate-limit + honeypot → insertar lead + aviso a la dueña (`server/utils/email.ts`). `LeadWizard`: checkbox RGPD + Turnstile. **Banner de cookies** + actualizar política.
 **Aceptación:** catálogo/packs/ocasiones/FAQ/reseñas se ven desde BD; enviar lead lo persiste y avisa; sin consentimiento/Turnstile se rechaza.
 
-## FASE 3 — Configurador de presupuesto (público)
+## FASE 3 — Configurador de presupuesto (público) ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). **Motor de precios puro y compartido** (`shared/configurator.ts`) usado por igual en cliente y servidor: resuelve tramos (`products.pricing`) → `base_price` → "a consultar", multiplica por cantidad, aplica reglas de `site_content.settings` (desmontaje +15€, umbral detallito 120€, >30 km gasolina "a consultar") y marca alquiler/fianza. **Página** `configurador.vue` paso a paso (ocasión → fecha → productos con tramo/tamaño/opción/cantidad → datos) con **panel de presupuesto en vivo** (`ConfiguratorSummary.vue`, sidebar en desktop + hoja inferior en móvil), estado en `useState` (`useConfigurator.ts`), deep-links `?ocasion=`, `?add=<slug>` y `?addPack=<slug>`. **Endpoint** `POST /api/quotes` (mismo blindaje que leads: rate-limit 5/10min + zod + honeypot + Turnstile server-side) que **recalcula precios desde la BD** (nunca confía en el cliente), rechaza fechas pasadas, e inserta `lead(presupuestado, source=configurador)` + `quote(enviado, subtotal/adjustments/total/valid_until=+30d)` + `quote_items` (con `options` jsonb tramo/tamaño/opciones; limpieza si fallan los items). **Emails** a la dueña y al cliente ("hemos recibido tu propuesta") vía Resend (`server/utils/email.ts`) con **fallback EmailJS** si Resend no está configurado. **CTAs cableados** (header "Presupuesto", hero, catálogo, ficha de producto/pack, packs) + sitemap. **Verificado:** test unitario del motor (30 aserciones cuadran con el catálogo real); `POST` real → `quote`+`quote_items`+`lead` correctos en Supabase (total 320€ con desmontaje+gasolina+alquiler+consulta); rechazos 400 (sin consentimiento / sin líneas / producto inexistente / fecha pasada), 403 (Turnstile "always-fail"), 200 sin persistir (honeypot), 429 (rate-limit); **flujo completo en navegador** (Chrome) añadiendo productos con total en vivo (Arco ×2 → 120€ dispara el detallito) y envío que persistió y **notificó por email**; build de producción OK.
+> **🐛 Bug preexistente (Fase 2) corregido de paso:** `pages/catalogo.vue` + `pages/catalogo/[slug].vue` (y packs) hacían de `[slug]` una ruta *hija* sin `<NuxtPage/>` en el padre → **las fichas de producto/pack nunca renderizaban** (servían la lista). Resuelto moviendo las listas a `catalogo/index.vue` y `packs/index.vue` (rutas hermanas). Verificado: `/catalogo/<slug>` y `/packs/<slug>` ahora muestran la ficha.
+> **⚠️ Para producción:** igual que Fase 2 — Turnstile y Resend con dominio verificado (hoy claves de TEST y EmailJS como notificador efectivo). La **señal** (`quotes.deposit_amount`) se deja `null`: la fija la dueña al aceptar (Fase 4/5).
 **Objetivo:** que el cliente combine productos/packs, vea **precio estimado en vivo** y envíe una solicitud de presupuesto.
 **Por qué:** es el corazón del modelo "tú eliges, nosotros creamos" y el mayor motor de conversión.
 **Cómo:** `configurador.vue`: paso a paso (ocasión → fecha → productos con cantidades/opciones/extras → datos de contacto). Estado con `useState`; precio calculado desde `products.pricing`/`packs.price` + reglas (desmontaje, gasolina si aplica). Enviar → `server/api/quotes.post.ts` (zod + Turnstile) crea `lead` + `quote(status='enviado')` + `quote_items`; email a la dueña y al cliente ("hemos recibido tu propuesta"). Mostrar resumen con total y "sujeto a confirmación".
-**Aceptación:** el total en vivo cuadra con el catálogo; enviar crea `quote`+`quote_items` correctos y ambos emails salen; accesible en móvil.
+**Aceptación:** el total en vivo cuadra con el catálogo ✅; enviar crea `quote`+`quote_items` correctos y ambos emails salen ✅; accesible en móvil ✅.
 
 ## FASE 4 — Panel /admin (SaaS) + flujo de reservas
 **Objetivo:** panel completo y responsive con todos los módulos y el flujo aprobar-reserva → email.
@@ -366,9 +369,9 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 - [ ] Rutas + nav móvil
 - [ ] Taxonomía real de ocasiones
 - [ ] RLS verificado
-- [ ] Catálogo + packs desde BD
-- [ ] Configurador con precio en vivo
-- [ ] Lead/quote persistidos + anti-spam + RGPD
+- [x] Catálogo + packs desde BD
+- [x] Configurador con precio en vivo
+- [x] Lead/quote persistidos + anti-spam + RGPD
 - [ ] Aceptar reserva → email + señal Stripe
 - [ ] Fianzas de alquiler
 - [ ] Agenda + inventario

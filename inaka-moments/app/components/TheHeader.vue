@@ -99,6 +99,7 @@ const navLinks = [
   { to: '/', label: 'Inicio' },
   { to: '/catalogo', label: 'Catálogo' },
   { to: '/packs', label: 'Packs' },
+  { to: '/configurador', label: 'Presupuesto' },
   { to: '/galeria', label: 'Galería' },
   { to: '/como-funciona', label: 'Cómo funciona' },
   { to: '/contacto', label: 'Contacto' },
