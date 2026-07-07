@@ -4,6 +4,8 @@
 
     <AboutSection />
 
+    <CatalogTeaser />
+
     <SocialProofGallery />
 
     <section id="lead-wizard" class="flex min-h-screen items-center bg-white py-24">

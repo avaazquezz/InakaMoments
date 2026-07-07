@@ -35,8 +35,8 @@
                   </div>
                   <div>
                     <p class="text-sm font-semibold text-inaka-terra">Email</p>
-                    <a href="mailto:nadine.tcae@gmail.com" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
-                      nadine.tcae@gmail.com
+                    <a :href="`mailto:${contacto.email}`" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
+                      {{ contacto.email }}
                     </a>
                   </div>
                 </li>
@@ -48,8 +48,8 @@
                   </div>
                   <div>
                     <p class="text-sm font-semibold text-inaka-terra">WhatsApp</p>
-                    <a href="https://wa.me/34000000000" target="_blank" rel="noopener noreferrer" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
-                      +34 000 000 000
+                    <a :href="waLink" target="_blank" rel="noopener noreferrer" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
+                      {{ waDisplay }}
                     </a>
                   </div>
                 </li>
@@ -62,7 +62,7 @@
                   </div>
                   <div>
                     <p class="text-sm font-semibold text-inaka-terra">Ubicación</p>
-                    <p class="text-inaka-terra/65">Abrera, Cataluña, España</p>
+                    <p class="text-inaka-terra/65">{{ contacto.ubicacion }}</p>
                   </div>
                 </li>
                 <li class="flex items-start gap-4">
@@ -73,8 +73,8 @@
                   </div>
                   <div>
                     <p class="text-sm font-semibold text-inaka-terra">Instagram</p>
-                    <a href="https://www.instagram.com/inaka.moments" target="_blank" rel="noopener noreferrer" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
-                      @inaka.moments
+                    <a :href="contacto.instagram" target="_blank" rel="noopener noreferrer" class="text-inaka-terra/65 hover:text-inaka-terra transition-colors">
+                      {{ igHandle }}
                     </a>
                   </div>
                 </li>
@@ -87,15 +87,15 @@
               <div class="rounded-xl bg-inaka-cream p-6 ring-1 ring-inaka-nude">
                 <div class="flex justify-between items-center py-2 border-b border-inaka-nude last:border-0">
                   <span class="text-sm text-inaka-terra/70">Lunes — Viernes</span>
-                  <span class="text-sm font-semibold text-inaka-terra">9:00 — 18:00</span>
+                  <span class="text-sm font-semibold text-inaka-terra">{{ contacto.horario.lunes_viernes }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b border-inaka-nude last:border-0">
                   <span class="text-sm text-inaka-terra/70">Sábados</span>
-                  <span class="text-sm font-semibold text-inaka-terra">10:00 — 14:00</span>
+                  <span class="text-sm font-semibold text-inaka-terra">{{ contacto.horario.sabados }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 last:border-0">
                   <span class="text-sm text-inaka-terra/70">Domingos</span>
-                  <span class="text-sm text-inaka-terra/50">Cerrado</span>
+                  <span class="text-sm text-inaka-terra/50">{{ contacto.horario.domingos }}</span>
                 </div>
               </div>
             </div>
@@ -128,7 +128,7 @@
           Si prefieres resolverlo directamente, escríbenos por WhatsApp y te respondemos al momento.
         </p>
         <a
-          href="https://wa.me/34000000000"
+          :href="waLink"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 rounded-md bg-[#25D366] px-8 py-4 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
@@ -144,6 +144,23 @@
 </template>
 
 <script setup lang="ts">
+// Datos de contacto editables por la dueña (site_content.contacto)
+const { data: contacto } = useSiteSection('contacto', {
+  email: 'nadine.tcae@gmail.com',
+  whatsapp: '+34000000000',
+  ubicacion: 'Abrera, Cataluña, España',
+  instagram: 'https://www.instagram.com/inaka.moments',
+  horario: {
+    lunes_viernes: '9:00 — 18:00',
+    sabados: '10:00 — 14:00',
+    domingos: 'Cerrado',
+  },
+})
+
+const waLink = computed(() => `https://wa.me/${contacto.value.whatsapp.replace(/\D/g, '')}`)
+const waDisplay = computed(() => contacto.value.whatsapp.replace(/^(\+\d{2})(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3 $4'))
+const igHandle = computed(() => `@${contacto.value.instagram.split('/').filter(Boolean).pop()}`)
+
 useHead({
   title: 'Contacto — Inaka Moments',
   meta: [

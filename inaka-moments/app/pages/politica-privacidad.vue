@@ -53,10 +53,15 @@
         </section>
 
         <section class="space-y-4">
-          <h2 class="text-xl font-bold text-inaka-terra">6. Destinatarios</h2>
+          <h2 class="text-xl font-bold text-inaka-terra">6. Destinatarios y encargados del tratamiento</h2>
           <p>
-            Sus datos no serán cedidos a terceros, excepto cuando sea necesario para la prestación del servicio solicitado (por ejemplo, herramientas de envío de correo electrónico) o cuando así lo exija la legislación vigente.
+            Sus datos no serán cedidos a terceros, excepto cuando así lo exija la legislación vigente. Para la prestación del servicio utilizamos los siguientes proveedores, que actúan como encargados del tratamiento:
           </p>
+          <ul class="list-disc list-inside space-y-1">
+            <li><strong>Supabase</strong> (base de datos y almacenamiento): las solicitudes de presupuesto se almacenan en servidores ubicados en la <strong>Unión Europea (París, Francia)</strong>.</li>
+            <li><strong>Servicios de envío de correo electrónico</strong> (Resend / EmailJS): utilizados únicamente para notificar su solicitud y responderle.</li>
+            <li><strong>Cloudflare Turnstile</strong> (verificación anti-spam del formulario): puede tratar datos técnicos de conexión para distinguir personas de robots.</li>
+          </ul>
         </section>
 
         <section class="space-y-4">
@@ -78,7 +83,7 @@
         <section class="space-y-4">
           <h2 class="text-xl font-bold text-inaka-terra">8. Uso de cookies</h2>
           <p>
-            Este sitio web utiliza cookies propias y de terceros para mejorar la experiencia de navegación. Para más información consulte nuestra <strong>Política de Cookies</strong>.
+            Este sitio web utiliza únicamente <strong>cookies técnicas esenciales</strong>, necesarias para el funcionamiento del sitio (por ejemplo, la sesión del panel de administración o la verificación anti-spam del formulario). No utilizamos cookies publicitarias, de rastreo ni de perfilado. Si en el futuro se incorporasen cookies analíticas, se solicitará su consentimiento previo mediante el gestor de cookies.
           </p>
         </section>
 

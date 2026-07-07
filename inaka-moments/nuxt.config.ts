@@ -8,20 +8,39 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/supabase',
+    '@nuxt/image',
+    '@nuxtjs/turnstile',
     [
       '@nuxtjs/sitemap',
       {
+        // Sitemap estático por ahora; en Fase 8 pasa a dinámico (BD).
         urls: [
           { loc: '/', changefreq: 'weekly', priority: 1.0 },
-          { loc: '/servicios', changefreq: 'monthly', priority: 0.8 },
-          { loc: '/galeria', changefreq: 'weekly', priority: 0.9 },
+          { loc: '/catalogo', changefreq: 'weekly', priority: 0.9 },
+          { loc: '/packs', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/galeria', changefreq: 'weekly', priority: 0.8 },
+          { loc: '/como-funciona', changefreq: 'monthly', priority: 0.7 },
+          { loc: '/faq', changefreq: 'monthly', priority: 0.6 },
+          { loc: '/resenas', changefreq: 'monthly', priority: 0.5 },
           { loc: '/contacto', changefreq: 'monthly', priority: 0.7 },
+          { loc: '/ocasiones/cumpleanos', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/baby-shower', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/bautizos', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/comuniones', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/graduaciones', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/despedidas', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/jubilaciones', changefreq: 'monthly', priority: 0.8 },
+          { loc: '/ocasiones/corporativo', changefreq: 'monthly', priority: 0.8 },
           { loc: '/politica-privacidad', changefreq: 'yearly', priority: 0.3 },
           { loc: '/aviso-legal', changefreq: 'yearly', priority: 0.3 },
         ],
       },
     ],
   ],
+  routeRules: {
+    // La antigua página de servicios queda absorbida por el catálogo
+    '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },
+  },
   // Supabase: URL y claves se leen de SUPABASE_URL / SUPABASE_KEY /
   // SUPABASE_SERVICE_KEY (esta última SOLO servidor, nunca llega al cliente).
   supabase: {
@@ -34,7 +53,24 @@ export default defineNuxtConfig({
     },
     types: '~~/app/types/database.ts',
   },
+  image: {
+    // Dominios remotos que IPX puede optimizar (placeholders + Supabase Storage)
+    domains: ['picsum.photos', 'kdjsbvvmcilbcycgxygo.supabase.co'],
+  },
+  turnstile: {
+    // Clave de TEST de Cloudflare (siempre pasa). En producción define
+    // NUXT_PUBLIC_TURNSTILE_SITE_KEY con la clave real del dominio.
+    siteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
+  },
   runtimeConfig: {
+    // ── Solo servidor (override en runtime con NUXT_<KEY>) ──
+    turnstile: {
+      // Secreto de TEST (siempre pasa). Producción: NUXT_TURNSTILE_SECRET_KEY.
+      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA',
+    },
+    resendApiKey: '',                        // NUXT_RESEND_API_KEY (si vacío → sin email server-side)
+    emailFrom: 'Inaka Moments <onboarding@resend.dev>', // NUXT_EMAIL_FROM (dominio verificado en prod)
+    emailBusiness: 'nadine.tcae@gmail.com',  // NUXT_EMAIL_BUSINESS (aviso de nuevos leads)
     public: {
       emailjsServiceId: '',
       emailjsTemplateId: '',

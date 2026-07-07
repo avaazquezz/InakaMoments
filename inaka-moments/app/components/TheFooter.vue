@@ -13,19 +13,19 @@
     <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
 
       <!-- Bloque principal -->
-      <div class="grid grid-cols-1 gap-14 py-16 md:grid-cols-3 lg:gap-20">
+      <div class="grid grid-cols-1 gap-14 py-16 md:grid-cols-2 lg:grid-cols-4 lg:gap-16">
 
-        <!-- Col 1: Marca + tagline -->
+        <!-- Col 1: Marca + tagline (editable: site_content.footer) -->
         <div class="flex flex-col gap-5">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.25em] text-inaka-gold/70 mb-3">Inaka Moments</p>
             <p class="text-2xl font-bold leading-snug text-inaka-cream">
-              Cada detalle,<br>
-              <span class="text-inaka-gold">una historia.</span>
+              {{ footer.tagline_titulo }}<br>
+              <span class="text-inaka-gold">{{ footer.tagline_span }}</span>
             </p>
           </div>
           <p class="text-sm leading-relaxed text-inaka-cream/60 max-w-xs">
-            Creamos experiencias únicas para los momentos más importantes de tu vida. Con alma, con mimo, con arte.
+            {{ footer.tagline_sub }}
           </p>
           <!-- Instagram CTA destacado -->
           <a
@@ -49,19 +49,49 @@
           </a>
         </div>
 
-        <!-- Col 3: Contacto -->
+        <!-- Col 2: Ocasiones (SEO interno) -->
+        <div>
+          <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-inaka-gold/70">Ocasiones</p>
+          <ul class="flex flex-col gap-2.5">
+            <li v-for="oc in ocasiones" :key="oc.slug">
+              <NuxtLink
+                :to="`/ocasiones/${oc.slug}`"
+                class="text-sm text-inaka-cream/65 transition-colors hover:text-inaka-cream"
+              >
+                {{ EVENT_TYPE_LABELS[oc.event_type] ?? oc.title }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Enlaces -->
+        <div>
+          <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-inaka-gold/70">Enlaces</p>
+          <ul class="flex flex-col gap-2.5">
+            <li v-for="link in enlaces" :key="link.to">
+              <NuxtLink
+                :to="link.to"
+                class="text-sm text-inaka-cream/65 transition-colors hover:text-inaka-cream"
+              >
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Contacto (editable: site_content.contacto) -->
         <div>
           <p class="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-inaka-gold/70">Contacto</p>
           <ul class="flex flex-col gap-4">
             <li>
               <a
-                href="mailto:nadine.tcae@gmail.com"
+                :href="`mailto:${contacto.email}`"
                 class="group inline-flex items-start gap-3 text-sm text-inaka-cream/65 transition-colors hover:text-inaka-cream"
               >
                 <svg class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold/60" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                nadine.tcae@gmail.com
+                {{ contacto.email }}
               </a>
             </li>
             <li class="inline-flex items-start gap-3 text-sm text-inaka-cream/65">
@@ -69,7 +99,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
-              Abrera, Cataluña, España.
+              {{ contacto.ubicacion }}
             </li>
           </ul>
         </div>
@@ -96,4 +126,27 @@
 </template>
 
 <script setup lang="ts">
+// Contenido editable por la dueña + enlaces SEO internos
+const { data: footer } = useSiteSection('footer', {
+  tagline_titulo: 'Cada detalle,',
+  tagline_span: 'una historia.',
+  tagline_sub: 'Creamos experiencias únicas para los momentos más importantes de tu vida. Con alma, con mimo, con arte.',
+})
+
+const { data: contacto } = useSiteSection('contacto', {
+  email: 'nadine.tcae@gmail.com',
+  ubicacion: 'Abrera, Cataluña, España',
+})
+
+const { data: ocasiones } = useOccasions()
+
+const enlaces = [
+  { to: '/catalogo', label: 'Catálogo' },
+  { to: '/packs', label: 'Packs' },
+  { to: '/galeria', label: 'Galería' },
+  { to: '/como-funciona', label: 'Cómo funciona' },
+  { to: '/faq', label: 'Preguntas frecuentes' },
+  { to: '/resenas', label: 'Reseñas' },
+  { to: '/contacto', label: 'Contacto' },
+]
 </script>

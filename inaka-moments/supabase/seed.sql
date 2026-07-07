@@ -216,3 +216,28 @@ insert into public.faqs (question, answer, category, sort_order) values
  'Sí, todos nuestros productos pueden combinarse entre sí. Tú eliges lo que más te gusta y nosotros nos encargamos de darle forma y convertirlo en un momento único.',
  'general', 80)
 on conflict do nothing;
+
+-- ── Galería PLACEHOLDER (reemplazar con fotos reales desde el panel, Fase 4) ─
+-- UUIDs fijos → idempotente. storage_path admite URL absoluta (placeholder)
+-- o ruta relativa dentro del bucket 'gallery' (fotos reales).
+insert into public.event_albums (id, title, event_type, published, sort_order) values
+('a0000000-0000-4000-8000-000000000001', 'Cumpleaños Colorido',        'cumpleanos',  true, 10),
+('a0000000-0000-4000-8000-000000000002', 'Baby Shower "Dulce Espera"', 'baby_shower', true, 20),
+('a0000000-0000-4000-8000-000000000003', 'Bautizo Clásico',            'bautizo',     true, 30),
+('a0000000-0000-4000-8000-000000000004', 'Comunión Elegante',          'comunion',    true, 40),
+('a0000000-0000-4000-8000-000000000005', 'Graduación Dorada',          'graduacion',  true, 50),
+('a0000000-0000-4000-8000-000000000006', 'Inauguración Corporativa',   'corporativo', true, 60)
+on conflict (id) do nothing;
+
+insert into public.gallery_images (id, album_id, storage_path, alt, featured, sort_order) values
+('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'https://picsum.photos/seed/cumple-colorido/800/1000',   'Decoración de cumpleaños colorido con globos', true, 10),
+('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', 'https://picsum.photos/seed/baby-shower-boho/800/1000',  'Baby shower Dulce Espera con arco de globos',  true, 20),
+('b0000000-0000-4000-8000-000000000003', 'a0000000-0000-4000-8000-000000000003', 'https://picsum.photos/seed/bautizo-clasico/800/1000',   'Decoración de bautizo clásico',                true, 30),
+('b0000000-0000-4000-8000-000000000004', 'a0000000-0000-4000-8000-000000000004', 'https://picsum.photos/seed/comunion-elegante/800/1000', 'Comunión elegante con aro 360',                true, 40),
+('b0000000-0000-4000-8000-000000000005', 'a0000000-0000-4000-8000-000000000005', 'https://picsum.photos/seed/graduacion-dorada/800/1000', 'Graduación con columnas doradas',              true, 50),
+('b0000000-0000-4000-8000-000000000006', 'a0000000-0000-4000-8000-000000000006', 'https://picsum.photos/seed/inauguracion-corp/800/1000', 'Inauguración corporativa con wall balloon',    true, 60)
+on conflict (id) do nothing;
+
+update public.event_albums a set cover_image_id = i.id
+from public.gallery_images i
+where i.album_id = a.id and a.cover_image_id is null;

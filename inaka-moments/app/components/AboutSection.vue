@@ -18,8 +18,8 @@
           <span class="h-px w-8 bg-inaka-gold/60 inline-block" />
         </span>
         <h2 class="mt-5 text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
-          Cada momento,<br>
-          <em class="not-italic text-inaka-mauve">una obra de arte.</em>
+          {{ about.titulo_principal }}<br>
+          <em class="not-italic text-inaka-mauve">{{ about.titulo_secundario }}</em>
         </h2>
       </div>
 
@@ -37,7 +37,7 @@
 
             <blockquote class="relative z-10">
               <p class="text-xl font-medium leading-relaxed text-inaka-terra/90 sm:text-2xl">
-                "Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo."
+                "{{ about.quote }}"
               </p>
               <footer class="mt-6 flex items-center gap-4">
                 <div class="h-10 w-10 rounded-full bg-inaka-mauve/30 ring-2 ring-inaka-mauve/40 flex items-center justify-center">
@@ -127,6 +127,13 @@
 
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
+
+// Textos editables por la dueña (site_content.about); defaults = copy actual
+const { data: about } = useSiteSection('about', {
+  titulo_principal: 'Cada momento,',
+  titulo_secundario: 'una obra de arte.',
+  quote: 'Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo.',
+})
 
 function makeIcon(paths: string[]) {
   return defineComponent({
