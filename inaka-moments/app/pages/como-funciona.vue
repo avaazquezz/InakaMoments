@@ -68,10 +68,10 @@
           Cuéntanos qué celebras y en 2 minutos tendrás tu solicitud de presupuesto en marcha.
         </p>
         <NuxtLink
-          to="/#lead-wizard"
+          to="/configurador"
           class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
         >
-          Diseñar mi evento
+          Configurar mi presupuesto
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
         </NuxtLink>
       </div>
@@ -88,70 +88,8 @@ useHead({
   ],
 })
 
-// Reglas de negocio del catálogo, editables por la dueña en site_content.settings
-const { data: settings } = useSiteSection('settings', {
-  desmontaje_precio: 15,
-  km_incluidos: 30,
-  plus_gasolina: 'a consultar según distancia',
-  umbral_detallito: 120,
-  antelacion_dias: 30,
-  pago_al_agendar: true,
-  fianza_alquiler: 'según estructura, reembolsable al comprobar el estado',
-})
-
-const pasos = [
-  {
-    icono: '🛍️',
-    titulo: 'Elige lo que te gusta',
-    descripcion: 'Explora el catálogo y los packs. Cada elemento tiene su precio para que combines a tu gusto: arcos, columnas, letreros, candy bar…',
-  },
-  {
-    icono: '💬',
-    titulo: 'Pide tu presupuesto',
-    descripcion: 'Cuéntanos tu ocasión, la fecha y lo que tienes en mente con el formulario de 2 minutos. Te respondemos en menos de 24 h.',
-  },
-  {
-    icono: '📅',
-    titulo: 'Confirma tu fecha',
-    descripcion: 'Cuando aceptes la propuesta, bloqueamos tu fecha en la agenda. El pago se realiza al momento de agendar.',
-  },
-  {
-    icono: '🎈',
-    titulo: 'Nosotros montamos',
-    descripcion: 'El día del evento llegamos, montamos y lo dejamos todo perfecto. Tú solo tienes que disfrutar del momento.',
-  },
-]
-
-const reglas = computed(() => [
-  {
-    icono: '🔧',
-    titulo: 'Montaje incluido',
-    texto: `Todos los precios incluyen el montaje. Desmontaje opcional por +${formatEUR(settings.value.desmontaje_precio)}.`,
-  },
-  {
-    icono: '🚗',
-    titulo: 'Desplazamiento',
-    texto: `Los primeros ${settings.value.km_incluidos} km están incluidos. A partir de ahí se añade un plus de gasolina (${settings.value.plus_gasolina}).`,
-  },
-  {
-    icono: '🎁',
-    titulo: 'Detallito de regalo',
-    texto: `Si tu pedido supera los ${formatEUR(settings.value.umbral_detallito)}, te llevas un detallito de Inaka Moments acorde a tu evento.`,
-  },
-  {
-    icono: '⏰',
-    titulo: 'Reserva con antelación',
-    texto: `Agenda tu evento con un mínimo de ${Math.round(settings.value.antelacion_dias / 30)} mes de antelación para que preparemos cada detalle con mimo.`,
-  },
-  {
-    icono: '💳',
-    titulo: 'Pago al agendar',
-    texto: 'El pago se realiza al momento de agendar: así tu fecha queda bloqueada en nuestra agenda.',
-  },
-  {
-    icono: '🔄',
-    titulo: 'Alquiler con fianza',
-    texto: `Algunas estructuras pueden alquilarse con fianza (${settings.value.fianza_alquiler}).`,
-  },
-])
+// Pasos del proceso (compartidos con la home) y reglas de negocio (desde
+// site_content.settings, editables por la dueña en el admin).
+const pasos = PROCESO_PASOS
+const { rules: reglas } = useBusinessRules()
 </script>

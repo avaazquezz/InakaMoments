@@ -120,6 +120,22 @@
       </div>
     </section>
 
+    <!-- Formulario rápido (LeadWizard) -->
+    <section id="lead-wizard" class="scroll-mt-24 bg-inaka-cream py-20 sm:py-24">
+      <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center">
+          <p class="mb-2 text-sm font-semibold uppercase tracking-widest text-inaka-gold">Sin compromiso</p>
+          <h2 class="text-3xl font-bold text-inaka-terra sm:text-4xl">Cuéntanos tu evento en 2 minutos</h2>
+          <p class="mt-3 text-base text-inaka-terra/60">
+            ¿Prefieres no configurar precios ahora? Déjanos los datos y te preparamos una propuesta a medida.
+            ¿Ya sabes lo que quieres?
+            <NuxtLink to="/configurador" class="font-semibold text-inaka-gold hover:underline">Móntalo en el configurador</NuxtLink>.
+          </p>
+        </div>
+        <LeadWizard />
+      </div>
+    </section>
+
     <!-- CTA final -->
     <section class="py-20 bg-inaka-terra text-inaka-cream">
       <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">

@@ -94,10 +94,10 @@
           Cada celebración es especial. Háblanos de la tuya y diseñamos juntos algo que nadie más tendrá.
         </p>
         <NuxtLink
-          to="/#lead-wizard"
+          to="/configurador"
           class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
         >
-          Diseñar mi evento
+          Configurar mi presupuesto
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>

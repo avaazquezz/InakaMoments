@@ -18,7 +18,7 @@
         </p>
         <div class="mt-8">
           <NuxtLink
-            to="/#lead-wizard"
+            :to="`/configurador?ocasion=${ocasion.event_type}`"
             class="inline-flex items-center gap-2 rounded-md bg-inaka-terra px-8 py-4 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
           >
             Diseñar mi {{ (EVENT_TYPE_LABELS[ocasion.event_type] ?? 'evento').toLowerCase() }}
@@ -90,10 +90,10 @@
           Baix Llobregat y alrededores de Barcelona.
         </p>
         <NuxtLink
-          to="/#lead-wizard"
+          :to="`/configurador?ocasion=${ocasion.event_type}`"
           class="inline-flex items-center gap-2 rounded-md bg-inaka-terra px-8 py-4 text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
         >
-          Pedir presupuesto sin compromiso
+          Configurar mi presupuesto
         </NuxtLink>
       </div>
     </section>

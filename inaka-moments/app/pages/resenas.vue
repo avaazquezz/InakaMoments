@@ -74,10 +74,10 @@
           Diseñamos tu celebración con el mismo mimo que nos gustaría recibir.
         </p>
         <NuxtLink
-          to="/#lead-wizard"
+          to="/configurador"
           class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
         >
-          Diseñar mi evento
+          Configurar mi presupuesto
         </NuxtLink>
       </div>
     </section>

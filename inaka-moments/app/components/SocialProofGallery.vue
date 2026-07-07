@@ -55,12 +55,12 @@
         <p class="text-sm font-semibold text-inaka-terra leading-snug">
           ¿Te imaginas tu evento así de especial?
         </p>
-        <a
-          href="#lead-wizard"
+        <NuxtLink
+          to="/configurador"
           class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream transition-opacity hover:opacity-90"
         >
           Diseñar el mío
-        </a>
+        </NuxtLink>
       </div>
     </div>
 
