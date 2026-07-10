@@ -74,10 +74,10 @@
             <!-- CTA -->
             <div class="mt-2 flex flex-col gap-3 sm:flex-row">
               <NuxtLink
-                to="/#lead-wizard"
+                :to="`/configurador?add=${producto.slug}`"
                 class="rounded-md bg-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
               >
-                Pedir presupuesto con este producto
+                Añadir a mi presupuesto
               </NuxtLink>
               <NuxtLink
                 to="/catalogo"

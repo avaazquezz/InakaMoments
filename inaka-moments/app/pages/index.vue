@@ -1,23 +1,37 @@
 <template>
   <main>
+    <!-- 1 · Portada -->
     <HeroSection />
 
+    <!-- 2 · Sobre nosotras -->
     <AboutSection />
 
+    <!-- 3 · Propuesta de valor / condiciones claras -->
+    <WhyInakaSection />
+
+    <!-- 4 · Ocasiones (enlaces SEO) -->
+    <OccasionsSection />
+
+    <!-- 5 · Catálogo (teaser → configurador) -->
     <CatalogTeaser />
 
+    <!-- 6 · Momentos reales (galería) -->
     <SocialProofGallery />
 
-    <section id="lead-wizard" class="flex min-h-screen items-center bg-white py-24">
-      <div class="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div class="mb-10 text-center">
-          <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-2">Sin compromiso</p>
-          <h2 class="text-3xl font-bold text-inaka-terra sm:text-4xl">Diseña tu evento en 2 minutos</h2>
-          <p class="mt-3 text-inaka-terra/60 text-base">Cuéntanos qué tienes en mente y te preparamos una propuesta a medida.</p>
-        </div>
-        <LeadWizard />
-      </div>
-    </section>
+    <!-- 7 · Cómo funciona -->
+    <HowItWorksSection />
+
+    <!-- 8 · Reseñas (se autooculta si no hay publicadas) -->
+    <TestimonialsSection />
+
+    <!-- 9 · Zona de servicio (SEO local) -->
+    <ServiceAreaSection />
+
+    <!-- 10 · Preguntas frecuentes -->
+    <FaqTeaserSection />
+
+    <!-- 11 · Cierre / CTA final -->
+    <FinalCtaSection />
   </main>
 </template>
 

@@ -17,6 +17,7 @@ export default defineNuxtConfig({
         urls: [
           { loc: '/', changefreq: 'weekly', priority: 1.0 },
           { loc: '/catalogo', changefreq: 'weekly', priority: 0.9 },
+          { loc: '/configurador', changefreq: 'monthly', priority: 0.9 },
           { loc: '/packs', changefreq: 'monthly', priority: 0.8 },
           { loc: '/galeria', changefreq: 'weekly', priority: 0.8 },
           { loc: '/como-funciona', changefreq: 'monthly', priority: 0.7 },

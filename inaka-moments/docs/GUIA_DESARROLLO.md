@@ -311,11 +311,32 @@ NUXT_PUBLIC_EMAILJS_SERVICE_ID=  NUXT_PUBLIC_EMAILJS_TEMPLATE_ID=  NUXT_PUBLIC_E
 6. `server/api/leads.post.ts`: zod + Turnstile + rate-limit + honeypot → insertar lead + aviso a la dueña (`server/utils/email.ts`). `LeadWizard`: checkbox RGPD + Turnstile. **Banner de cookies** + actualizar política.
 **Aceptación:** catálogo/packs/ocasiones/FAQ/reseñas se ven desde BD; enviar lead lo persiste y avisa; sin consentimiento/Turnstile se rechaza.
 
-## FASE 3 — Configurador de presupuesto (público)
+## FASE 3 — Configurador de presupuesto (público) ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). **Motor de precios puro y compartido** (`shared/configurator.ts`) usado por igual en cliente y servidor: resuelve tramos (`products.pricing`) → `base_price` → "a consultar", multiplica por cantidad, aplica reglas de `site_content.settings` (desmontaje +15€, umbral detallito 120€, >30 km gasolina "a consultar") y marca alquiler/fianza. **Página** `configurador.vue` paso a paso (ocasión → fecha → productos con tramo/tamaño/opción/cantidad → datos) con **panel de presupuesto en vivo** (`ConfiguratorSummary.vue`, sidebar en desktop + hoja inferior en móvil), estado en `useState` (`useConfigurator.ts`), deep-links `?ocasion=`, `?add=<slug>` y `?addPack=<slug>`. **Endpoint** `POST /api/quotes` (mismo blindaje que leads: rate-limit 5/10min + zod + honeypot + Turnstile server-side) que **recalcula precios desde la BD** (nunca confía en el cliente), rechaza fechas pasadas, e inserta `lead(presupuestado, source=configurador)` + `quote(enviado, subtotal/adjustments/total/valid_until=+30d)` + `quote_items` (con `options` jsonb tramo/tamaño/opciones; limpieza si fallan los items). **Emails** a la dueña y al cliente ("hemos recibido tu propuesta") vía Resend (`server/utils/email.ts`) con **fallback EmailJS** si Resend no está configurado. **CTAs cableados** (header "Presupuesto", hero, catálogo, ficha de producto/pack, packs) + sitemap. **Verificado:** test unitario del motor (30 aserciones cuadran con el catálogo real); `POST` real → `quote`+`quote_items`+`lead` correctos en Supabase (total 320€ con desmontaje+gasolina+alquiler+consulta); rechazos 400 (sin consentimiento / sin líneas / producto inexistente / fecha pasada), 403 (Turnstile "always-fail"), 200 sin persistir (honeypot), 429 (rate-limit); **flujo completo en navegador** (Chrome) añadiendo productos con total en vivo (Arco ×2 → 120€ dispara el detallito) y envío que persistió y **notificó por email**; build de producción OK.
+> **🐛 Bug preexistente (Fase 2) corregido de paso:** `pages/catalogo.vue` + `pages/catalogo/[slug].vue` (y packs) hacían de `[slug]` una ruta *hija* sin `<NuxtPage/>` en el padre → **las fichas de producto/pack nunca renderizaban** (servían la lista). Resuelto moviendo las listas a `catalogo/index.vue` y `packs/index.vue` (rutas hermanas). Verificado: `/catalogo/<slug>` y `/packs/<slug>` ahora muestran la ficha.
+> **⚠️ Para producción:** igual que Fase 2 — Turnstile y Resend con dominio verificado (hoy claves de TEST y EmailJS como notificador efectivo). La **señal** (`quotes.deposit_amount`) se deja `null`: la fija la dueña al aceptar (Fase 4/5).
 **Objetivo:** que el cliente combine productos/packs, vea **precio estimado en vivo** y envíe una solicitud de presupuesto.
 **Por qué:** es el corazón del modelo "tú eliges, nosotros creamos" y el mayor motor de conversión.
 **Cómo:** `configurador.vue`: paso a paso (ocasión → fecha → productos con cantidades/opciones/extras → datos de contacto). Estado con `useState`; precio calculado desde `products.pricing`/`packs.price` + reglas (desmontaje, gasolina si aplica). Enviar → `server/api/quotes.post.ts` (zod + Turnstile) crea `lead` + `quote(status='enviado')` + `quote_items`; email a la dueña y al cliente ("hemos recibido tu propuesta"). Mostrar resumen con total y "sujeto a confirmación".
-**Aceptación:** el total en vivo cuadra con el catálogo; enviar crea `quote`+`quote_items` correctos y ambos emails salen; accesible en móvil.
+**Aceptación:** el total en vivo cuadra con el catálogo ✅; enviar crea `quote`+`quote_items` correctos y ambos emails salen ✅; accesible en móvil ✅.
+
+### 3.1 — Reestructura y ampliación de la home ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). Home reestructurada a 12 secciones **data-driven**; el `LeadWizard` se movió a `/contacto` (ancla `#lead-wizard`), se corrigieron todos los `/#lead-wizard` (→ `/configurador`, con `?ocasion=` en las landings), y se extrajo `PROCESO_PASOS` (`app/utils/content.ts`) + `useBusinessRules()` compartidos con `como-funciona.vue`. **Verificado:** build de producción OK; SSR muestra todas las secciones nuevas; **reseñas autoocultables probadas en ambos sentidos** (BD vacía → oculta; publicar testimonio → aparece; borrar → oculta); sin errores/hidratación en consola; recorrido en navegador (Chrome) con ritmo visual correcto; wizard operativo en `/contacto#lead-wizard`.
+
+> **Por qué:** con el configurador ya en marcha, el bloque inferior de la home (`#lead-wizard` → "Diseña tu evento en 2 minutos") **duplicaba** `/configurador`, y la portada se quedaba corta frente al resto del sitio. Existen páginas de reseñas/FAQ/cómo-funciona/ocasiones que **no se asomaban en la home**. Objetivo: home rica, ordenada y orientada a conversión, con secciones **data-driven** (editables desde el `/admin` de Fase 4) y sin duplicar el configurador. *(Decisiones cerradas con el cliente.)*
+
+**Arquitectura de la home** (`app/pages/index.vue`), con fondos alternos cream/white para ritmo visual:
+Hero → About → **Por qué Inaka (valor)** → **Ocasiones** → CatalogTeaser → SocialProofGallery → **Cómo funciona (teaser)** → **Reseñas** *(se autooculta)* → **Zona de servicio** → **FAQ destacadas** → **Banda CTA final** *(reemplaza al `LeadWizard`)*. Instagram **no es sección propia**: se integra (más visible) en el bloque destacado del `TheFooter.vue`.
+
+**Componentes nuevos** (`app/components/*Section.vue`, auto-importados, cada uno lee de datos ya existentes → sin tablas nuevas):
+- `WhyInakaSection` (diferenciadores desde `site_content.settings`), `OccasionsSection` (`useOccasions`), `HowItWorksSection` (pasos → extraer a `app/utils/content.ts` `PROCESO_PASOS`, compartido con `como-funciona.vue`), `TestimonialsSection` (**`v-if` sobre `useTestimonials`** → sección oculta si no hay reseñas publicadas), `FaqTeaserSection` (`useFaqs`), `ServiceAreaSection` (SEO local; `settings.km_incluidos` + `site_content.contacto.ubicacion`), `FinalCtaSection` (→ `/configurador` + `/contacto`). Instagram se reforzó en `TheFooter.vue` (bloque destacado, `site_content.contacto.instagram`) en lugar de una sección propia.
+- *(Opcional DRY)* `useBusinessRules()` compartido por `WhyInakaSection` y `como-funciona.vue`.
+
+**Mover el `LeadWizard` a `/contacto`:** quitar la `<section id="lead-wizard">` de `index.vue` y añadirla en `contacto.vue` (el componente `LeadWizard.vue` no cambia). **Corregir enlaces `/#lead-wizard`** (rotos al mover el wizard) → `/configurador`: en `ocasiones/[slug].vue` (×2), `como-funciona.vue`, `resenas.vue`, `galeria.vue` y `SocialProofGallery.vue`.
+
+**Reseñas gestionables por la jefa:** la sección de la home **se autooculta** mientras no haya testimonios `published` (hoy el seed no trae ninguno → oculta). En cuanto se publique uno (CRUD de **Fase 4**), aparece sola. No se inventan reseñas ficticias.
+
+**Aceptación:** home sin duplicar el configurador; todas las secciones nuevas renderizan desde BD y son responsive; la sección de reseñas aparece/desaparece según haya testimonios publicados; el `LeadWizard` persiste leads desde `/contacto`; sin enlaces `/#lead-wizard` muertos.
 
 ## FASE 4 — Panel /admin (SaaS) + flujo de reservas
 **Objetivo:** panel completo y responsive con todos los módulos y el flujo aprobar-reserva → email.
@@ -324,7 +345,8 @@ NUXT_PUBLIC_EMAILJS_SERVICE_ID=  NUXT_PUBLIC_EMAILJS_TEMPLATE_ID=  NUXT_PUBLIC_E
 - **Dashboard/Reportes:** leads nuevos, próximos eventos, ingresos/señales, productos más pedidos, embudo.
 - **Productos/Packs:** CRUD con precios/tramos, tamaños, extras, alquiler+fianza+stock, fotos (subida con pipeline: comprimir, recorte, quitar EXIF/GPS) → `catalog-media`.
 - **Galería:** CRUD de álbumes/fotos, portada, `featured`, reordenar.
-- **Contenido/Ajustes:** `site_content` (hero/about/footer/contacto), FAQs, reseñas, ocasiones (SEO), reemplazo de PDF, y **reglas de negocio** (km, desmontaje, umbral detallito, antelación, fianza).
+- **Contenido/Ajustes:** `site_content` (hero/about/footer/contacto), FAQs, reseñas, ocasiones (SEO), reemplazo de PDF, y **reglas de negocio** (km, desmontaje, umbral detallito, antelación, fianza). Estos datos **alimentan las nuevas secciones de la home** (§3.1): las **reglas** → "Por qué Inaka", `occasions` → "Ocasiones", `faqs` → "FAQ destacadas", `contacto` → "Zona de servicio"/"Instagram".
+- **Reseñas (control de visibilidad de la home):** CRUD de `testimonials` con **publicar/despublicar** y reordenar. **Publicar la primera reseña hace aparecer la sección de reseñas de la home** (que hasta entonces está autooculta, §3.1); despublicar todas la vuelve a ocultar. Sin toggle manual: la visibilidad la gobierna el propio contenido publicado.
 - **Leads + CRM:** pipeline kanban por `status`, notas, `lead_activities` (seguimientos), origen/UTM, tags.
 - **Presupuestos:** ver/editar `quotes` (ajustar líneas, aplicar desmontaje/gasolina/descuento), enviar al cliente, **Aceptar** → confirma `event` en la fecha (valida antelación 1 mes y choque de fecha) + **email de confirmación al cliente desde el correo del negocio** + genera cobro de señal (Fase 5).
 - **Agenda:** calendario mensual + lista de `events`; CRUD manual.
@@ -340,7 +362,7 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 
 ## FASE 6 — Diseño elevado, i18n y PWA
 **Objetivo:** subir el listón visual (paleta intacta), optimizar mobile/tablet/web, bilingüe + PWA.
-**Cómo:** tipografía autoalojada (`@fontsource`: serif display + sans cuerpo) y extender `tailwind.config.js`; pulir componentes y microanimaciones (`prefers-reduced-motion`); QA responsive 375/768/1280 + accesibilidad (focus, ARIA, contraste `gold`); **i18n** (`@nuxtjs/i18n`) extrayendo textos a `i18n/locales/{ca,es}.json` + selector + hreflang; **PWA** (`@vite-pwa/nuxt`) alcance `/admin`. Admin con estética de marca.
+**Cómo:** tipografía autoalojada (`@fontsource`: serif display + sans cuerpo) y extender `tailwind.config.js`; pulir componentes y microanimaciones (`prefers-reduced-motion`); QA responsive 375/768/1280 + accesibilidad (focus, ARIA, contraste `gold`) — **incluir las nuevas secciones de la home (§3.1)** en la QA responsive; **i18n** (`@nuxtjs/i18n`) extrayendo textos a `i18n/locales/{ca,es}.json` + selector + hreflang — **incluir los copys de las secciones nuevas de la home** (§3.1); **PWA** (`@vite-pwa/nuxt`) alcance `/admin`. Admin con estética de marca.
 **Aceptación:** Lighthouse mobile bueno; ca↔es traduce toda la UI; panel instalable; sin regresiones responsive.
 
 ## FASE 7 — Docker + despliegue
@@ -352,7 +374,7 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 
 ## FASE 8 — Calidad, legal, SEO avanzado, observabilidad, contenido real
 **Objetivo:** cerrar "al 100%".
-**Cómo:** (1) **Calidad:** ESLint+Prettier, Vitest (utils/API/cálculo del configurador), E2E Playwright (configurador→presupuesto→aceptar→pago señal→email), GitHub Actions. (2) **SEO:** datos estructurados `LocalBusiness`, `Product`(con `offers`/precio), `Service`, `FAQPage`, `Review`, `BreadcrumbList`; **sitemap dinámico** (productos/packs/ocasiones/álbumes); OG por página; `routeRules` de caché; **Google Business Profile** + Search Console; CWV. (3) **Legal/RGPD:** cookies, consentimiento, retención, textos legales. (4) **Observabilidad:** Sentry, uptime, **backup** BD+Storage. (5) **Analítica:** Plausible/Umami con **embudo del configurador/wizard**. (6) **Contenido real:** cargar productos/precios/packs reales (§0.1), fotos reales por el panel, WhatsApp/email reales; go-live.
+**Cómo:** (1) **Calidad:** ESLint+Prettier, Vitest (utils/API/cálculo del configurador), E2E Playwright (configurador→presupuesto→aceptar→pago señal→email), GitHub Actions. (2) **SEO:** datos estructurados `LocalBusiness`, `Product`(con `offers`/precio), `Service`, `FAQPage`, `Review`, `BreadcrumbList` — aprovechar que la **home ya surface Ocasiones/FAQ/Reseñas/Zona de servicio (§3.1)** para `FAQPage`+`Review` en portada, enlazado interno a ocasiones y **SEO local** (zona de servicio); **sitemap dinámico** (productos/packs/ocasiones/álbumes); OG por página; `routeRules` de caché; **Google Business Profile** + Search Console; CWV. (3) **Legal/RGPD:** cookies, consentimiento, retención, textos legales. (4) **Observabilidad:** Sentry, uptime, **backup** BD+Storage. (5) **Analítica:** Plausible/Umami con **embudo del configurador/wizard**. (6) **Contenido real:** cargar productos/precios/packs reales (§0.1), fotos reales por el panel, WhatsApp/email reales; go-live.
 **Aceptación:** CI verde; Rich Results válidos (Product/FAQ/LocalBusiness); alertas activas; panel de analítica con embudo; contenido real publicado.
 
 ---
@@ -366,9 +388,10 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 - [ ] Rutas + nav móvil
 - [ ] Taxonomía real de ocasiones
 - [ ] RLS verificado
-- [ ] Catálogo + packs desde BD
-- [ ] Configurador con precio en vivo
-- [ ] Lead/quote persistidos + anti-spam + RGPD
+- [x] Catálogo + packs desde BD
+- [x] Configurador con precio en vivo
+- [x] Home reestructurada (secciones nuevas + reseñas autoocultables + wizard en /contacto)
+- [x] Lead/quote persistidos + anti-spam + RGPD
 - [ ] Aceptar reserva → email + señal Stripe
 - [ ] Fianzas de alquiler
 - [ ] Agenda + inventario

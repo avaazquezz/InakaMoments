@@ -23,7 +23,7 @@
             <li>Nombre y apellidos</li>
             <li>Dirección de correo electrónico</li>
             <li>Número de teléfono (WhatsApp)</li>
-            <li>Información sobre el evento (tipo, fecha, número de invitados, espacios de interés, estilo)</li>
+            <li>Información sobre el evento (tipo, fecha, dirección, número de invitados)</li>
             <li>Cualquier información adicional que el usuario facilite voluntariamente</li>
           </ul>
         </section>
