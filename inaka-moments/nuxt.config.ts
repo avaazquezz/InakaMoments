@@ -41,6 +41,13 @@ export default defineNuxtConfig({
   routeRules: {
     // La antigua página de servicios queda absorbida por el catálogo
     '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },
+    // El panel /admin va sin SSR: es privado (sin SEO que ganar) y así se
+    // evita el problema clásico de Nuxt donde las llamadas `useFetch` a
+    // rutas propias durante el render de servidor NO reenvían las cookies
+    // de la petición original — provocaba 401 en /api/admin/** aunque el
+    // navegador ya tuviera sesión. Con ssr:false, todo el fetch de datos
+    // ocurre en el cliente, donde el navegador sí adjunta la cookie.
+    '/admin/**': { ssr: false },
   },
   // Supabase: URL y claves se leen de SUPABASE_URL / SUPABASE_KEY /
   // SUPABASE_SERVICE_KEY (esta última SOLO servidor, nunca llega al cliente).
@@ -50,7 +57,7 @@ export default defineNuxtConfig({
       login: '/admin/login',
       callback: '/admin',
       include: ['/admin(/*)?'],
-      exclude: ['/admin/login'],
+      exclude: ['/admin/login', '/admin/reset-password'],
     },
     types: '~~/app/types/database.ts',
   },

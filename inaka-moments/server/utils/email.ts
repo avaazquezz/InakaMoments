@@ -6,7 +6,7 @@
  * independientemente del resultado del email.
  */
 
-function esc(s: string): string {
+export function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
@@ -46,7 +46,7 @@ export interface QuoteEmailData {
   message?: string
 }
 
-function eur(n: number): string {
+export function eur(n: number): string {
   return new Intl.NumberFormat('es-ES', {
     style: 'currency',
     currency: 'EUR',
@@ -188,6 +188,60 @@ export async function sendClientQuoteConfirmation(q: QuoteEmailData): Promise<bo
   }
   catch (err) {
     console.error('[email] error enviando confirmación al cliente:', err)
+    return false
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// Confirmación de reserva (aceptar presupuesto desde el panel — Fase 4)
+// ═════════════════════════════════════════════════════════════════════════
+
+export interface ReservationEmailData {
+  clientName: string
+  clientEmail: string
+  eventTypeLabel: string
+  eventDate: string
+  location?: string
+  depositAmount: number
+  total: number
+  quoteId: string
+}
+
+/** Confirmación de fecha reservada + señal a pagar. true si el email salió. */
+export async function sendReservationConfirmedEmail(r: ReservationEmailData): Promise<boolean> {
+  const config = useRuntimeConfig()
+  if (!config.resendApiKey) {
+    console.warn('[email] NUXT_RESEND_API_KEY no configurada — confirmación de reserva omitida')
+    return false
+  }
+
+  try {
+    await $fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${config.resendApiKey}` },
+      body: {
+        from: config.emailFrom,
+        to: [r.clientEmail],
+        reply_to: config.emailBusiness,
+        subject: `🎈 ¡Fecha reservada! ${r.eventTypeLabel} — ${r.eventDate}`,
+        html: `
+          <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;color:#3d2320">
+            <h2 style="color:#8B3A2A">¡Tu fecha ya está reservada, ${esc(r.clientName.split(' ')[0] || r.clientName)}! 🎈</h2>
+            <p style="line-height:1.6">Hemos confirmado tu <strong>${esc(r.eventTypeLabel.toLowerCase())}</strong> para el <strong>${esc(r.eventDate)}</strong>${r.location ? ` en ${esc(r.location)}` : ''}.</p>
+            <table style="width:100%;border-collapse:collapse;background:#FAFAF8;border-radius:12px;font-size:14px;margin:16px 0">
+              <tr><td style="padding:8px 12px;color:#8B3A2A;font-weight:600">Total del presupuesto</td><td style="padding:8px 12px;text-align:right">${esc(eur(r.total))}</td></tr>
+              <tr><td style="padding:8px 12px;color:#8B3A2A;font-weight:600">Señal a abonar</td><td style="padding:8px 12px;text-align:right;font-weight:700">${esc(eur(r.depositAmount))}</td></tr>
+            </table>
+            <p style="line-height:1.6">Para bloquear la fecha, la señal se abona por Bizum o transferencia — te contactaremos para coordinarlo si aún no lo hemos hecho.</p>
+            <p style="line-height:1.6;margin-top:20px">Con mimo,<br><strong>Inaka Moments</strong><br><span style="color:#8B3A2A99">Momentos bonitos, recuerdos para siempre.</span></p>
+            <p style="color:#8B3A2A99;font-size:12px;margin-top:16px">Presupuesto #${esc(r.quoteId.slice(0, 8))}</p>
+          </div>`,
+      },
+    })
+    return true
+  }
+  catch (err) {
+    console.error('[email] error enviando confirmación de reserva:', err)
     return false
   }
 }

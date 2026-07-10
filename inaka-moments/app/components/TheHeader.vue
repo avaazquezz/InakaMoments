@@ -26,7 +26,7 @@
       <!-- Desktop CTA -->
       <div class="hidden md:block">
         <a
-          href="/catalogo-inaka-moments-2026.pdf"
+          :href="catalogPdfUrl"
           download="Catalogo-InakaMoments-2026.pdf"
           class="rounded-md border border-inaka-terra px-4 py-2 text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
         >
@@ -79,7 +79,7 @@
         </nav>
         <div class="border-t border-inaka-nude px-4 py-6">
           <a
-            href="/catalogo-inaka-moments-2026.pdf"
+            :href="catalogPdfUrl"
             download="Catalogo-InakaMoments-2026.pdf"
             class="block w-full rounded-md border border-inaka-terra px-4 py-3 text-center text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
             @click="menuAbierto = false"
@@ -94,6 +94,7 @@
 
 <script setup lang="ts">
 const menuAbierto = ref(false)
+const catalogPdfUrl = storagePublicUrl('catalog', 'catalogo-inaka-moments-2026.pdf')
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
