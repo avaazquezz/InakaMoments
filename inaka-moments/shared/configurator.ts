@@ -102,6 +102,13 @@ export interface ConfiguratorOptions {
   desmontaje: boolean
   /** Evento a más de `km_incluidos` km → plus de gasolina a consultar. */
   far: boolean
+  /**
+   * Distancia real (km) desde Abrera, calculada por geocodificación.
+   * Número = autoritativa, manda sobre `far`. `null`/`undefined` = no
+   * disponible (dirección vacía o geocodificación fallida) → cae al
+   * booleano `far` autodeclarado.
+   */
+  distanceKm?: number | null
 }
 
 // ── Resultado calculado ────────────────────────────────────────────────────
@@ -271,7 +278,19 @@ export function computeQuote(
   if (opts.desmontaje) {
     adjustments.push({ key: 'desmontaje', label: 'Desmontaje', amount: rules.desmontaje_precio })
   }
-  if (opts.far) {
+  if (opts.distanceKm != null) {
+    if (opts.distanceKm > rules.km_incluidos) {
+      const over = round2(opts.distanceKm - rules.km_incluidos)
+      adjustments.push({
+        key: 'gasolina',
+        label: `Desplazamiento (+${rules.km_incluidos} km incluidos)`,
+        amount: null,
+        note: `${round2(opts.distanceKm)} km · +${over} km sobre los incluidos — a consultar`,
+      })
+    }
+    // Dentro del radio incluido: sin ajuste, la distancia real manda sobre `far`.
+  }
+  else if (opts.far) {
     adjustments.push({
       key: 'gasolina',
       label: `Desplazamiento (+${rules.km_incluidos} km)`,

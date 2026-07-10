@@ -587,10 +587,12 @@ export type Database = {
           client_phone: string | null
           created_at: string
           deposit_amount: number | null
+          distance_km: number | null
           event_date: string | null
           event_type: Database["public"]["Enums"]["event_type"] | null
           id: string
           lead_id: string | null
+          location: string | null
           notes: string | null
           status: Database["public"]["Enums"]["quote_status"]
           subtotal: number
@@ -605,10 +607,12 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           deposit_amount?: number | null
+          distance_km?: number | null
           event_date?: string | null
           event_type?: Database["public"]["Enums"]["event_type"] | null
           id?: string
           lead_id?: string | null
+          location?: string | null
           notes?: string | null
           status?: Database["public"]["Enums"]["quote_status"]
           subtotal?: number
@@ -623,10 +627,12 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           deposit_amount?: number | null
+          distance_km?: number | null
           event_date?: string | null
           event_type?: Database["public"]["Enums"]["event_type"] | null
           id?: string
           lead_id?: string | null
+          location?: string | null
           notes?: string | null
           status?: Database["public"]["Enums"]["quote_status"]
           subtotal?: number

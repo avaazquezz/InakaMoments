@@ -37,12 +37,18 @@ export interface ConfiguratorState {
   event_type: string
   event_date: string
   far: boolean
+  /** Dirección del evento (texto libre, para geocodificar). */
+  location: string
+  /** Distancia (km) desde Abrera, estimada en vivo por /api/geocode. */
+  distance_km: number | null
+  /** Rango de invitados (opcional): 'Menos de 50' | '50 – 100' | 'Más de 100'. */
+  invitados: string
   desmontaje: boolean
   lines: SelectedLine[]
 }
 
 function emptyState(): ConfiguratorState {
-  return { event_type: '', event_date: '', far: false, desmontaje: false, lines: [] }
+  return { event_type: '', event_date: '', far: false, location: '', distance_km: null, invitados: '', desmontaje: false, lines: [] }
 }
 
 /** Clave estable de una línea (mismo producto + tramo + tamaño = misma línea). */
@@ -70,7 +76,7 @@ export function useConfigurator() {
   const quote = computed<ComputedQuote>(() =>
     computeQuote(
       state.value.lines,
-      { desmontaje: state.value.desmontaje, far: state.value.far },
+      { desmontaje: state.value.desmontaje, far: state.value.far, distanceKm: state.value.distance_km },
       rules.value,
       catalog.value,
     ),

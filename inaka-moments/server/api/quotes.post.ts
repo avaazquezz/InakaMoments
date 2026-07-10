@@ -8,11 +8,12 @@ import {
   type PricingProduct,
   type SelectedLine,
 } from '~~/shared/configurator'
+import { addDaysISO } from '~~/shared/dates'
 
 /**
  * POST /api/quotes — envío del CONFIGURADOR de presupuesto (Fase 3).
  *
- * Defensas (mismo patrón que /api/leads):
+ * Defensas:
  *   1. Rate-limit por IP (5 / 10 min)
  *   2. Validación estricta con zod (consentimiento RGPD obligatorio)
  *   3. Honeypot ("website") → 200 silencioso
@@ -48,6 +49,8 @@ const quoteSchema = z.object({
   event_type: z.enum(EVENT_TYPES, { message: 'Ocasión no válida' }),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().or(z.literal('')),
   far: z.boolean().default(false),
+  location: z.string().trim().max(300).optional().or(z.literal('')),
+  invitados: z.string().max(40).optional().or(z.literal('')),
   desmontaje: z.boolean().default(false),
   lines: z.array(lineSchema).min(1, 'Añade al menos un producto a tu presupuesto').max(40),
   nombre: z.string().trim().min(2, 'Nombre demasiado corto').max(120),
@@ -60,13 +63,6 @@ const quoteSchema = z.object({
   source: z.string().max(60).default('configurador'),
   utm: z.record(z.string(), z.string().max(200)).default({}),
 })
-
-/** Fecha (YYYY-MM-DD) a hoy + n días. */
-function addDays(days: number): string {
-  const d = new Date()
-  d.setDate(d.getDate() + days)
-  return d.toISOString().split('T')[0]!
-}
 
 export default defineEventHandler(async (event) => {
   // 1 ─ Rate limit por IP
@@ -104,7 +100,7 @@ export default defineEventHandler(async (event) => {
   const productIds = [...new Set(body.lines.filter(l => l.kind === 'product').map(l => l.id))]
   const packIds = [...new Set(body.lines.filter(l => l.kind === 'pack').map(l => l.id))]
 
-  const [{ data: products, error: prodErr }, { data: packs, error: packErr }, { data: settingsRow }] =
+  const [{ data: products, error: prodErr }, { data: packs, error: packErr }, { data: settingsRow }, geo] =
     await Promise.all([
       productIds.length
         ? supabase.from('products')
@@ -117,6 +113,7 @@ export default defineEventHandler(async (event) => {
             .in('id', packIds).eq('active', true)
         : Promise.resolve({ data: [], error: null }),
       supabase.from('site_content').select('data').eq('section', 'settings').maybeSingle(),
+      body.location ? distanceFromAbreraKm(body.location) : Promise.resolve(null),
     ])
 
   if (prodErr || packErr) {
@@ -130,6 +127,10 @@ export default defineEventHandler(async (event) => {
     (packs ?? []) as PricingPack[],
   )
 
+  // La distancia geocodificada por el propio servidor es autoritativa; nunca
+  // se confía en un distance_km enviado por el cliente (ni siquiera se acepta).
+  const distanceKm = geo?.distanceKm ?? null
+
   const selection: SelectedLine[] = body.lines.map(l => ({
     kind: l.kind,
     id: l.id,
@@ -141,7 +142,7 @@ export default defineEventHandler(async (event) => {
 
   const computed = computeQuote(
     selection,
-    { desmontaje: body.desmontaje, far: body.far },
+    { desmontaje: body.desmontaje, far: body.far, distanceKm },
     rules,
     catalog,
   )
@@ -158,13 +159,15 @@ export default defineEventHandler(async (event) => {
   const eventTypeLabel = EVENT_TYPE_LABELS[body.event_type] ?? body.event_type
   const eventDate = body.event_date || null
 
-  // Una solicitud nueva no puede ser para una fecha ya pasada (el cliente ya
-  // limita el picker a la antelación mínima; esto blinda envíos manipulados).
-  if (eventDate && eventDate < new Date().toISOString().split('T')[0]!) {
+  // Una solicitud nueva debe respetar la antelación mínima real configurada
+  // (el cliente ya limita el calendario a estas fechas; esto blinda envíos
+  // manipulados directamente contra la API).
+  const minAllowedDate = addDaysISO(rules.antelacion_dias)
+  if (eventDate && eventDate < minAllowedDate) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Bad Request',
-      message: 'La fecha del evento no puede ser una fecha pasada.',
+      message: `La fecha del evento debe tener al menos ${rules.antelacion_dias} días de antelación.`,
     })
   }
 
@@ -177,6 +180,7 @@ export default defineEventHandler(async (event) => {
       telefono: body.telefono || null,
       tipo: body.event_type,
       fecha: eventDate,
+      invitados: body.invitados || null,
       ideas_extra: body.mensaje || null,
       status: 'presupuestado',
       source: body.source,
@@ -187,7 +191,7 @@ export default defineEventHandler(async (event) => {
 
   if (leadErr || !lead) {
     console.error('[quotes] error insertando lead:', leadErr)
-    throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'No hemos podido registrar tu solicitud. Inténtalo de nuevo o escríbenos por WhatsApp.' })
+    throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'No hemos podido registrar tu solicitud. Inténtalo de nuevo o escríbenos por Instagram.' })
   }
 
   const { data: quote, error: quoteErr } = await supabase
@@ -199,12 +203,14 @@ export default defineEventHandler(async (event) => {
       client_phone: body.telefono || null,
       event_type: body.event_type,
       event_date: eventDate,
+      location: body.location || null,
+      distance_km: distanceKm,
       status: 'enviado',
       subtotal: computed.itemsSubtotal,
       adjustments: computed.adjustments,
       total: computed.total,
       deposit_amount: null, // la señal la fija la dueña al aceptar (Fase 4/5)
-      valid_until: addDays(30),
+      valid_until: addDaysISO(30),
       notes: body.mensaje || null,
     })
     .select('id')
@@ -243,6 +249,9 @@ export default defineEventHandler(async (event) => {
     clientPhone: body.telefono || undefined,
     eventTypeLabel,
     eventDate: eventDate || undefined,
+    location: body.location || undefined,
+    invitados: body.invitados || undefined,
+    distanceKm,
     lines: computed.lines.map(l => ({ label: l.label, qty: l.qty, unit_price: l.unit_price, line_total: l.line_total })),
     adjustments: computed.adjustments.map(a => ({ label: a.label, amount: a.amount, note: a.note })),
     itemsSubtotal: computed.itemsSubtotal,

@@ -133,27 +133,64 @@
               <div class="flex max-w-md flex-col gap-5">
                 <div class="flex flex-col gap-1.5">
                   <label for="cfg-fecha" class="text-sm font-semibold text-inaka-terra">Fecha aproximada del evento</label>
-                  <input
-                    id="cfg-fecha"
-                    v-model="state.event_date"
-                    type="date"
-                    :min="minDate"
-                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra outline-none transition-all"
-                    :class="state.event_date ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
-                  />
+                  <DatePicker id="cfg-fecha" v-model="state.event_date" :min="minDate" aria-label="Fecha del evento" />
                   <p class="flex items-center gap-1 text-xs text-inaka-terra/50">
                     <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     Recuerda agendar con al menos {{ rules.antelacion_dias }} días de antelación.
                   </p>
                 </div>
 
-                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-inaka-beige bg-white p-4 transition-colors hover:border-inaka-terra/40">
-                  <input v-model="state.far" type="checkbox" class="mt-0.5 h-4 w-4 shrink-0 accent-inaka-terra" />
-                  <span class="text-sm text-inaka-terra/75">
-                    <span class="font-semibold text-inaka-terra">Mi evento es a más de {{ rules.km_incluidos }} km de Abrera.</span>
-                    <span class="mt-0.5 block text-xs text-inaka-terra/50">Se añadiría un pequeño plus de desplazamiento (a consultar según distancia).</span>
-                  </span>
-                </label>
+                <div class="flex flex-col gap-1.5">
+                  <label for="cfg-ubicacion" class="text-sm font-semibold text-inaka-terra">Dirección del evento <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
+                  <input
+                    id="cfg-ubicacion"
+                    v-model="state.location"
+                    type="text"
+                    autocomplete="street-address"
+                    placeholder="Calle, número, ciudad"
+                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all"
+                    :class="state.location ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
+                  />
+
+                  <!-- Feedback en vivo de distancia calculada -->
+                  <p v-if="geocodeStatus === 'loading'" class="flex items-center gap-1.5 text-xs text-inaka-terra/50">
+                    <svg class="h-3 w-3 shrink-0 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    Calculando distancia…
+                  </p>
+                  <p v-else-if="geocodeStatus === 'ok' && state.distance_km != null" class="flex items-center gap-1.5 text-xs" :class="isFarAway ? 'text-inaka-terra/70' : 'text-inaka-terra/50'">
+                    <span aria-hidden="true">📍</span>
+                    A {{ state.distance_km }} km de Abrera.
+                    <span v-if="isFarAway">Se añadirá un pequeño plus de desplazamiento (a consultar).</span>
+                    <span v-else>Dentro de la zona incluida.</span>
+                  </p>
+
+                  <!-- Fallback manual: solo si no hay dirección o no se pudo geocodificar -->
+                  <label v-if="geocodeStatus === 'idle' || geocodeStatus === 'error'" class="mt-1 flex cursor-pointer items-start gap-3 rounded-xl border border-inaka-beige bg-white p-4 transition-colors hover:border-inaka-terra/40">
+                    <input v-model="state.far" type="checkbox" class="mt-0.5 h-4 w-4 shrink-0 accent-inaka-terra" />
+                    <span class="text-sm text-inaka-terra/75">
+                      <span class="font-semibold text-inaka-terra">Mi evento es a más de {{ rules.km_incluidos }} km de Abrera.</span>
+                      <span class="mt-0.5 block text-xs text-inaka-terra/50">Se añadiría un pequeño plus de desplazamiento (a consultar según distancia).</span>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label for="cfg-invitados" class="text-sm font-semibold text-inaka-terra">Número de invitados <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
+                  <div class="relative">
+                    <select
+                      id="cfg-invitados"
+                      v-model="state.invitados"
+                      class="w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-sm text-inaka-terra outline-none transition-all"
+                      :class="state.invitados ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
+                    >
+                      <option value="">Selecciona un rango</option>
+                      <option value="Menos de 50">Menos de 50 personas</option>
+                      <option value="50 – 100">Entre 50 y 100 personas</option>
+                      <option value="Más de 100">Más de 100 personas</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-inaka-terra/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -458,6 +495,7 @@
 <script setup lang="ts">
 import emailjs from '@emailjs/browser'
 import type { Pack, Product } from '~/utils/catalog'
+import { addDaysISO } from '~~/shared/dates'
 
 useHead({
   title: 'Configurador de presupuesto — Inaka Moments',
@@ -529,11 +567,44 @@ function selectOccasion(value: string) {
 }
 
 // ── Fecha ──────────────────────────────────────────────────────────────────
-const minDate = computed(() => {
-  const d = new Date()
-  d.setDate(d.getDate() + rules.value.antelacion_dias)
-  return d.toISOString().split('T')[0]!
+const minDate = computed(() => addDaysISO(rules.value.antelacion_dias))
+
+// ── Ubicación / distancia en vivo ───────────────────────────────────────────
+type GeocodeStatus = 'idle' | 'loading' | 'ok' | 'error'
+const geocodeStatus = ref<GeocodeStatus>('idle')
+const isFarAway = computed(() => (state.value.distance_km ?? 0) > rules.value.km_incluidos)
+let geocodeTimer: ReturnType<typeof setTimeout> | null = null
+let geocodeController: AbortController | null = null
+
+watch(() => state.value.location, (val) => {
+  if (geocodeTimer) clearTimeout(geocodeTimer)
+  if (val.trim().length < 5) {
+    state.value.distance_km = null
+    geocodeStatus.value = 'idle'
+    return
+  }
+  geocodeTimer = setTimeout(() => runGeocode(val), 550)
 })
+
+async function runGeocode(address: string) {
+  geocodeController?.abort()
+  geocodeController = new AbortController()
+  geocodeStatus.value = 'loading'
+  try {
+    const res = await $fetch<{ distance_km: number | null, display_name: string | null }>('/api/geocode', {
+      query: { address },
+      signal: geocodeController.signal,
+    })
+    if (address !== state.value.location) return // respuesta obsoleta
+    state.value.distance_km = res.distance_km
+    geocodeStatus.value = res.distance_km != null ? 'ok' : 'error'
+  }
+  catch {
+    if (address !== state.value.location) return
+    state.value.distance_km = null
+    geocodeStatus.value = 'error'
+  }
+}
 
 // ── Productos ──────────────────────────────────────────────────────────────
 const categoriaActiva = ref('todos')
@@ -673,6 +744,8 @@ async function submit() {
         event_type: state.value.event_type,
         event_date: state.value.event_date,
         far: state.value.far,
+        location: state.value.location,
+        invitados: state.value.invitados,
         desmontaje: state.value.desmontaje,
         lines: state.value.lines,
         nombre: contact.nombre,
@@ -697,7 +770,7 @@ async function submit() {
   catch (err: any) {
     console.error('Quote submit error:', err)
     submitError.value = err?.data?.message
-      ?? 'Ha ocurrido un error al enviar tu propuesta. Inténtalo de nuevo o contáctanos por WhatsApp.'
+      ?? 'Ha ocurrido un error al enviar tu propuesta. Inténtalo de nuevo o escríbenos por Instagram.'
   }
   finally {
     isSending.value = false
@@ -731,7 +804,7 @@ async function notifyViaEmailJs(fullPhone: string, q: QuoteResult | null) {
         telefono: fullPhone,
         tipo_evento: labels[state.value.event_type] ?? state.value.event_type,
         fecha: state.value.event_date || 'No especificada',
-        invitados: 'Configurador',
+        invitados: state.value.invitados || 'No especificado',
         espacios: 'Configurador de presupuesto',
         estilo: 'No especificado',
         ideas_extra: `${contact.mensaje ? contact.mensaje + '\n\n' : ''}${resumen}`,
@@ -763,6 +836,7 @@ function startOver() {
   touched.email = false
   touched.telefono = false
   submitError.value = ''
+  geocodeStatus.value = 'idle'
 }
 
 // ── Prefill por query (?ocasion=slug&add=slug) ─────────────────────────────
