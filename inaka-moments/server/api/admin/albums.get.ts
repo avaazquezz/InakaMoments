@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
 
   const { data, error } = await supabase
     .from('event_albums')
-    .select('*, gallery_images(id)')
+    .select('*, gallery_images!gallery_images_album_id_fkey(id)')
     .order('sort_order', { ascending: true })
 
   if (error) {

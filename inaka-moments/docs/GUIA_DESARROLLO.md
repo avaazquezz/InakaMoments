@@ -339,6 +339,17 @@ Hero → About → **Por qué Inaka (valor)** → **Ocasiones** → CatalogTease
 **Aceptación:** home sin duplicar el configurador; todas las secciones nuevas renderizan desde BD y son responsive; la sección de reseñas aparece/desaparece según haya testimonios publicados; el `LeadWizard` persiste leads desde `/contacto`; sin enlaces `/#lead-wizard` muertos.
 
 ## FASE 4 — Panel /admin (SaaS) + flujo de reservas
+> **✅ HECHA Y VERIFICADA** (julio 2026, rama `feat-fase4-admin-panel`). Los 10 módulos probados end-to-end en navegador (Chrome, cuenta real de Supabase Auth) contra el proyecto Cloud: login + **reset de contraseña completo** (solicitar enlace → email real recibido → click → `PASSWORD_RECOVERY` → nueva contraseña → auto-login → re-login), Dashboard (KPIs verificados matemáticamente contra los datos reales), Productos, Packs, Galería, Contenido/Ajustes, Reseñas (autoocultado de la home probado en ambos sentidos), Leads + CRM (kanban, notas, borrado con quote vinculado → `lead_id` a `null`), **Presupuestos** (flujo crítico `Aceptar`: caso feliz ×2, rechazo por antelación insuficiente, rechazo por colisión de fecha con evento confirmado — los tres casos también repetidos en Agenda), Inventario (solape de fechas bloqueado). Bloqueos 409 confirmados en Productos/Packs (borrado con presupuestos asociados) y en Presupuestos (borrado tras aceptar). Datos de prueba creados durante la verificación limpiados al terminar; el seed original (18 productos, 1 pack, 8 ocasiones, 8 FAQs, 6 álbumes) quedó intacto.
+>
+> **🐛 5 bugs reales encontrados y corregidos durante la verificación:**
+> 1. **Redirección de `/admin` sin sesión no funcionaba** (`nuxt.config.ts`): el middleware global del módulo `@nuxtjs/supabase` excluye siempre `[login, callback, ...exclude]` de la comprobación de sesión, y `callback` estaba fijado a `'/admin'` — la ruta raíz del panel quedaba sin protección de redirect (los datos seguían protegidos server-side, pero un visitante sin sesión veía el shell vacío en vez de rebotar a login). Fix: `callback: '/admin/login'`.
+> 2. **Enlace de recuperación de contraseña ya usado/caducado no mostraba ningún error** (`app/pages/admin/reset-password.vue`): el SDK de Supabase falla el canje del `code` en silencio quando ya se ha consumido, sin evento `PASSWORD_RECOVERY` ni `error_code` en la URL. Fix: fallback por timeout que detecta la ausencia de sesión/evento y muestra "enlace ya no válido".
+> 3. **`ChipListEditor` no se resolvía** en los formularios de Productos (Tamaños/Opciones), Packs (Incluye) y Leads (Etiquetas) — faltaba el prefijo `Admin` que exige el auto-import de Nuxt para componentes de `app/components/admin/`. Esos campos eran completamente invisibles.
+> 4. **Módulo Galería roto por completo**: `server/api/admin/albums.get.ts` y `albums/[id].get.ts` hacían un embed implícito `gallery_images(...)` ambiguo (hay dos FKs entre `event_albums` y `gallery_images` — `album_id` y `cover_image_id`), causando un 500 de PostgREST (`PGRST201`) en cada carga. Fix: especificar la relación explícita `gallery_images!gallery_images_album_id_fkey(...)`.
+> 5. **Bug sistémico en `server/utils/adminSchemas.ts`**: ~20 campos de texto opcionales usaban `z.string().optional().or(z.literal(''))` sin `.nullable()`, pero sus columnas son `nullable` en Postgres — un GET siempre puede devolver `null` (nunca `''`), y el flujo editar→guardar reenvía ese mismo objeto en el PATCH. Sin `.nullable()`, **cualquier edición de una fila con ese campo vacío fallaba con "Invalid input"** (Reseñas, Leads, Agenda, FAQs, Ocasiones, Productos/Packs con descripción vacía — se descubrió al intentar publicar una reseña sin "Origen"). Corregido en el archivo compartido, de una vez para todos los módulos afectados.
+>
+> **⚠️ Limitación conocida (no bug):** `NUXT_RESEND_API_KEY` vacía en `.env` de dev → los emails server-side (confirmación de reserva, reenvío de presupuesto) fallan/no-op; requiere una clave real de Resend para probarse de verdad. La comprobación de responsive a 375px no pudo verificarse visualmente en esta sesión (la herramienta de resize del navegador remoto no tuvo efecto), pero el código de `admin.vue` tiene la lógica responsive correcta (sidebar `hidden md:flex`, hamburguesa `md:hidden`, menú deslizable) heredada del patrón ya verificado en Fase 0 para la web pública.
+
 **Objetivo:** panel completo y responsive con todos los módulos y el flujo aprobar-reserva → email.
 **Por qué:** núcleo del encargo: la dueña gestiona negocio y web sin tocar código.
 **Cómo:** `app/layouts/admin.vue` (sidebar on-brand, responsive), `admin/login.vue` (Supabase Auth + reset password), middleware `/admin/**`. Módulos:
@@ -392,10 +403,10 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 - [x] Configurador con precio en vivo
 - [x] Home reestructurada (secciones nuevas + reseñas autoocultables + wizard en /contacto)
 - [x] Lead/quote persistidos + anti-spam + RGPD
-- [ ] Aceptar reserva → email + señal Stripe
-- [ ] Fianzas de alquiler
-- [ ] Agenda + inventario
-- [ ] CRM + reportes
+- [ ] Aceptar reserva → email + señal Stripe *(flujo y email verificados; falta el cobro real con Stripe, Fase 5)*
+- [ ] Fianzas de alquiler *(campo `deposit_status` operativo en Inventario; falta cobro/devolución real con Stripe, Fase 5)*
+- [x] Agenda + inventario
+- [x] CRM + reportes
 - [ ] Landings ocasión + FAQ + reseñas (SEO)
 - [ ] i18n ca/es
 - [ ] PWA

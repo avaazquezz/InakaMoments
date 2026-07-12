@@ -78,6 +78,8 @@ const isSending = ref(false)
 // Supabase devuelve enlaces caducados/inválidos como error en la query Y en
 // el hash (?error=...#error=...) — se comprueban ambos para avisar con un
 // mensaje claro en vez de dejar la página en silencio sin explicar nada.
+const codeExchangeFailed = ref(false)
+
 const linkError = computed(() => {
   const queryCode = route.query.error_code
   if (typeof queryCode === 'string') return errorMessage(queryCode)
@@ -86,6 +88,7 @@ const linkError = computed(() => {
     const hashCode = hashParams.get('error_code')
     if (hashCode) return errorMessage(hashCode)
   }
+  if (codeExchangeFailed.value) return 'Este enlace ya no es válido (puede que ya se haya usado). Pide uno nuevo abajo.'
   return ''
 })
 
@@ -144,5 +147,16 @@ onMounted(() => {
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (session) stage.value = 'update'
   })
+
+  // Un enlace ya usado (o con un `code` inválido) no dispara PASSWORD_RECOVERY
+  // ni deja error_code en la URL — el SDK falla el canje del código en
+  // silencio dentro de su propia inicialización (no hay forma de "escuchar"
+  // ese fallo). Si hay un `code` en la URL y tras un margen no se resolvió
+  // sesión ni evento de recovery, lo tratamos como enlace inválido/caducado.
+  if (typeof route.query.code === 'string') {
+    setTimeout(() => {
+      if (stage.value === 'request' && !linkError.value) codeExchangeFailed.value = true
+    }, 2500)
+  }
 })
 </script>

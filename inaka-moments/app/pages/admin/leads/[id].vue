@@ -49,7 +49,7 @@
             <label class="text-xs font-semibold text-inaka-terra/70">Notas internas</label>
             <textarea v-model="form.notes" rows="2" class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
           </div>
-          <ChipListEditor v-model="form.tags" label="Etiquetas" placeholder="p. ej. urgente" />
+          <AdminChipListEditor v-model="form.tags" label="Etiquetas" placeholder="p. ej. urgente" />
 
           <div class="flex items-center gap-4">
             <button type="submit" :disabled="saving" class="rounded-xl bg-inaka-terra px-6 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">

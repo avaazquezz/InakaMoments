@@ -48,9 +48,9 @@
     </div>
 
     <!-- Tamaños -->
-    <ChipListEditor v-model="form.sizes" label="Tamaños" placeholder="p. ej. 180cm" />
+    <AdminChipListEditor v-model="form.sizes" label="Tamaños" placeholder="p. ej. 180cm" />
     <!-- Opciones/extras -->
-    <ChipListEditor v-model="form.options" label="Opciones / extras" placeholder="p. ej. látex" />
+    <AdminChipListEditor v-model="form.options" label="Opciones / extras" placeholder="p. ej. látex" />
 
     <!-- Ocasiones -->
     <div class="flex flex-col gap-2">

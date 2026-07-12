@@ -55,7 +55,15 @@ export default defineNuxtConfig({
     // Solo el panel /admin requiere sesión; la web pública queda libre.
     redirectOptions: {
       login: '/admin/login',
-      callback: '/admin',
+      // No usamos OAuth/magic-link (solo email+password), así que esta ruta
+      // de callback nunca se visita de verdad — login.vue/reset-password.vue
+      // hacen su propio navigateTo('/admin') tras autenticar. Se apunta a
+      // /admin/login (ya excluida) para no dejarla como '/admin': el
+      // middleware global del módulo excluye SIEMPRE [login, callback, ...
+      // exclude] de la comprobación de sesión, así que con callback:'/admin'
+      // la ruta raíz del panel quedaba sin protección de redirect (bug real,
+      // corregido aquí).
+      callback: '/admin/login',
       include: ['/admin(/*)?'],
       exclude: ['/admin/login', '/admin/reset-password'],
     },

@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <ChipListEditor v-model="form.includes" label="Incluye" placeholder="p. ej. Arco orgánico 200cm" />
+    <AdminChipListEditor v-model="form.includes" label="Incluye" placeholder="p. ej. Arco orgánico 200cm" />
 
     <div class="flex flex-col gap-2">
       <label class="text-sm font-semibold text-inaka-terra">Ocasiones</label>
