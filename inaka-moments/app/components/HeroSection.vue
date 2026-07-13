@@ -28,7 +28,7 @@
             </NuxtLink>
 
             <a
-              href="/catalogo-inaka-moments-2026.pdf"
+              :href="catalogPdfUrl"
               download="Catalogo-InakaMoments-2026.pdf"
               class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
             >
@@ -75,6 +75,8 @@ const { data: hero } = useSiteSection('hero', {
   cta_principal: 'Diseñar mi evento',
   cta_secundario: 'Descargar Catálogo',
 })
+
+const catalogPdfUrl = storagePublicUrl('catalog', 'catalogo-inaka-moments-2026.pdf')
 
 const logoCol        = ref<HTMLDivElement | null>(null)
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)

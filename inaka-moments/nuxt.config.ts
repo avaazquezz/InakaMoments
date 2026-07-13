@@ -41,6 +41,13 @@ export default defineNuxtConfig({
   routeRules: {
     // La antigua página de servicios queda absorbida por el catálogo
     '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },
+    // El panel /admin va sin SSR: es privado (sin SEO que ganar) y así se
+    // evita el problema clásico de Nuxt donde las llamadas `useFetch` a
+    // rutas propias durante el render de servidor NO reenvían las cookies
+    // de la petición original — provocaba 401 en /api/admin/** aunque el
+    // navegador ya tuviera sesión. Con ssr:false, todo el fetch de datos
+    // ocurre en el cliente, donde el navegador sí adjunta la cookie.
+    '/admin/**': { ssr: false },
   },
   // Supabase: URL y claves se leen de SUPABASE_URL / SUPABASE_KEY /
   // SUPABASE_SERVICE_KEY (esta última SOLO servidor, nunca llega al cliente).
@@ -48,9 +55,17 @@ export default defineNuxtConfig({
     // Solo el panel /admin requiere sesión; la web pública queda libre.
     redirectOptions: {
       login: '/admin/login',
-      callback: '/admin',
+      // No usamos OAuth/magic-link (solo email+password), así que esta ruta
+      // de callback nunca se visita de verdad — login.vue/reset-password.vue
+      // hacen su propio navigateTo('/admin') tras autenticar. Se apunta a
+      // /admin/login (ya excluida) para no dejarla como '/admin': el
+      // middleware global del módulo excluye SIEMPRE [login, callback, ...
+      // exclude] de la comprobación de sesión, así que con callback:'/admin'
+      // la ruta raíz del panel quedaba sin protección de redirect (bug real,
+      // corregido aquí).
+      callback: '/admin/login',
       include: ['/admin(/*)?'],
-      exclude: ['/admin/login'],
+      exclude: ['/admin/login', '/admin/reset-password'],
     },
     types: '~~/app/types/database.ts',
   },
