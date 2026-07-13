@@ -18,12 +18,12 @@
           <p class="mt-1 text-xs text-inaka-terra/50">{{ formatEUR(data.presupuestosAceptadosMes.total) }} en total</p>
         </div>
         <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
-          <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Señal prevista (mes)</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Reserva prevista (mes)</p>
           <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ formatEUR(data.presupuestosAceptadosMes.senalPrevista) }}</p>
-          <p class="mt-1 text-xs text-inaka-terra/50">Importe fijado por ti al aceptar</p>
+          <p class="mt-1 text-xs text-inaka-terra/50">% de reserva sobre el total, al aceptar</p>
         </div>
         <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
-          <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Señal cobrada (mes)</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Reserva cobrada (mes)</p>
           <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ formatEUR(data.presupuestosAceptadosMes.senalCobrada) }}</p>
           <p class="mt-1 text-xs text-inaka-terra/50">Marcada "pagado" tras recibir el Bizum</p>
         </div>

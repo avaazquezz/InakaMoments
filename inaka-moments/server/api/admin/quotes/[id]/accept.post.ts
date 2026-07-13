@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { bizumConcept } from '~~/shared/bizum'
-import { normalizeRules } from '~~/shared/configurator'
+import { normalizeRules, round2 } from '~~/shared/configurator'
 import { addDaysISO } from '~~/shared/dates'
 import { EVENT_TYPE_LABELS, type EventType } from '~~/shared/eventTypes'
 
@@ -18,7 +18,6 @@ import { EVENT_TYPE_LABELS, type EventType } from '~~/shared/eventTypes'
  */
 
 const bodySchema = z.object({
-  deposit_amount: z.number().min(0).optional(),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 })
 
@@ -47,15 +46,17 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'El presupuesto no tiene fecha de evento. Indica una fecha para aceptar.' })
   }
 
-  const effectiveDeposit = body.deposit_amount ?? quote.deposit_amount
-  if (effectiveDeposit == null) {
-    throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'Indica el importe de la señal para aceptar el presupuesto.' })
-  }
-
   const { data: settingsRow } = await supabase.from('site_content').select('data').eq('section', 'settings').maybeSingle()
   const settingsData = settingsRow?.data as Record<string, unknown> | null
   const rules = normalizeRules(settingsData)
   const bizumPhone = typeof settingsData?.bizum_telefono === 'string' ? settingsData.bizum_telefono : undefined
+  // La reserva es SIEMPRE un % del total (gestionable en Contenido → Reglas
+  // de negocio) — nunca un importe libre, para que sea consistente entre
+  // presupuestos y no dependa de que la dueña recuerde fijarlo a mano.
+  const senalPorcentaje = typeof settingsData?.senal_porcentaje === 'number' && settingsData.senal_porcentaje > 0
+    ? settingsData.senal_porcentaje
+    : 50
+  const effectiveDeposit = round2(quote.total * senalPorcentaje / 100)
   const minAllowedDate = addDaysISO(rules.antelacion_dias)
   if (effectiveDate < minAllowedDate) {
     throw createError({

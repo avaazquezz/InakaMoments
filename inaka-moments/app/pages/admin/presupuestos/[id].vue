@@ -63,7 +63,10 @@
             <span class="text-lg font-extrabold text-inaka-terra">{{ formatEUR(quote.total) }}</span>
           </div>
           <div class="mt-2 flex items-center justify-between gap-2">
-            <p class="text-xs text-inaka-terra/50">Señal: {{ quote.deposit_amount != null ? formatEUR(quote.deposit_amount) : 'sin fijar' }}</p>
+            <p class="text-xs text-inaka-terra/50">
+              <template v-if="quote.status === 'aceptado'">Reserva: {{ formatEUR(quote.deposit_amount!) }}</template>
+              <template v-else>Reserva prevista ({{ senalPorcentaje }}%): {{ formatEUR(round2(quote.total * senalPorcentaje / 100)) }}</template>
+            </p>
             <template v-if="quote.status === 'aceptado'">
               <AdminStatusBadge :status="quote.deposit_status" kind="payment" />
               <select v-model="quote.deposit_status" class="rounded-lg border border-inaka-beige bg-white px-2 py-1 text-xs text-inaka-terra outline-none focus:border-inaka-terra" @change="updateDepositStatus">
@@ -148,9 +151,9 @@
               <label class="text-sm font-semibold text-inaka-terra">Fecha del evento</label>
               <input v-model="acceptForm.event_date" type="date" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-inaka-terra">Importe de la señal (€)</label>
-              <input v-model.number="acceptForm.deposit_amount" type="number" min="0" step="1" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+            <div class="rounded-lg bg-inaka-cream px-3 py-2.5 text-sm text-inaka-terra">
+              Reserva a abonar (<strong>{{ senalPorcentaje }}%</strong> del total): <strong>{{ quote ? formatEUR(round2(quote.total * senalPorcentaje / 100)) : '—' }}</strong>
+              <p class="mt-0.5 text-xs text-inaka-terra/50">Se calcula sola según el % fijado en Contenido → Reglas de negocio.</p>
             </div>
             <p v-if="acceptError" class="text-xs text-red-500">{{ acceptError }}</p>
             <div class="mt-2 flex justify-end gap-3">
@@ -167,6 +170,8 @@
 </template>
 
 <script setup lang="ts">
+import { round2 } from '~~/shared/configurator'
+
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Presupuesto — Panel Inaka Moments' })
 
@@ -185,6 +190,11 @@ const toast = useToast()
 
 const { data: quote, pending, refresh } = await useFetch<QuoteDetail>(`/api/admin/quotes/${route.params.id}`)
 const { data: products } = await useFetch<AdminProduct[]>('/api/admin/products')
+const { data: settings } = await useFetch<{ data: Record<string, unknown> }>('/api/admin/site-content/settings')
+const senalPorcentaje = computed(() => {
+  const v = settings.value?.data?.senal_porcentaje
+  return typeof v === 'number' && v > 0 ? v : 50
+})
 
 // ── Datos cliente/evento ────────────────────────────────────────────────
 const infoForm = reactive({ client_name: '', client_email: '', client_phone: '', event_date: '', location: '', notes: '' })
@@ -291,12 +301,11 @@ async function saveAdjustments() {
 const accepting = ref(false)
 const acceptSubmitting = ref(false)
 const acceptError = ref('')
-const acceptForm = reactive({ event_date: '', deposit_amount: 0 })
+const acceptForm = reactive({ event_date: '' })
 
 function openAccept() {
   if (!quote.value) return
   acceptForm.event_date = quote.value.event_date ?? ''
-  acceptForm.deposit_amount = quote.value.deposit_amount ?? 0
   acceptError.value = ''
   accepting.value = true
 }
@@ -322,10 +331,10 @@ async function updateDepositStatus() {
   if (!quote.value) return
   try {
     await $fetch(`/api/admin/quotes/${route.params.id}`, { method: 'PATCH', body: { deposit_status: quote.value.deposit_status } })
-    toast.success('Estado de la señal actualizado.')
+    toast.success('Estado de la reserva actualizado.')
   }
   catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido actualizar la señal.')
+    toast.error(err?.data?.message ?? 'No se ha podido actualizar la reserva.')
     await refresh()
   }
 }

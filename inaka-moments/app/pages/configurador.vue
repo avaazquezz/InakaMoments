@@ -801,7 +801,6 @@ async function notifyViaEmailJs(fullPhone: string, q: QuoteResult | null) {
         tipo_evento: labels[state.value.event_type] ?? state.value.event_type,
         fecha: state.value.event_date || 'No especificada',
         invitados: state.value.invitados || 'No especificado',
-        espacios: 'Configurador de presupuesto',
         estilo: 'No especificado',
         ideas_extra: `${contact.mensaje ? contact.mensaje + '\n\n' : ''}${resumen}`,
         to_email: config.public.emailjsRecipient,

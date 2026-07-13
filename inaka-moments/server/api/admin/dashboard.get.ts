@@ -4,10 +4,10 @@ import { formatISODate, todayISO } from '~~/shared/dates'
  * GET /api/admin/dashboard — resumen agregado para la portada del panel.
  *
  * Sin pasarela de pago (Fase 5 usa Bizum manual) no hay "ingresos"
- * automáticos: "señal prevista" es el importe que la dueña ha fijado al
- * aceptar, y "señal cobrada" es la que ella misma ha marcado `pagado` al
- * ver entrar el Bizum — ambas son declaradas por la dueña, no verificadas
- * por ninguna pasarela.
+ * automáticos: "reserva prevista" es el % del total (site_content.settings
+ * .senal_porcentaje) calculado al aceptar, y "reserva cobrada" es la que la
+ * dueña ha marcado `pagado` al ver entrar el Bizum — esta última sigue
+ * siendo declarada por ella, no verificada por ninguna pasarela.
  */
 
 interface EventoResumen {

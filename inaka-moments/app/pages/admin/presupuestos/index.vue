@@ -18,7 +18,7 @@
             <th class="px-4 py-3">Fecha evento</th>
             <th class="px-4 py-3">Total</th>
             <th class="px-4 py-3">Estado</th>
-            <th class="px-4 py-3">Señal</th>
+            <th class="px-4 py-3">Reserva</th>
             <th class="px-4 py-3" />
           </tr>
         </thead>
