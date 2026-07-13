@@ -60,7 +60,7 @@
             <textarea v-model="editing.notes" rows="2" placeholder="Notas" class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             <p v-if="saveError" class="text-xs text-red-500">{{ saveError }}</p>
             <div class="mt-2 flex justify-between">
-              <button v-if="editing.id" type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="removeEvent">Borrar</button>
+              <button v-if="editing.id" type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="confirmingDeleteEvent = true">Borrar</button>
               <span v-else />
               <div class="flex gap-3">
                 <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="editing = null">Cancelar</button>
@@ -71,6 +71,15 @@
         </div>
       </div>
     </Teleport>
+
+    <AdminConfirmDialog
+      :open="confirmingDeleteEvent"
+      title="¿Borrar este evento?"
+      :message="editing?.title ? `«${editing.title}» se eliminará permanentemente.` : 'Esta acción no se puede deshacer.'"
+      danger
+      @cancel="confirmingDeleteEvent = false"
+      @confirm="removeEvent"
+    />
   </div>
 </template>
 
@@ -102,6 +111,7 @@ const sortedEvents = computed(() => [...(data.value ?? [])].sort((a, b) => a.eve
 const editing = ref<Partial<AdminEvent> | null>(null)
 const saving = ref(false)
 const saveError = ref('')
+const confirmingDeleteEvent = ref(false)
 
 function openNew(date?: string) {
   editing.value = { title: '', event_date: date ?? '', status: 'tentativo', location: '', client_name: '', client_contact: '', notes: '' }
@@ -146,6 +156,9 @@ async function removeEvent() {
   }
   catch (err: any) {
     toast.error(err?.data?.message ?? 'No se ha podido borrar.')
+  }
+  finally {
+    confirmingDeleteEvent.value = false
   }
 }
 </script>

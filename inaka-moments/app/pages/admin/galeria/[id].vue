@@ -42,7 +42,7 @@
             <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-inaka-terra/0 p-1 opacity-0 transition-all group-hover:bg-inaka-terra/60 group-hover:opacity-100">
               <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="setCover(img.id)">Portada</button>
               <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="toggleFeatured(img)">{{ img.featured ? 'Quitar ★' : 'Destacar' }}</button>
-              <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-600" @click="removeImage(img.id)">Borrar</button>
+              <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-600" @click="imageToDelete = img.id">Borrar</button>
             </div>
           </div>
 
@@ -69,6 +69,15 @@
       danger
       @cancel="confirmingDelete = false"
       @confirm="deleteAlbum"
+    />
+
+    <AdminConfirmDialog
+      :open="!!imageToDelete"
+      title="¿Borrar esta foto?"
+      message="Esta acción no se puede deshacer."
+      danger
+      @cancel="imageToDelete = null"
+      @confirm="removeImage"
     />
   </div>
 </template>
@@ -195,14 +204,19 @@ async function toggleFeatured(img: GalleryImage) {
   }
 }
 
-async function removeImage(imageId: string) {
+const imageToDelete = ref<string | null>(null)
+async function removeImage() {
+  if (!imageToDelete.value) return
   try {
-    await $fetch(`/api/admin/images/${imageId}`, { method: 'DELETE' })
+    await $fetch(`/api/admin/images/${imageToDelete.value}`, { method: 'DELETE' })
     toast.success('Foto borrada.')
     await refresh()
   }
   catch (err: any) {
     toast.error(err?.data?.message ?? 'No se ha podido borrar la foto.')
+  }
+  finally {
+    imageToDelete.value = null
   }
 }
 </script>

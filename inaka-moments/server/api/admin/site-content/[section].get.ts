@@ -1,6 +1,9 @@
 export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
   const section = getRouterParam(event, 'section')
+  if (!ADMIN_EDITABLE_SITE_CONTENT_SECTIONS.includes(section as any)) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden', message: 'Sección no editable desde el panel.' })
+  }
   const supabase = useSupabaseAdmin(event)
 
   const { data, error } = await supabase.from('site_content').select('*').eq('section', section!).maybeSingle()

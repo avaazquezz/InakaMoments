@@ -14,55 +14,6 @@
       </button>
     </div>
 
-    <!-- Textos web -->
-    <div v-if="activeTab === 'textos'" class="flex flex-col gap-4">
-      <AdminSiteContentEditor
-        section="hero"
-        title="Portada (Hero)"
-        :fields="[
-          { key: 'tagline', label: 'Tagline' },
-          { key: 'titulo', label: 'Título' },
-          { key: 'titulo_span', label: 'Título (resaltado)' },
-          { key: 'subtitulo', label: 'Subtítulo', type: 'textarea' },
-          { key: 'cta_principal', label: 'Botón principal' },
-          { key: 'cta_secundario', label: 'Botón secundario' },
-        ]"
-      />
-      <AdminSiteContentEditor
-        section="about"
-        title="Sobre nosotros"
-        :fields="[
-          { key: 'titulo_principal', label: 'Título principal' },
-          { key: 'titulo_secundario', label: 'Título secundario' },
-          { key: 'parrafo_1', label: 'Párrafo 1', type: 'textarea' },
-          { key: 'parrafo_2', label: 'Párrafo 2', type: 'textarea' },
-          { key: 'quote', label: 'Cita' },
-          { key: 'cta_enlace', label: 'Texto del enlace' },
-        ]"
-      />
-      <AdminSiteContentEditor
-        section="footer"
-        title="Pie de página"
-        :fields="[
-          { key: 'tagline_titulo', label: 'Título' },
-          { key: 'tagline_span', label: 'Título (resaltado)' },
-          { key: 'tagline_sub', label: 'Subtítulo', type: 'textarea' },
-        ]"
-      />
-      <AdminSiteContentEditor
-        section="contacto"
-        title="Datos de contacto"
-        :fields="[
-          { key: 'email', label: 'Email' },
-          { key: 'ubicacion', label: 'Ubicación' },
-          { key: 'instagram', label: 'URL de Instagram' },
-          { key: 'horario.lunes_viernes', label: 'Horario lunes-viernes' },
-          { key: 'horario.sabados', label: 'Horario sábados' },
-          { key: 'horario.domingos', label: 'Horario domingos' },
-        ]"
-      />
-    </div>
-
     <!-- FAQs -->
     <AdminFaqManager v-if="activeTab === 'faqs'" />
 
@@ -119,14 +70,13 @@ definePageMeta({ layout: 'admin' })
 useHead({ title: 'Contenido y ajustes — Panel Inaka Moments' })
 
 const tabs = [
-  { id: 'textos', label: 'Textos web' },
   { id: 'faqs', label: 'FAQs' },
   { id: 'ocasiones', label: 'Ocasiones' },
   { id: 'reglas', label: 'Reglas de negocio' },
   { id: 'pdf', label: 'PDF catálogo' },
 ] as const
 
-const activeTab = ref<(typeof tabs)[number]['id']>('textos')
+const activeTab = ref<(typeof tabs)[number]['id']>('faqs')
 
 interface AdminOccasion { slug: string, title: string, published: boolean }
 const { data: occasions, pending: pendingOccasions } = await useFetch<AdminOccasion[]>('/api/admin/occasions')
