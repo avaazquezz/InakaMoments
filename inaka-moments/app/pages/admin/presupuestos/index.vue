@@ -18,6 +18,7 @@
             <th class="px-4 py-3">Fecha evento</th>
             <th class="px-4 py-3">Total</th>
             <th class="px-4 py-3">Estado</th>
+            <th class="px-4 py-3">Señal</th>
             <th class="px-4 py-3" />
           </tr>
         </thead>
@@ -27,6 +28,10 @@
             <td class="px-4 py-3 text-inaka-terra/60">{{ q.event_date ?? '—' }}</td>
             <td class="px-4 py-3 text-inaka-terra/60">{{ formatEUR(q.total) }}</td>
             <td class="px-4 py-3"><AdminStatusBadge :status="q.status" kind="quote" /></td>
+            <td class="px-4 py-3">
+              <AdminStatusBadge v-if="q.status === 'aceptado'" :status="q.deposit_status" kind="payment" />
+              <span v-else class="text-inaka-terra/30">—</span>
+            </td>
             <td class="px-4 py-3 text-right">
               <NuxtLink :to="`/admin/presupuestos/${q.id}`" class="text-xs font-semibold text-inaka-gold hover:underline">Ver</NuxtLink>
             </td>
@@ -41,7 +46,7 @@
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Presupuestos — Panel Inaka Moments' })
 
-interface AdminQuote { id: string, client_name: string | null, event_date: string | null, total: number, status: string, lead_id: string | null }
+interface AdminQuote { id: string, client_name: string | null, event_date: string | null, total: number, status: string, deposit_status: string, lead_id: string | null }
 
 const route = useRoute()
 const { data, pending } = await useFetch<AdminQuote[]>('/api/admin/quotes')

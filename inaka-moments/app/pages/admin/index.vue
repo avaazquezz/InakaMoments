@@ -7,7 +7,7 @@
 
     <template v-else-if="data">
       <!-- Tarjetas de resumen -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
           <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Leads nuevos</p>
           <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ data.leadsNuevos }}</p>
@@ -20,7 +20,12 @@
         <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
           <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Señal prevista (mes)</p>
           <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ formatEUR(data.presupuestosAceptadosMes.senalPrevista) }}</p>
-          <p class="mt-1 text-xs text-inaka-terra/50">Importe fijado por ti, no cobro verificado</p>
+          <p class="mt-1 text-xs text-inaka-terra/50">Importe fijado por ti al aceptar</p>
+        </div>
+        <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
+          <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/50">Señal cobrada (mes)</p>
+          <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ formatEUR(data.presupuestosAceptadosMes.senalCobrada) }}</p>
+          <p class="mt-1 text-xs text-inaka-terra/50">Marcada "pagado" tras recibir el Bizum</p>
         </div>
       </div>
 
@@ -82,7 +87,7 @@ useHead({ title: 'Dashboard — Panel Inaka Moments' })
 interface DashboardData {
   leadsNuevos: number
   proximosEventos: { id: string, title: string, event_date: string, event_type: string | null, status: string }[]
-  presupuestosAceptadosMes: { count: number, total: number, senalPrevista: number }
+  presupuestosAceptadosMes: { count: number, total: number, senalPrevista: number, senalCobrada: number }
   funnel: { status: string, count: number }[]
   topProductos: { name: string, qty: number }[]
 }

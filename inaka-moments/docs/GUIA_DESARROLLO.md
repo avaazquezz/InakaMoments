@@ -59,7 +59,7 @@ App **Nuxt 4.3 SSR + Vue 3.5 + Tailwind** en `inaka-moments/`. Negocio: **decora
 |---|---|
 | Backend | **Supabase Cloud** (Postgres + Auth + Storage). Sin MinIO. |
 | Catálogo | **Completo: catálogo público navegable + configurador de presupuesto + módulo Productos/Packs en admin.** |
-| Pagos | **Señal online con Stripe** al reservar + gestión de **fianzas** de alquiler. |
+| Pagos | **Señal por Bizum manual** al reservar (teléfono + concepto identificable; la dueña marca "pagado" a mano) + **fianzas** de alquiler (mismo criterio manual, ya operativo desde Fase 4). Sin pasarela de pago. |
 | Panel `/admin` | Galería, Contenido/catálogo, **Productos y Packs**, **Leads + CRM**, **Presupuestos/Quotes**, **Agenda/Reservas**, **Inventario alquiler + fianzas**, **Reportes**. |
 | Reservas + email | El cliente configura/pide fecha → aviso a la dueña → la dueña **acepta la reserva** → **email de confirmación al cliente desde el correo del negocio** + cobro de señal. |
 | Agenda | Interna + aprobación de reservas; regla de **1 mes de antelación** y **choque de fecha** validados. |
@@ -90,14 +90,15 @@ App **Nuxt 4.3 SSR + Vue 3.5 + Tailwind** en `inaka-moments/`. Negocio: **decora
                  │
    ┌─────────────┼───────────────┬───────────────┐
    ▼             ▼               ▼               ▼
- Stripe       Resend/SMTP     Turnstile      Plausible/Umami
+ Bizum        Resend/SMTP     Turnstile      Plausible/Umami
  (señal/       (emails)       (anti-spam)    (analítica+embudo)
-  fianzas)
+  fianzas,
+  manual)
 ```
 
-**Principios:** un solo despliegue Nuxt (web + `/admin`); **BFF seguro** (toda escritura y pagos por `server/api/**` con service_role / claves privadas; el navegador nunca ve secretos); lecturas públicas con anon key + RLS (solo publicado).
+**Principios:** un solo despliegue Nuxt (web + `/admin`); **BFF seguro** (toda escritura por `server/api/**` con service_role / claves privadas; el navegador nunca ve secretos); lecturas públicas con anon key + RLS (solo publicado). **Sin pasarela de pago:** la señal y las fianzas se cobran por Bizum/transferencia fuera de la app; el panel solo deja constancia (`deposit_status`) de lo que la dueña ha marcado como cobrado.
 
-**Módulos Nuxt:** `@nuxtjs/tailwindcss`, `@nuxtjs/supabase`, `@nuxtjs/i18n`, `@nuxt/image`, `@vite-pwa/nuxt`, `@nuxtjs/sitemap`, `@nuxtjs/turnstile`. **Pagos:** `stripe` (server) + `@stripe/stripe-js` (client).
+**Módulos Nuxt:** `@nuxtjs/tailwindcss`, `@nuxtjs/supabase`, `@nuxtjs/i18n`, `@nuxt/image`, `@vite-pwa/nuxt`, `@nuxtjs/sitemap`, `@nuxtjs/turnstile`.
 
 **Estructura de carpetas (Nuxt 4, `srcDir = app/`):**
 ```
@@ -267,8 +268,6 @@ create table gallery_images (id uuid primary key default gen_random_uuid(), albu
 SUPABASE_URL=  SUPABASE_KEY=(anon)  SUPABASE_SERVICE_KEY=(solo server)
 # Sitio
 NUXT_PUBLIC_SITE_URL=https://inakamoments.com
-# Stripe
-STRIPE_SECRET_KEY=            NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=   STRIPE_WEBHOOK_SECRET=
 # Email (Resend o SMTP)
 RESEND_API_KEY=  EMAIL_FROM="Inaka Moments <hola@inakamoments.com>"  EMAIL_BUSINESS=nadine.tcae@gmail.com
 # Anti-spam
@@ -278,7 +277,7 @@ NUXT_PUBLIC_PLAUSIBLE_DOMAIN=inakamoments.com
 # EmailJS (legado/fallback opcional)
 NUXT_PUBLIC_EMAILJS_SERVICE_ID=  NUXT_PUBLIC_EMAILJS_TEMPLATE_ID=  NUXT_PUBLIC_EMAILJS_PUBLIC_KEY=
 ```
-> Secretos (`SUPABASE_SERVICE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `SMTP_*`, `NUXT_TURNSTILE_SECRET_KEY`) → `runtimeConfig` privado (solo server). **Rotar** claves EmailJS previas; destinatario = correo del negocio.
+> Secretos (`SUPABASE_SERVICE_KEY`, `RESEND_API_KEY`, `SMTP_*`, `NUXT_TURNSTILE_SECRET_KEY`) → `runtimeConfig` privado (solo server). El **teléfono Bizum** no es un secreto: vive en `site_content.settings.bizum_telefono`, editable desde Contenido → Reglas de negocio (Fase 5). **Rotar** claves EmailJS previas; destinatario = correo del negocio.
 
 ---
 
@@ -365,11 +364,14 @@ Hero → About → **Por qué Inaka (valor)** → **Ocasiones** → CatalogTease
 Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. UX: estados carga/vacío, toasts, confirmaciones, ayuda.
 **Aceptación:** login protege `/admin/**`; CRUD de productos refleja en la web; **Aceptar presupuesto** crea evento confirmado y envía email; agenda e inventario operativos; panel usable en móvil.
 
-## FASE 5 — Pagos con Stripe (señal + fianzas)
-**Objetivo:** cobrar la **señal al reservar** y gestionar **fianzas** de alquiler.
-**Por qué:** el catálogo exige "pago al agendar" y fianza reembolsable por alquiler.
-**Cómo:** `server/utils/stripe.ts`; al aceptar un presupuesto, crear **Checkout Session** por la señal (`payments.type='senal'`); `server/api/stripe-webhook.post.ts` (verifica `STRIPE_WEBHOOK_SECRET`) actualiza `payments.status` y confirma reserva. Para alquiler: **depósito de fianza** (Checkout o PaymentIntent con captura manual/hold) y devolución al cerrar el evento (`type='reembolso_fianza'`). En admin: registrar pagos manuales (Bizum/transferencia) y ver estado. Emails de recibo.
-**Aceptación:** en modo test, aceptar reserva genera link de pago; pagar marca `payments.status='pagado'` y confirma; fianza registrada y reembolsable; webhook idempotente.
+## FASE 5 — Señal por Bizum (manual, sin pasarela) ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). Se descartó Stripe deliberadamente: fricción innecesaria (cuenta merchant, claves, webhook) para un negocio unipersonal que ya cobra por Bizum a diario. Nueva columna `quotes.deposit_status` (enum `payment_status`, default `pendiente`, mismo enum que ya usaba `rental_bookings.deposit_status` desde Fase 4). Al **Aceptar** un presupuesto (`POST /api/admin/quotes/[id]/accept`), el email de confirmación (`sendReservationConfirmedEmail`) incluye el **teléfono Bizum** (`site_content.settings.bizum_telefono`, editable en Contenido → Reglas de negocio, sin migración porque esa columna ya es jsonb abierto) y un **concepto identificable** generado por `shared/bizum.ts` (`bizumConcept()` → `"Fiesta {cliente} {fecha}"`, puro y sin BD, igual que `shared/dates.ts`). Si el teléfono no está configurado, el email cae a la frase genérica anterior (sin roturas durante el rollout). La dueña marca la señal `pagado`/`reembolsado`/`fallido` con un `<select>` en la ficha del presupuesto — mismo patrón ya probado en Inventario para fianzas, sin modal, cambio inmediato vía `PATCH /api/admin/quotes/[id]`. El listado de presupuestos muestra el estado de la señal de un vistazo (badge `AdminStatusBadge kind="payment"`, ya existía y no requirió cambios). Dashboard: nuevo KPI "Señal cobrada (mes)" junto al ya existente "Señal prevista (mes)", ambos explícitamente declarados por la dueña (sin pasarela que los verifique).
+> **Fianzas de alquiler:** ya resueltas desde Fase 4 (`rental_bookings.deposit_status`, mismo enum, editable en Inventario) — no requirieron ningún cambio, el mismo criterio manual ya aplicaba.
+> **Tabla `payments`:** queda sin usar (dormida desde Fase 1, scaffolding para un Stripe que no se construyó) — no se toca ni se borra, no aporta nada al flujo manual.
+**Objetivo:** dejar constancia de la **señal al reservar** y de las **fianzas** de alquiler sin integrar ninguna pasarela de pago.
+**Por qué:** el catálogo solo exige "pago al agendar", no una pasarela concreta; Bizum ya es el método persona-a-persona estándar en España y no requiere cuenta merchant ni código adicional.
+**Cómo:** `quotes.deposit_status` + `shared/bizum.ts` + teléfono en `site_content.settings.bizum_telefono` + `<select>` en la ficha del presupuesto (ver detalle arriba).
+**Aceptación:** aceptar un presupuesto con señal envía email con teléfono + concepto Bizum ✅; marcar la señal como pagada actualiza badge y listado ✅; fianzas de alquiler operativas desde Fase 4 ✅; nada de Stripe/checkout/webhook en el código ✅.
 
 ## FASE 6 — Diseño elevado, i18n y PWA
 **Objetivo:** subir el listón visual (paleta intacta), optimizar mobile/tablet/web, bilingüe + PWA.
@@ -403,8 +405,8 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 - [x] Configurador con precio en vivo
 - [x] Home reestructurada (secciones nuevas + reseñas autoocultables + wizard en /contacto)
 - [x] Lead/quote persistidos + anti-spam + RGPD
-- [ ] Aceptar reserva → email + señal Stripe *(flujo y email verificados; falta el cobro real con Stripe, Fase 5)*
-- [ ] Fianzas de alquiler *(campo `deposit_status` operativo en Inventario; falta cobro/devolución real con Stripe, Fase 5)*
+- [x] Aceptar reserva → email + señal por Bizum (manual, sin pasarela)
+- [x] Fianzas de alquiler (manual desde Fase 4, mismo criterio que la señal)
 - [x] Agenda + inventario
 - [x] CRM + reportes
 - [ ] Landings ocasión + FAQ + reseñas (SEO)

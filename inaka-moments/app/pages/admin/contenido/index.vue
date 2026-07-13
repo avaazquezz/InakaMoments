@@ -94,6 +94,7 @@
         { key: 'antelacion_dias', label: 'Antelación mínima (días)', type: 'number' },
         { key: 'pago_al_agendar', label: 'Pago al agendar', type: 'checkbox' },
         { key: 'fianza_alquiler', label: 'Texto fianza alquiler' },
+        { key: 'bizum_telefono', label: 'Teléfono Bizum (señal)' },
         { key: 'moneda', label: 'Moneda' },
       ]"
     />

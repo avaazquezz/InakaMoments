@@ -62,7 +62,15 @@
             <span class="font-bold text-inaka-terra">Total</span>
             <span class="text-lg font-extrabold text-inaka-terra">{{ formatEUR(quote.total) }}</span>
           </div>
-          <p class="mt-2 text-xs text-inaka-terra/50">Señal: {{ quote.deposit_amount != null ? formatEUR(quote.deposit_amount) : 'sin fijar' }}</p>
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <p class="text-xs text-inaka-terra/50">Señal: {{ quote.deposit_amount != null ? formatEUR(quote.deposit_amount) : 'sin fijar' }}</p>
+            <template v-if="quote.status === 'aceptado'">
+              <AdminStatusBadge :status="quote.deposit_status" kind="payment" />
+              <select v-model="quote.deposit_status" class="rounded-lg border border-inaka-beige bg-white px-2 py-1 text-xs text-inaka-terra outline-none focus:border-inaka-terra" @change="updateDepositStatus">
+                <option v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']" :key="s" :value="s">{{ s }}</option>
+              </select>
+            </template>
+          </div>
         </div>
       </div>
 
@@ -168,7 +176,7 @@ interface QuoteDetail {
   id: string, client_name: string | null, client_email: string | null, client_phone: string | null,
   event_type: string | null, event_date: string | null, location: string | null, notes: string | null,
   status: string, subtotal: number, adjustments: QuoteAdjustment[], total: number, deposit_amount: number | null,
-  items: QuoteItem[]
+  deposit_status: string, items: QuoteItem[]
 }
 interface AdminProduct { id: string, name: string, base_price: number | null, pricing: { label: string, price: number }[] }
 
@@ -307,6 +315,18 @@ async function confirmAccept() {
   }
   finally {
     acceptSubmitting.value = false
+  }
+}
+
+async function updateDepositStatus() {
+  if (!quote.value) return
+  try {
+    await $fetch(`/api/admin/quotes/${route.params.id}`, { method: 'PATCH', body: { deposit_status: quote.value.deposit_status } })
+    toast.success('Estado de la señal actualizado.')
+  }
+  catch (err: any) {
+    toast.error(err?.data?.message ?? 'No se ha podido actualizar la señal.')
+    await refresh()
   }
 }
 

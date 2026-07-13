@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { bizumConcept } from '~~/shared/bizum'
 import { normalizeRules } from '~~/shared/configurator'
 import { addDaysISO } from '~~/shared/dates'
 import { EVENT_TYPE_LABELS, type EventType } from '~~/shared/eventTypes'
@@ -52,7 +53,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const { data: settingsRow } = await supabase.from('site_content').select('data').eq('section', 'settings').maybeSingle()
-  const rules = normalizeRules(settingsRow?.data as Record<string, unknown> | null)
+  const settingsData = settingsRow?.data as Record<string, unknown> | null
+  const rules = normalizeRules(settingsData)
+  const bizumPhone = typeof settingsData?.bizum_telefono === 'string' ? settingsData.bizum_telefono : undefined
   const minAllowedDate = addDaysISO(rules.antelacion_dias)
   if (effectiveDate < minAllowedDate) {
     throw createError({
@@ -103,6 +106,8 @@ export default defineEventHandler(async (event) => {
       depositAmount: effectiveDeposit,
       total: quote.total,
       quoteId: quote.id,
+      bizumPhone,
+      bizumConcept: bizumConcept({ clientName: quote.client_name ?? 'Cliente', eventDate: effectiveDate }),
     })
   }
 

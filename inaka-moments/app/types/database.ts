@@ -587,6 +587,7 @@ export type Database = {
           client_phone: string | null
           created_at: string
           deposit_amount: number | null
+          deposit_status: Database["public"]["Enums"]["payment_status"]
           distance_km: number | null
           event_date: string | null
           event_type: Database["public"]["Enums"]["event_type"] | null
@@ -607,6 +608,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           deposit_amount?: number | null
+          deposit_status?: Database["public"]["Enums"]["payment_status"]
           distance_km?: number | null
           event_date?: string | null
           event_type?: Database["public"]["Enums"]["event_type"] | null
@@ -627,6 +629,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           deposit_amount?: number | null
+          deposit_status?: Database["public"]["Enums"]["payment_status"]
           distance_km?: number | null
           event_date?: string | null
           event_type?: Database["public"]["Enums"]["event_type"] | null

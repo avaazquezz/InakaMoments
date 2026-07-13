@@ -3,10 +3,11 @@ import { formatISODate, todayISO } from '~~/shared/dates'
 /**
  * GET /api/admin/dashboard — resumen agregado para la portada del panel.
  *
- * Nota deliberada: sin Stripe (Fase 5) no hay ningún estado de pago
- * verificado, así que aquí NUNCA se habla de "ingresos" — solo de
- * presupuestos aceptados y el importe de señal previsto (un número que la
- * dueña ha fijado manualmente, no dinero confirmado en cuenta).
+ * Sin pasarela de pago (Fase 5 usa Bizum manual) no hay "ingresos"
+ * automáticos: "señal prevista" es el importe que la dueña ha fijado al
+ * aceptar, y "señal cobrada" es la que ella misma ha marcado `pagado` al
+ * ver entrar el Bizum — ambas son declaradas por la dueña, no verificadas
+ * por ninguna pasarela.
  */
 
 interface EventoResumen {
@@ -35,7 +36,7 @@ export default defineEventHandler(async (event) => {
       .order('event_date', { ascending: true })
       .limit(5),
     supabase.from('quotes')
-      .select('id, total, deposit_amount')
+      .select('id, total, deposit_amount, deposit_status')
       .eq('status', 'aceptado')
       .gte('updated_at', startOfMonthISO()),
     supabase.from('leads').select('status'),
@@ -72,6 +73,7 @@ export default defineEventHandler(async (event) => {
       count: presupuestos.length,
       total: round2(presupuestos.reduce((s, q) => s + (q.total ?? 0), 0)),
       senalPrevista: round2(presupuestos.reduce((s, q) => s + (q.deposit_amount ?? 0), 0)),
+      senalCobrada: round2(presupuestos.filter(q => q.deposit_status === 'pagado').reduce((s, q) => s + (q.deposit_amount ?? 0), 0)),
     },
     funnel,
     topProductos,

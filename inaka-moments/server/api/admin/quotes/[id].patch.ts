@@ -27,6 +27,7 @@ const updateSchema = z.object({
   notes: z.string().max(2000).nullable().optional(),
   valid_until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   deposit_amount: z.number().min(0).nullable().optional(),
+  deposit_status: z.enum(['pendiente', 'pagado', 'reembolsado', 'fallido']).optional(),
   adjustments: z.array(adjustmentSchema).max(20).optional(),
   status: z.enum(['borrador', 'enviado', 'rechazado', 'caducado']).optional(),
 })
