@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-screen bg-inaka-cream font-sans text-inaka-terra">
     <!-- Sidebar (desktop) -->
-    <aside class="hidden w-64 shrink-0 flex-col border-r border-inaka-beige bg-white md:flex">
+    <aside class="hidden w-64 shrink-0 flex-col border-r border-inaka-beige bg-white md:flex md:sticky md:top-0 md:h-screen">
       <div class="flex h-16 items-center gap-2 border-b border-inaka-beige px-5">
         <NuxtLink to="/admin" class="flex items-center gap-2">
           <img src="/logo.png" alt="Inaka Moments" class="h-9 w-auto" />
@@ -121,13 +121,13 @@ const ICON = {
 }
 
 const navItems: NavItem[] = [
-  { to: '/admin', label: 'Dashboard', icon: ICON.dashboard },
+  { to: '/admin', label: 'Inicio', icon: ICON.dashboard },
   { to: '/admin/productos', label: 'Productos', icon: ICON.box, sectionLabel: 'Catálogo' },
   { to: '/admin/packs', label: 'Packs', icon: ICON.gift },
   { to: '/admin/galeria', label: 'Galería', icon: ICON.photo, sectionLabel: 'Contenido' },
   { to: '/admin/contenido', label: 'Contenido y ajustes', icon: ICON.doc },
   { to: '/admin/resenas', label: 'Reseñas', icon: ICON.star },
-  { to: '/admin/leads', label: 'Leads', icon: ICON.users, sectionLabel: 'Negocio' },
+  { to: '/admin/leads', label: 'Clientes', icon: ICON.users, sectionLabel: 'Negocio' },
   { to: '/admin/presupuestos', label: 'Presupuestos', icon: ICON.receipt },
   { to: '/admin/agenda', label: 'Agenda', icon: ICON.calendar },
   { to: '/admin/inventario', label: 'Inventario alquiler', icon: ICON.archive },
@@ -139,7 +139,7 @@ function isActive(to: string): boolean {
 }
 
 const currentTitle = computed(() => {
-  if (route.path === '/admin') return 'Dashboard'
+  if (route.path === '/admin') return 'Inicio'
   const match = navItems
     .filter(i => i.to !== '/admin' && route.path.startsWith(i.to))
     .sort((a, b) => b.to.length - a.to.length)[0]

@@ -205,6 +205,10 @@ export interface ReservationEmailData {
   depositAmount: number
   total: number
   quoteId: string
+  /** Teléfono Bizum de la dueña (site_content.settings.bizum_telefono). Vacío → frase genérica de fallback. */
+  bizumPhone?: string
+  /** Concepto a usar en el Bizum, p.ej. "Fiesta Marta 2026-08-15" (shared/bizum.ts). */
+  bizumConcept?: string
 }
 
 /** Confirmación de fecha reservada + señal a pagar. true si el email salió. */
@@ -232,7 +236,11 @@ export async function sendReservationConfirmedEmail(r: ReservationEmailData): Pr
               <tr><td style="padding:8px 12px;color:#8B3A2A;font-weight:600">Total del presupuesto</td><td style="padding:8px 12px;text-align:right">${esc(eur(r.total))}</td></tr>
               <tr><td style="padding:8px 12px;color:#8B3A2A;font-weight:600">Señal a abonar</td><td style="padding:8px 12px;text-align:right;font-weight:700">${esc(eur(r.depositAmount))}</td></tr>
             </table>
-            <p style="line-height:1.6">Para bloquear la fecha, la señal se abona por Bizum o transferencia — te contactaremos para coordinarlo si aún no lo hemos hecho.</p>
+            <p style="line-height:1.6">${
+              r.bizumPhone
+                ? `Para bloquear la fecha, haz un <strong>Bizum de ${esc(eur(r.depositAmount))}</strong> al <strong>${esc(r.bizumPhone)}</strong> con el concepto <strong>"${esc(r.bizumConcept ?? '')}"</strong>. En cuanto lo recibamos, confirmaremos tu reserva.`
+                : 'Para bloquear la fecha, la señal se abona por Bizum o transferencia — te contactaremos para coordinarlo si aún no lo hemos hecho.'
+            }</p>
             <p style="line-height:1.6;margin-top:20px">Con mimo,<br><strong>Inaka Moments</strong><br><span style="color:#8B3A2A99">Momentos bonitos, recuerdos para siempre.</span></p>
             <p style="color:#8B3A2A99;font-size:12px;margin-top:16px">Presupuesto #${esc(r.quoteId.slice(0, 8))}</p>
           </div>`,
@@ -242,6 +250,57 @@ export async function sendReservationConfirmedEmail(r: ReservationEmailData): Pr
   }
   catch (err) {
     console.error('[email] error enviando confirmación de reserva:', err)
+    return false
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// Solicitud de reseña (día después del evento — Fase 5)
+// ═════════════════════════════════════════════════════════════════════════
+
+export interface ReviewRequestEmailData {
+  clientName: string
+  clientEmail: string
+  eventTypeLabel: string
+  eventDate: string
+  token: string
+}
+
+/** Invitación a dejar una reseña tras el evento. true si el email salió. */
+export async function sendReviewRequestEmail(r: ReviewRequestEmailData): Promise<boolean> {
+  const config = useRuntimeConfig()
+  if (!config.resendApiKey) {
+    console.warn('[email] NUXT_RESEND_API_KEY no configurada — solicitud de reseña omitida')
+    return false
+  }
+
+  const surveyUrl = `https://inakamoments.com/resena/${r.token}`
+
+  try {
+    await $fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${config.resendApiKey}` },
+      body: {
+        from: config.emailFrom,
+        to: [r.clientEmail],
+        reply_to: config.emailBusiness,
+        subject: `🎈 ¿Qué tal fue tu ${r.eventTypeLabel.toLowerCase()}?`,
+        html: `
+          <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;color:#3d2320">
+            <h2 style="color:#8B3A2A">¡Hola, ${esc(r.clientName.split(' ')[0] || r.clientName)}! 🎈</h2>
+            <p style="line-height:1.6">Esperamos que disfrutarais muchísimo de tu <strong>${esc(r.eventTypeLabel.toLowerCase())}</strong> del <strong>${esc(r.eventDate)}</strong>. Nos encantaría saber qué tal fue tu experiencia con Inaka Moments.</p>
+            <p style="line-height:1.6;margin:20px 0">
+              <a href="${esc(surveyUrl)}" style="display:inline-block;background:#8B3A2A;color:#FAFAF8;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600">Dejar mi opinión</a>
+            </p>
+            <p style="line-height:1.6;color:#8B3A2A99;font-size:13px">Solo lleva un minuto: una puntuación de 1 a 5 estrellas y, si quieres, unas palabras. Nos ayuda muchísimo a seguir creciendo.</p>
+            <p style="line-height:1.6;margin-top:20px">Con mimo,<br><strong>Inaka Moments</strong><br><span style="color:#8B3A2A99">Momentos bonitos, recuerdos para siempre.</span></p>
+          </div>`,
+      },
+    })
+    return true
+  }
+  catch (err) {
+    console.error('[email] error enviando solicitud de reseña:', err)
     return false
   }
 }

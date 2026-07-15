@@ -38,6 +38,12 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  vite: {
+    // @emailjs/browser solo lo importa configurador.vue; sin esto, Vite lo
+    // descubre en caliente la primera vez y fuerza un reload completo de
+    // página (dev) — se nota como "el primer click en Presupuesto se cuelga".
+    optimizeDeps: { include: ['@emailjs/browser'] },
+  },
   routeRules: {
     // La antigua página de servicios queda absorbida por el catálogo
     '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },

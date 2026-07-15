@@ -19,14 +19,19 @@
         v-for="cell in grid"
         :key="cell.iso"
         type="button"
-        class="flex min-h-[84px] flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-colors"
+        class="flex min-h-[84px] flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-all duration-150"
         :class="[
-          cell.inMonth ? 'border-inaka-beige/70 bg-white hover:bg-inaka-nude/20' : 'border-transparent bg-inaka-cream/60 text-inaka-terra/30',
-          cell.iso === todayIso ? 'ring-1 ring-inaka-gold' : '',
+          cell.inMonth ? 'border-inaka-beige/70 bg-white hover:border-inaka-terra/40 hover:bg-inaka-nude/40 hover:shadow-sm' : 'border-transparent bg-inaka-cream/60 text-inaka-terra/30 hover:bg-inaka-cream',
+          cell.iso === todayIso ? 'bg-inaka-gold/10 ring-2 ring-inaka-terra' : '',
         ]"
         @click="$emit('dayClick', cell.iso)"
       >
-        <span class="text-xs font-semibold" :class="cell.inMonth ? 'text-inaka-terra' : 'text-inaka-terra/30'">{{ cell.date.getDate() }}</span>
+        <span
+          class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
+          :class="cell.iso === todayIso ? 'bg-inaka-terra text-inaka-cream' : (cell.inMonth ? 'text-inaka-terra' : 'text-inaka-terra/30')"
+        >
+          {{ cell.date.getDate() }}
+        </span>
         <span
           v-for="ev in cell.events.slice(0, 2)"
           :key="ev.id"
@@ -38,6 +43,18 @@
         </span>
         <span v-if="cell.events.length > 2" class="text-[10px] font-medium text-inaka-terra/50">+{{ cell.events.length - 2 }} más</span>
       </button>
+    </div>
+
+    <!-- Leyenda de estados -->
+    <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-inaka-beige/70 pt-3">
+      <div v-for="s in EVENT_STATUSES" :key="s" class="flex items-center gap-1.5">
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full" :class="EVENT_STATUS_STYLES[s].dot" />
+        <span class="text-xs text-inaka-terra/70">{{ EVENT_STATUS_LABELS[s] }}</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-inaka-terra ring-2 ring-inaka-gold/40" />
+        <span class="text-xs text-inaka-terra/70">Hoy</span>
+      </div>
     </div>
   </div>
 </template>
@@ -119,9 +136,6 @@ function goNext() {
 }
 
 function chipClass(status: string): string {
-  if (status === 'confirmado') return 'bg-inaka-terra text-inaka-cream'
-  if (status === 'tentativo') return 'bg-inaka-gold/30 text-inaka-terra'
-  if (status === 'cancelado') return 'bg-red-100 text-red-700 line-through'
-  return 'bg-inaka-nude text-inaka-terra/70' // completado
+  return EVENT_STATUS_STYLES[status as EventStatus]?.chip ?? 'bg-inaka-nude text-inaka-terra/70'
 }
 </script>

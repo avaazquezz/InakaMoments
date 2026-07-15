@@ -104,9 +104,7 @@
       <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <!-- Columna principal -->
         <div class="lg:col-span-2">
-          <Transition name="fade" mode="out-in">
-
-            <!-- PASO 1: Ocasión -->
+          <!-- PASO 1: Ocasión -->
             <div v-if="step === 1" key="s1">
               <h2 class="text-2xl font-bold text-inaka-terra">¿Qué celebras?</h2>
               <p class="mb-6 mt-1 text-sm text-inaka-terra/55">Elige la ocasión para personalizar tu presupuesto.</p>
@@ -406,8 +404,6 @@
                 </div>
               </div>
             </div>
-
-          </Transition>
 
           <!-- Navegación -->
           <div class="mt-8 flex items-center justify-between gap-3">
@@ -805,7 +801,6 @@ async function notifyViaEmailJs(fullPhone: string, q: QuoteResult | null) {
         tipo_evento: labels[state.value.event_type] ?? state.value.event_type,
         fecha: state.value.event_date || 'No especificada',
         invitados: state.value.invitados || 'No especificado',
-        espacios: 'Configurador de presupuesto',
         estilo: 'No especificado',
         ideas_extra: `${contact.mensaje ? contact.mensaje + '\n\n' : ''}${resumen}`,
         to_email: config.public.emailjsRecipient,

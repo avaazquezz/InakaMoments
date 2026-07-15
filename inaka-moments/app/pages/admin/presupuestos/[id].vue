@@ -7,6 +7,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
         <div class="flex items-center gap-3">
           <p class="text-lg font-bold text-inaka-terra">{{ quote.client_name ?? 'Sin nombre' }}</p>
+          <span v-if="quote.event_type" class="text-sm text-inaka-terra/50">{{ EVENT_TYPE_LABELS[quote.event_type] }}</span>
           <AdminStatusBadge :status="quote.status" kind="quote" />
         </div>
         <div class="flex items-center gap-2">
@@ -62,7 +63,18 @@
             <span class="font-bold text-inaka-terra">Total</span>
             <span class="text-lg font-extrabold text-inaka-terra">{{ formatEUR(quote.total) }}</span>
           </div>
-          <p class="mt-2 text-xs text-inaka-terra/50">Señal: {{ quote.deposit_amount != null ? formatEUR(quote.deposit_amount) : 'sin fijar' }}</p>
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <p class="text-xs text-inaka-terra/50">
+              <template v-if="quote.status === 'aceptado'">Reserva: {{ formatEUR(quote.deposit_amount!) }}</template>
+              <template v-else>Reserva prevista ({{ senalPorcentaje }}%): {{ formatEUR(round2(quote.total * senalPorcentaje / 100)) }}</template>
+            </p>
+            <template v-if="quote.status === 'aceptado'">
+              <AdminStatusBadge :status="quote.deposit_status" kind="payment" />
+              <select v-model="quote.deposit_status" class="rounded-lg border border-inaka-beige bg-white px-2 py-1 text-xs text-inaka-terra outline-none focus:border-inaka-terra" @change="updateDepositStatus">
+                <option v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']" :key="s" :value="s">{{ s }}</option>
+              </select>
+            </template>
+          </div>
         </div>
       </div>
 
@@ -140,9 +152,9 @@
               <label class="text-sm font-semibold text-inaka-terra">Fecha del evento</label>
               <input v-model="acceptForm.event_date" type="date" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-inaka-terra">Importe de la señal (€)</label>
-              <input v-model.number="acceptForm.deposit_amount" type="number" min="0" step="1" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+            <div class="rounded-lg bg-inaka-cream px-3 py-2.5 text-sm text-inaka-terra">
+              Reserva a abonar (<strong>{{ senalPorcentaje }}%</strong> del total): <strong>{{ quote ? formatEUR(round2(quote.total * senalPorcentaje / 100)) : '—' }}</strong>
+              <p class="mt-0.5 text-xs text-inaka-terra/50">Se calcula sola según el % fijado en Contenido → Reglas de negocio.</p>
             </div>
             <p v-if="acceptError" class="text-xs text-red-500">{{ acceptError }}</p>
             <div class="mt-2 flex justify-end gap-3">
@@ -159,6 +171,9 @@
 </template>
 
 <script setup lang="ts">
+import { round2 } from '~~/shared/configurator'
+import { EVENT_TYPE_LABELS, type EventType } from '~~/shared/eventTypes'
+
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Presupuesto — Panel Inaka Moments' })
 
@@ -166,9 +181,9 @@ interface QuoteItem { id: string, product_id: string | null, pack_id: string | n
 interface QuoteAdjustment { key: string, label: string, amount: number | null, note?: string }
 interface QuoteDetail {
   id: string, client_name: string | null, client_email: string | null, client_phone: string | null,
-  event_type: string | null, event_date: string | null, location: string | null, notes: string | null,
+  event_type: EventType | null, event_date: string | null, location: string | null, notes: string | null,
   status: string, subtotal: number, adjustments: QuoteAdjustment[], total: number, deposit_amount: number | null,
-  items: QuoteItem[]
+  deposit_status: string, items: QuoteItem[]
 }
 interface AdminProduct { id: string, name: string, base_price: number | null, pricing: { label: string, price: number }[] }
 
@@ -177,6 +192,11 @@ const toast = useToast()
 
 const { data: quote, pending, refresh } = await useFetch<QuoteDetail>(`/api/admin/quotes/${route.params.id}`)
 const { data: products } = await useFetch<AdminProduct[]>('/api/admin/products')
+const { data: settings } = await useFetch<{ data: Record<string, unknown> }>('/api/admin/site-content/settings')
+const senalPorcentaje = computed(() => {
+  const v = settings.value?.data?.senal_porcentaje
+  return typeof v === 'number' && v > 0 ? v : 50
+})
 
 // ── Datos cliente/evento ────────────────────────────────────────────────
 const infoForm = reactive({ client_name: '', client_email: '', client_phone: '', event_date: '', location: '', notes: '' })
@@ -283,12 +303,11 @@ async function saveAdjustments() {
 const accepting = ref(false)
 const acceptSubmitting = ref(false)
 const acceptError = ref('')
-const acceptForm = reactive({ event_date: '', deposit_amount: 0 })
+const acceptForm = reactive({ event_date: '' })
 
 function openAccept() {
   if (!quote.value) return
   acceptForm.event_date = quote.value.event_date ?? ''
-  acceptForm.deposit_amount = quote.value.deposit_amount ?? 0
   acceptError.value = ''
   accepting.value = true
 }
@@ -307,6 +326,18 @@ async function confirmAccept() {
   }
   finally {
     acceptSubmitting.value = false
+  }
+}
+
+async function updateDepositStatus() {
+  if (!quote.value) return
+  try {
+    await $fetch(`/api/admin/quotes/${route.params.id}`, { method: 'PATCH', body: { deposit_status: quote.value.deposit_status } })
+    toast.success('Estado de la reserva actualizado.')
+  }
+  catch (err: any) {
+    toast.error(err?.data?.message ?? 'No se ha podido actualizar la reserva.')
+    await refresh()
   }
 }
 

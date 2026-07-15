@@ -131,3 +131,9 @@ export const leadActivitySchema = z.object({
 export const siteContentSchema = z.object({
   data: z.record(z.string(), z.unknown()),
 })
+
+// Únicas secciones de site_content editables desde el panel — Textos web
+// (hero/about/footer/contacto) se retiró deliberadamente de la UI para el
+// traspaso a un segundo admin no técnico; este guard cierra también la API
+// para que no sea saltable con una llamada directa.
+export const ADMIN_EDITABLE_SITE_CONTENT_SECTIONS = ['settings'] as const

@@ -19,15 +19,6 @@
         <textarea v-model="form.intro" rows="4" class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Título SEO</label>
-        <input v-model="form.seo_title" type="text" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-      </div>
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Descripción SEO</label>
-        <textarea v-model="form.seo_description" rows="2" class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-      </div>
-
       <div class="flex flex-col gap-2">
         <label class="text-sm font-semibold text-inaka-terra">Productos destacados</label>
         <div class="max-h-56 overflow-y-auto rounded-lg border border-inaka-beige p-2">

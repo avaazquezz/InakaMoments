@@ -131,21 +131,33 @@ async function updatePassword() {
   await navigateTo('/admin')
 }
 
+// El enlace de INVITACIÓN puede dejar una sesión activa sin disparar
+// 'PASSWORD_RECOVERY' — `hasRecoveryLink` exige que la URL traiga de verdad
+// las marcas de ese enlace (code / type=invite|recovery). Sin esto, CUALQUIER
+// sesión ya abierta en el navegador (p. ej. quien ya había iniciado sesión)
+// bastaba para saltarse el email y cambiar la contraseña sin verificación.
+const hasRecoveryLink = computed(() => {
+  if (typeof route.query.code === 'string') return true
+  if (import.meta.client) {
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+    return hash.get('type') === 'invite' || hash.get('type') === 'recovery'
+  }
+  return false
+})
+
 // Supabase dispara 'PASSWORD_RECOVERY' al aterrizar desde el enlace de
 // recuperación, procesando el fragmento #access_token de la URL de forma
 // asíncrona nada más cargar la página. El listener se registra ANTES de
 // cualquier `await` para no perder el evento por una condición de carrera
 // (si se comprobara `getSession()` primero, el evento podría dispararse
 // mientras esa llamada está en vuelo, antes de que el listener exista).
-// El enlace de INVITACIÓN, en cambio, puede dejar una sesión activa sin
-// disparar ese evento — `getSession()` cubre ese caso como respaldo.
 onMounted(() => {
   supabase.auth.onAuthStateChange((event) => {
     if (event === 'PASSWORD_RECOVERY') stage.value = 'update'
   })
 
   supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) stage.value = 'update'
+    if (session && hasRecoveryLink.value) stage.value = 'update'
   })
 
   // Un enlace ya usado (o con un `code` inválido) no dispara PASSWORD_RECOVERY

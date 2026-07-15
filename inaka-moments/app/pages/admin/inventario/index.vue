@@ -36,23 +36,41 @@
         <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">{{ editing.id ? 'Editar' : 'Nueva' }} reserva</h2>
           <form class="flex flex-col gap-3" @submit.prevent="save">
-            <select v-model="editing.product_id" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-              <option value="" disabled>Producto de alquiler…</option>
-              <option v-for="p in rentalProducts" :key="p.id" :value="p.id">{{ p.name }}</option>
-            </select>
-            <div class="grid grid-cols-2 gap-3">
-              <input v-model="editing.date_from" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-              <input v-model="editing.date_to" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-            </div>
-            <select v-model="editing.event_id" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-              <option :value="null">Sin evento vinculado</option>
-              <option v-for="ev in events" :key="ev.id" :value="ev.id">{{ ev.title }} ({{ ev.event_date }})</option>
-            </select>
-            <div class="grid grid-cols-2 gap-3">
-              <input v-model.number="editing.deposit_amount" type="number" min="0" placeholder="Fianza (€)" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-              <select v-model="editing.deposit_status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-                <option v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']" :key="s" :value="s">{{ s }}</option>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-inaka-terra/70">Producto de alquiler</label>
+              <select v-model="editing.product_id" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" @change="onProductChange">
+                <option value="" disabled>Elige un producto…</option>
+                <option v-for="p in rentalProducts" :key="p.id" :value="p.id">{{ p.name }}</option>
               </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-inaka-terra/70">Fecha de inicio</label>
+                <input v-model="editing.date_from" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-inaka-terra/70">Fecha de fin</label>
+                <input v-model="editing.date_to" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-semibold text-inaka-terra/70">Evento vinculado (opcional)</label>
+              <select v-model="editing.event_id" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
+                <option :value="null">Sin evento vinculado</option>
+                <option v-for="ev in events" :key="ev.id" :value="ev.id">{{ ev.title }} ({{ ev.event_date }})</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-inaka-terra/70">Fianza (€)</label>
+                <input v-model.number="editing.deposit_amount" type="number" min="0" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-inaka-terra/70">Estado de la fianza</label>
+                <select v-model="editing.deposit_status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
+                  <option v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']" :key="s" :value="s">{{ s }}</option>
+                </select>
+              </div>
             </div>
             <p v-if="saveError" class="text-xs text-red-500">{{ saveError }}</p>
             <div class="mt-2 flex justify-end gap-3">
@@ -76,7 +94,7 @@ interface Booking {
   id: string, product_id: string, event_id: string | null, date_from: string, date_to: string,
   deposit_amount: number, deposit_status: string, product?: { name: string } | null, event?: { title: string } | null
 }
-interface AdminProduct { id: string, name: string, is_rental: boolean }
+interface AdminProduct { id: string, name: string, is_rental: boolean, deposit: number }
 interface AdminEventLite { id: string, title: string, event_date: string }
 
 const { data, pending, refresh } = await useFetch<Booking[]>('/api/admin/rental-bookings')
@@ -98,6 +116,14 @@ function openNew() {
 function openEdit(b: Booking) {
   editing.value = { ...b }
   saveError.value = ''
+}
+
+// Solo autocompleta la fianza en reservas nuevas: en una reserva existente
+// respeta el importe ya guardado aunque se cambie el producto.
+function onProductChange() {
+  if (editing.value?.id) return
+  const product = (products.value ?? []).find(p => p.id === editing.value?.product_id)
+  if (product && editing.value) editing.value.deposit_amount = product.deposit
 }
 
 async function save() {

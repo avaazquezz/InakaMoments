@@ -4,8 +4,9 @@
  * público nunca cambie.
  */
 
+import { CATALOG_PDF_PATH } from '~~/shared/catalogPdf'
+
 const MAX_SIZE = 25 * 1024 * 1024 // 25 MB, igual que el límite del bucket 'catalog'
-const FIXED_PATH = 'catalogo-inaka-moments-2026.pdf'
 
 export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = useSupabaseAdmin(event)
-  const { error } = await supabase.storage.from('catalog').upload(FIXED_PATH, file.data, {
+  const { error } = await supabase.storage.from('catalog').upload(CATALOG_PDF_PATH, file.data, {
     contentType: 'application/pdf',
     upsert: true,
   })
@@ -34,5 +35,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'No se ha podido subir el PDF.' })
   }
 
-  return { path: FIXED_PATH }
+  return { path: CATALOG_PDF_PATH }
 })

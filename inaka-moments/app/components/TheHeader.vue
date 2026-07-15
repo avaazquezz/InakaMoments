@@ -27,7 +27,8 @@
       <div class="hidden md:block">
         <a
           :href="catalogPdfUrl"
-          download="Catalogo-InakaMoments-2026.pdf"
+          target="_blank"
+          rel="noopener"
           class="rounded-md border border-inaka-terra px-4 py-2 text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
         >
           Catálogo PDF
@@ -80,7 +81,8 @@
         <div class="border-t border-inaka-nude px-4 py-6">
           <a
             :href="catalogPdfUrl"
-            download="Catalogo-InakaMoments-2026.pdf"
+            target="_blank"
+            rel="noopener"
             class="block w-full rounded-md border border-inaka-terra px-4 py-3 text-center text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
             @click="menuAbierto = false"
           >
@@ -93,8 +95,10 @@
 </template>
 
 <script setup lang="ts">
+import { CATALOG_PDF_PATH } from '~~/shared/catalogPdf'
+
 const menuAbierto = ref(false)
-const catalogPdfUrl = storagePublicUrl('catalog', 'catalogo-inaka-moments-2026.pdf')
+const catalogPdfUrl = storagePublicUrl('catalog', CATALOG_PDF_PATH)
 
 const navLinks = [
   { to: '/', label: 'Inicio' },

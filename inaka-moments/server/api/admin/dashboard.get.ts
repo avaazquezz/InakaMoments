@@ -1,12 +1,13 @@
-import { formatISODate, todayISO } from '~~/shared/dates'
+import { addDaysISO, formatISODate, todayISO } from '~~/shared/dates'
 
 /**
  * GET /api/admin/dashboard — resumen agregado para la portada del panel.
  *
- * Nota deliberada: sin Stripe (Fase 5) no hay ningún estado de pago
- * verificado, así que aquí NUNCA se habla de "ingresos" — solo de
- * presupuestos aceptados y el importe de señal previsto (un número que la
- * dueña ha fijado manualmente, no dinero confirmado en cuenta).
+ * Sin pasarela de pago (Fase 5 usa Bizum manual) no hay "ingresos"
+ * automáticos: "reserva prevista" es el % del total (site_content.settings
+ * .senal_porcentaje) calculado al aceptar, y "reserva cobrada" es la que la
+ * dueña ha marcado `pagado` al ver entrar el Bizum — esta última sigue
+ * siendo declarada por ella, no verificada por ninguna pasarela.
  */
 
 interface EventoResumen {
@@ -22,12 +23,22 @@ function startOfMonthISO(): string {
   return formatISODate(new Date(d.getFullYear(), d.getMonth(), 1))
 }
 
+function startOfPreviousMonthISO(): string {
+  const d = new Date()
+  return formatISODate(new Date(d.getFullYear(), d.getMonth() - 1, 1))
+}
+
 export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
   const supabase = useSupabaseAdmin(event)
 
-  const [leadsNuevos, proximosEventos, presupuestosMes, todosLeads, quoteItems] = await Promise.all([
+  const [
+    leadsNuevos, quotesEnviados, testimonialsPendientes, proximosEventos, presupuestosMes, todosLeads, quoteItems,
+    presupuestosMesAnterior, depositosPendientes, eventosProximos7Dias, resenasPublicadas,
+  ] = await Promise.all([
     supabase.from('leads').select('id', { count: 'exact', head: true }).eq('status', 'nuevo'),
+    supabase.from('quotes').select('id', { count: 'exact', head: true }).eq('status', 'enviado'),
+    supabase.from('testimonials').select('id', { count: 'exact', head: true }).not('responded_at', 'is', null).eq('published', false),
     supabase.from('events')
       .select('id, title, event_date, event_type, status')
       .gte('event_date', todayISO())
@@ -35,7 +46,7 @@ export default defineEventHandler(async (event) => {
       .order('event_date', { ascending: true })
       .limit(5),
     supabase.from('quotes')
-      .select('id, total, deposit_amount')
+      .select('id, total, deposit_amount, deposit_status')
       .eq('status', 'aceptado')
       .gte('updated_at', startOfMonthISO()),
     supabase.from('leads').select('status'),
@@ -43,6 +54,21 @@ export default defineEventHandler(async (event) => {
       .select('product_id, qty, quotes!inner(status), product:products(name)')
       .eq('quotes.status', 'aceptado')
       .not('product_id', 'is', null),
+    supabase.from('quotes')
+      .select('id, total, deposit_amount, deposit_status')
+      .eq('status', 'aceptado')
+      .gte('updated_at', startOfPreviousMonthISO())
+      .lt('updated_at', startOfMonthISO()),
+    supabase.from('rental_bookings')
+      .select('id, deposit_amount')
+      .eq('deposit_status', 'pagado')
+      .lt('date_to', todayISO()),
+    supabase.from('events')
+      .select('id', { count: 'exact', head: true })
+      .neq('status', 'cancelado')
+      .gte('event_date', todayISO())
+      .lte('event_date', addDaysISO(7)),
+    supabase.from('testimonials').select('rating').eq('published', true),
   ])
 
   const funnelOrder = ['nuevo', 'contactado', 'presupuestado', 'ganado', 'perdido'] as const
@@ -64,14 +90,42 @@ export default defineEventHandler(async (event) => {
     .slice(0, 5)
 
   const presupuestos = presupuestosMes.data ?? []
+  const totalMes = round2(presupuestos.reduce((s, q) => s + (q.total ?? 0), 0))
+
+  const presupuestosAnterior = presupuestosMesAnterior.data ?? []
+  const totalMesAnterior = round2(presupuestosAnterior.reduce((s, q) => s + (q.total ?? 0), 0))
+  const senalCobradaMes = round2(presupuestos.filter(q => q.deposit_status === 'pagado').reduce((s, q) => s + (q.deposit_amount ?? 0), 0))
+  const senalCobradaMesAnterior = round2(presupuestosAnterior.filter(q => q.deposit_status === 'pagado').reduce((s, q) => s + (q.deposit_amount ?? 0), 0))
+
+  const depositos = depositosPendientes.data ?? []
+
+  const ratings = (resenasPublicadas.data ?? []).map(t => t.rating).filter((r): r is number => r != null)
 
   return {
     leadsNuevos: leadsNuevos.count ?? 0,
+    quotesEnviados: quotesEnviados.count ?? 0,
+    testimonialsPendientes: testimonialsPendientes.count ?? 0,
     proximosEventos: (proximosEventos.data ?? []) as EventoResumen[],
+    eventosProximos7Dias: eventosProximos7Dias.count ?? 0,
+    depositosPendientes: {
+      count: depositos.length,
+      total: round2(depositos.reduce((s, r) => s + (r.deposit_amount ?? 0), 0)),
+    },
+    resenas: {
+      count: (resenasPublicadas.data ?? []).length,
+      mediaRating: ratings.length > 0 ? round2(ratings.reduce((s, r) => s + r, 0) / ratings.length) : null,
+    },
     presupuestosAceptadosMes: {
       count: presupuestos.length,
-      total: round2(presupuestos.reduce((s, q) => s + (q.total ?? 0), 0)),
+      total: totalMes,
       senalPrevista: round2(presupuestos.reduce((s, q) => s + (q.deposit_amount ?? 0), 0)),
+      senalCobrada: senalCobradaMes,
+      ticketMedio: presupuestos.length > 0 ? round2(totalMes / presupuestos.length) : null,
+    },
+    presupuestosAceptadosMesAnterior: {
+      count: presupuestosAnterior.length,
+      total: totalMesAnterior,
+      senalCobrada: senalCobradaMesAnterior,
     },
     funnel,
     topProductos,

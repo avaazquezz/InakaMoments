@@ -22,7 +22,7 @@
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-inaka-terra/70">Estado</label>
               <select v-model="form.status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-                <option v-for="s in ['nuevo', 'contactado', 'presupuestado', 'ganado', 'perdido']" :key="s" :value="s">{{ s }}</option>
+                <option v-for="s in LEAD_STATUSES" :key="s" :value="s">{{ LEAD_STATUS_LABELS[s] }}</option>
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
@@ -55,7 +55,7 @@
             <button type="submit" :disabled="saving" class="rounded-xl bg-inaka-terra px-6 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">
               {{ saving ? 'Guardando…' : 'Guardar' }}
             </button>
-            <button type="button" class="text-sm font-semibold text-red-500 hover:underline" @click="confirmingDelete = true">Borrar lead</button>
+            <button type="button" class="text-sm font-semibold text-red-500 hover:underline" @click="confirmingDelete = true">Borrar cliente</button>
           </div>
         </form>
 
@@ -100,7 +100,7 @@
       </div>
     </template>
 
-    <AdminConfirmDialog :open="confirmingDelete" title="¿Borrar este lead?" message="Se borrarán también sus actividades." danger @cancel="confirmingDelete = false" @confirm="deleteLead" />
+    <AdminConfirmDialog :open="confirmingDelete" title="¿Borrar este cliente?" message="Se borrarán también sus actividades." danger @cancel="confirmingDelete = false" @confirm="deleteLead" />
   </div>
 </template>
 
@@ -108,7 +108,7 @@
 import { EVENT_TYPES, EVENT_TYPE_LABELS } from '~~/shared/eventTypes'
 
 definePageMeta({ layout: 'admin' })
-useHead({ title: 'Lead — Panel Inaka Moments' })
+useHead({ title: 'Cliente — Panel Inaka Moments' })
 
 interface LeadActivity { id: string, note: string | null, created_at: string }
 interface LinkedQuote { id: string, status: string, total: number, event_date: string | null, created_at: string }
@@ -149,7 +149,7 @@ async function save() {
   saving.value = true
   try {
     await $fetch(`/api/admin/leads/${route.params.id}`, { method: 'PATCH', body: form })
-    toast.success('Lead guardado.')
+    toast.success('Cliente guardado.')
     await refresh()
   }
   catch (err: any) {
@@ -164,7 +164,7 @@ const confirmingDelete = ref(false)
 async function deleteLead() {
   try {
     await $fetch(`/api/admin/leads/${route.params.id}`, { method: 'DELETE' })
-    toast.success('Lead borrado.')
+    toast.success('Cliente borrado.')
     await navigateTo('/admin/leads')
   }
   catch (err: any) {

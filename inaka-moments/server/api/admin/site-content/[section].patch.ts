@@ -2,6 +2,9 @@ export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
   const section = getRouterParam(event, 'section')
   if (!section) throw createError({ statusCode: 400, statusMessage: 'Bad Request', message: 'Falta la sección.' })
+  if (!ADMIN_EDITABLE_SITE_CONTENT_SECTIONS.includes(section as any)) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden', message: 'Sección no editable desde el panel.' })
+  }
 
   const parsed = siteContentSchema.safeParse(await readBody(event))
   if (!parsed.success) {
