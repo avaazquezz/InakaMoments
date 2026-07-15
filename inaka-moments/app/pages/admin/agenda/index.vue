@@ -24,7 +24,8 @@
 
     <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
       <AdminEmptyState v-if="(data ?? []).length === 0" title="Sin eventos" />
-      <table v-else class="w-full text-left text-sm">
+      <div v-else class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr><th class="px-4 py-3">Título</th><th class="px-4 py-3">Fecha</th><th class="px-4 py-3">Estado</th></tr>
         </thead>
@@ -36,24 +37,25 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- Modal crear/editar -->
     <Teleport to="body">
       <div v-if="editing" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="editing = null" />
-        <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">{{ editing.id ? 'Editar evento' : 'Nuevo evento' }}</h2>
           <form class="flex flex-col gap-3" @submit.prevent="save">
             <input v-model="editing.title" type="text" placeholder="Título" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input v-model="editing.event_date" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
               <select v-model="editing.status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
                 <option v-for="s in EVENT_STATUSES" :key="s" :value="s">{{ EVENT_STATUS_LABELS[s] }}</option>
               </select>
             </div>
             <input v-model="editing.location" type="text" placeholder="Ubicación (opcional)" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input v-model="editing.client_name" type="text" placeholder="Cliente" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
               <input v-model="editing.client_contact" type="text" placeholder="Contacto" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>

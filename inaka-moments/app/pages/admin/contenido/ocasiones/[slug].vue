@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label class="flex items-center gap-2">
           <input v-model="form.published" type="checkbox" class="h-4 w-4 accent-inaka-terra" />
           <span class="text-sm text-inaka-terra">Publicada</span>

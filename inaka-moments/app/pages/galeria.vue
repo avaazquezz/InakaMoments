@@ -1,21 +1,10 @@
 <template>
   <main>
-    <!-- Hero -->
-    <section class="relative overflow-hidden bg-inaka-cream py-24 sm:py-32">
-      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div class="absolute -top-32 -right-32 h-80 w-80 rounded-full bg-inaka-mauve/10 blur-3xl" />
-        <div class="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-inaka-gold/10 blur-3xl" />
-      </div>
-      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-4">Nuestros trabajos</p>
-        <h1 class="text-4xl font-bold text-inaka-terra sm:text-5xl lg:text-6xl mb-6">
-          Galería de momentos
-        </h1>
-        <p class="text-inaka-terra/70 text-lg max-w-2xl mx-auto">
-          Cada evento que decoramos es una historia única. Explora nuestra colección de trabajos reales.
-        </p>
-      </div>
-    </section>
+    <PageHero
+      eyebrow="Nuestros trabajos"
+      title="Galería de momentos"
+      subtitle="Cada evento que decoramos es una historia única. Explora nuestra colección de trabajos reales."
+    />
 
     <!-- Filters -->
     <section class="sticky top-[73px] z-30 bg-inaka-cream/95 backdrop-blur-sm border-b border-inaka-nude py-4">
@@ -73,11 +62,11 @@
           v-if="!pending && imagenesFiltradas.length === 0"
           class="flex flex-col items-center justify-center py-20 text-center"
         >
-          <span class="text-5xl mb-4">📷</span>
+          <Icon name="lucide:image-off" class="mb-4 h-12 w-12 text-inaka-terra/30" aria-hidden="true" />
           <p class="text-inaka-terra/60 text-lg">No hay imágenes en esta categoría todavía.</p>
           <button
             type="button"
-            class="mt-4 rounded-lg bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream transition-opacity hover:opacity-90"
+            class="mt-4 rounded-lg bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
             @click="filtroActivo = 'todos'"
           >
             Ver todos
@@ -86,24 +75,12 @@
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-20 bg-inaka-terra text-inaka-cream">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-bold sm:text-4xl mb-5">¿Te imaginas tu evento en nuestra galería?</h2>
-        <p class="text-inaka-cream/70 text-lg mb-8 max-w-2xl mx-auto">
-          Cada celebración es especial. Háblanos de la tuya y diseñamos juntos algo que nadie más tendrá.
-        </p>
-        <NuxtLink
-          to="/configurador"
-          class="inline-flex items-center gap-2 rounded-md bg-inaka-gold px-8 py-4 text-sm font-semibold text-inaka-terra shadow-sm transition-opacity hover:opacity-90"
-        >
-          Configurar mi presupuesto
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </NuxtLink>
-      </div>
-    </section>
+    <CtaBand
+      title="¿Te imaginas tu evento en nuestra galería?"
+      subtitle="Cada celebración es especial. Háblanos de la tuya y diseñamos juntos algo que nadie más tendrá."
+      cta-label="Configurar mi presupuesto"
+      cta-to="/configurador"
+    />
   </main>
 </template>
 
@@ -114,7 +91,7 @@ useHead({
     { name: 'description', content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.' },
     { property: 'og:title', content: 'Galería — Inaka Moments' },
     { property: 'og:description', content: 'Descubre los trabajos reales de Inaka Moments.' },
-    { property: 'og:image', content: '/og-galeria.png' },
+    { property: 'og:image', content: '/logo.png' },
   ],
 })
 

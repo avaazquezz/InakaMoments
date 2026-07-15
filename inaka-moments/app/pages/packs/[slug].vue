@@ -3,14 +3,14 @@
     <section class="py-16 bg-inaka-cream sm:py-24">
       <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <nav class="mb-8 text-sm text-inaka-terra/50" aria-label="Migas de pan">
-          <NuxtLink to="/packs" class="hover:text-inaka-terra transition-colors">Packs</NuxtLink>
+          <NuxtLink to="/packs" class="rounded outline-none transition-colors hover:text-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold">Packs</NuxtLink>
           <span class="mx-2">/</span>
           <span class="text-inaka-terra/80">{{ pack.name }}</span>
         </nav>
 
         <div class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-inaka-nude sm:p-12">
           <div class="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <h1 class="text-3xl font-bold text-inaka-terra sm:text-4xl">{{ pack.name }}</h1>
+            <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">{{ pack.name }}</h1>
             <span v-if="pack.price != null" class="rounded-full bg-inaka-terra px-6 py-2 text-xl font-bold text-inaka-cream">
               {{ formatEUR(pack.price) }}
             </span>
@@ -27,7 +27,7 @@
                 class="flex items-start gap-3 text-inaka-terra/75"
               >
                 <span class="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-inaka-gold/20">
-                  <svg class="h-3 w-3 text-inaka-gold" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  <Icon name="lucide:check" class="h-3 w-3 text-inaka-gold" aria-hidden="true" />
                 </span>
                 {{ item }}
               </li>
@@ -35,15 +35,12 @@
           </div>
 
           <div class="flex flex-col gap-3 sm:flex-row">
-            <NuxtLink
-              :to="`/configurador?addPack=${pack.slug}`"
-              class="rounded-md bg-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
-            >
+            <BaseButtonLink :to="`/configurador?addPack=${pack.slug}`" :icon="undefined">
               Añadir a mi presupuesto
-            </NuxtLink>
+            </BaseButtonLink>
             <NuxtLink
               to="/catalogo"
-              class="rounded-md border border-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
+              class="rounded-md border border-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
             >
               Ver productos sueltos
             </NuxtLink>

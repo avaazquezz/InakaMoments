@@ -9,7 +9,7 @@
             {{ hero.tagline }}
           </p>
 
-          <h1 class="text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
+          <h1 class="font-display text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
             {{ hero.titulo }}<br class="hidden sm:block" />
             <span class="text-inaka-mauve">{{ hero.titulo_span }}</span>
           </h1>
@@ -20,18 +20,13 @@
 
           <!-- CTA buttons -->
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <NuxtLink
-              to="/configurador"
-              class="rounded-md bg-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
-            >
-              {{ hero.cta_principal }}
-            </NuxtLink>
+            <BaseButtonLink to="/configurador" :icon="undefined">{{ hero.cta_principal }}</BaseButtonLink>
 
             <a
               :href="catalogPdfUrl"
               target="_blank"
               rel="noopener"
-              class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
+              class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
             >
               {{ hero.cta_secundario }}
             </a>
@@ -44,11 +39,17 @@
           ref="logoCol"
           class="order-1 relative flex items-center justify-center lg:order-2"
         >
-          <img
+          <NuxtImg
             src="/logo.png"
             alt="Inaka Moments — Momentos bonitos, recuerdos para siempre"
-            class="relative z-10 w-72 cursor-pointer select-none transition-transform duration-300 hover:scale-105 sm:w-96 lg:w-[460px]"
+            class="relative z-10 w-72 cursor-pointer select-none transition-transform duration-300 motion-safe:hover:scale-105 sm:w-96 lg:w-[460px]"
+            width="460"
+            height="460"
+            format="webp"
+            quality="85"
+            sizes="288px sm:384px lg:460px"
             loading="eager"
+            fetchpriority="high"
             draggable="false"
             @mouseenter="launchConfetti"
             @click="launchConfetti"
@@ -100,6 +101,7 @@ const COLORS: string[] = ['#C9A96E', '#C4909A', '#8B3A2A', '#D4BFA0', '#E8D0C8',
 const randomColor = (): string => COLORS[Math.floor(Math.random() * COLORS.length)] as string
 
 function launchConfetti() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   const now = Date.now()
   if (now - lastLaunch < 600) return
   lastLaunch = now

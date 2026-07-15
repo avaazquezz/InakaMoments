@@ -7,7 +7,7 @@
       <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-3">
         Momentos reales
       </p>
-      <h2 class="text-3xl font-bold text-inaka-terra md:text-4xl mb-3">
+      <h2 class="font-display text-3xl font-bold text-inaka-terra md:text-4xl mb-3">
         Magia en la vida real
       </h2>
       <p class="text-inaka-terra/70 text-base max-w-md mx-auto">
@@ -16,15 +16,37 @@
     </div>
 
     <!-- Carousel -->
-    <div
-      ref="carouselRef"
-      class="carousel flex overflow-x-auto gap-6 pb-6 px-6 md:px-12 select-none"
-      :class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
-      @mousedown="onMouseDown"
-      @mousemove="onMouseMove"
-      @mouseup="onMouseUp"
-      @mouseleave="onMouseLeave"
-    >
+    <div class="relative">
+      <button
+        type="button"
+        class="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white p-2 text-inaka-terra shadow-md outline-none transition hover:bg-inaka-cream focus-visible:ring-2 focus-visible:ring-inaka-gold sm:flex"
+        aria-label="Desplazar galería a la izquierda"
+        @click="scrollByCard(-1)"
+      >
+        <Icon name="lucide:chevron-left" class="h-5 w-5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        class="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white p-2 text-inaka-terra shadow-md outline-none transition hover:bg-inaka-cream focus-visible:ring-2 focus-visible:ring-inaka-gold sm:flex"
+        aria-label="Desplazar galería a la derecha"
+        @click="scrollByCard(1)"
+      >
+        <Icon name="lucide:chevron-right" class="h-5 w-5" aria-hidden="true" />
+      </button>
+      <div
+        ref="carouselRef"
+        tabindex="0"
+        role="region"
+        aria-label="Galería de momentos, desplazable con las flechas del teclado"
+        class="carousel flex overflow-x-auto gap-6 pb-6 px-6 outline-none md:px-12 select-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-inaka-gold"
+        :class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
+        @mousedown="onMouseDown"
+        @mousemove="onMouseMove"
+        @mouseup="onMouseUp"
+        @mouseleave="onMouseLeave"
+        @keydown.left.prevent="scrollByCard(-1)"
+        @keydown.right.prevent="scrollByCard(1)"
+      >
       <div
         v-for="item in gallery"
         :key="item.id"
@@ -57,10 +79,11 @@
         </p>
         <NuxtLink
           to="/configurador"
-          class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream transition-opacity hover:opacity-90"
+          class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
         >
           Diseñar el mío
         </NuxtLink>
+      </div>
       </div>
     </div>
 
@@ -132,7 +155,18 @@ function onMouseLeave() {
   launchMomentum()
 }
 
+function scrollByCard(direction: 1 | -1) {
+  if (!carouselRef.value) return
+  const card = carouselRef.value.querySelector<HTMLElement>(':scope > *')
+  const amount = (card?.offsetWidth ?? 300) + 24 // + gap-6
+  carouselRef.value.scrollBy({
+    left: amount * direction,
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+  })
+}
+
 function launchMomentum() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   if (!carouselRef.value || Math.abs(velocity) < MIN_VELOCITY) return
   const el = carouselRef.value
 

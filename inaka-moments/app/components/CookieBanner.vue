@@ -10,11 +10,11 @@
         <p class="flex-1 text-sm leading-relaxed text-inaka-cream/85">
           🍪 Esta web solo utiliza <strong>cookies esenciales</strong> para su funcionamiento
           (no usamos cookies publicitarias ni de rastreo). Más información en nuestra
-          <NuxtLink to="/politica-privacidad" class="font-semibold text-inaka-gold hover:underline">política de privacidad</NuxtLink>.
+          <NuxtLink to="/politica-privacidad" class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold">política de privacidad</NuxtLink>.
         </p>
         <button
           type="button"
-          class="shrink-0 rounded-md bg-inaka-gold px-6 py-2.5 text-sm font-semibold text-inaka-terra transition-opacity hover:opacity-90"
+          class="shrink-0 rounded-md bg-inaka-gold px-6 py-2.5 text-sm font-semibold text-inaka-terra outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-cream focus-visible:ring-offset-2 focus-visible:ring-offset-inaka-terra"
           @click="accept"
         >
           Entendido

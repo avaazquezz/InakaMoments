@@ -9,7 +9,25 @@
     <div v-if="pending" class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
     <AdminEmptyState v-else-if="(data ?? []).length === 0" title="Sin reservas de inventario" />
 
-    <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
+    <!-- Tarjetas (móvil/tablet) -->
+    <div v-else class="flex flex-col gap-3 md:hidden">
+      <div v-for="b in data" :key="b.id" class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude">
+        <div class="flex items-start justify-between gap-2">
+          <p class="font-semibold text-inaka-terra">{{ b.product?.name ?? '—' }}</p>
+          <AdminStatusBadge :status="b.deposit_status" kind="payment" />
+        </div>
+        <p class="text-xs text-inaka-terra/55">{{ b.date_from }} → {{ b.date_to }}</p>
+        <p class="text-xs text-inaka-terra/55">{{ b.event?.title ?? 'Sin evento vinculado' }}</p>
+        <div class="mt-1 flex items-center gap-3">
+          <button type="button" class="text-xs font-semibold text-inaka-gold hover:underline" @click="openEdit(b)">Editar</button>
+          <button type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="askDelete(b)">Borrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla (desktop) -->
+    <div v-if="!pending && (data ?? []).length" class="hidden overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude md:block">
+      <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr><th class="px-4 py-3">Producto</th><th class="px-4 py-3">Del</th><th class="px-4 py-3">Al</th><th class="px-4 py-3">Evento</th><th class="px-4 py-3">Fianza</th><th class="px-4 py-3" /></tr>
@@ -28,12 +46,13 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <Teleport to="body">
       <div v-if="editing" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="editing = null" />
-        <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">{{ editing.id ? 'Editar' : 'Nueva' }} reserva</h2>
           <form class="flex flex-col gap-3" @submit.prevent="save">
             <div class="flex flex-col gap-1.5">
@@ -43,7 +62,7 @@
                 <option v-for="p in rentalProducts" :key="p.id" :value="p.id">{{ p.name }}</option>
               </select>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-semibold text-inaka-terra/70">Fecha de inicio</label>
                 <input v-model="editing.date_from" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
@@ -60,7 +79,7 @@
                 <option v-for="ev in events" :key="ev.id" :value="ev.id">{{ ev.title }} ({{ ev.event_date }})</option>
               </select>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-semibold text-inaka-terra/70">Fianza (€)</label>
                 <input v-model.number="editing.deposit_amount" type="number" min="0" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />

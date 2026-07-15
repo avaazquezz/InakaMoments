@@ -39,7 +39,7 @@
             <img :src="storagePublicUrl('gallery', img.storage_path)" class="h-full w-full object-cover" :alt="img.alt ?? ''" />
             <span v-if="album.cover_image_id === img.id" class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream">Portada</span>
             <span v-if="img.featured" class="absolute right-1.5 top-1.5 rounded bg-inaka-gold px-1.5 py-0.5 text-[10px] font-bold text-inaka-terra">★</span>
-            <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-inaka-terra/0 p-1 opacity-0 transition-all group-hover:bg-inaka-terra/60 group-hover:opacity-100">
+            <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-inaka-terra/60 p-1 transition-all md:bg-inaka-terra/0 md:opacity-0 md:group-hover:bg-inaka-terra/60 md:group-hover:opacity-100 md:focus-within:opacity-100">
               <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="setCover(img.id)">Portada</button>
               <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="toggleFeatured(img)">{{ img.featured ? 'Quitar ★' : 'Destacar' }}</button>
               <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-600" @click="imageToDelete = img.id">Borrar</button>

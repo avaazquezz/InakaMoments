@@ -35,7 +35,7 @@
     <Teleport to="body">
       <div v-if="creating" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="creating = false" />
-        <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">Nuevo cliente</h2>
           <form class="flex flex-col gap-3" @submit.prevent="createLead">
             <input v-model="form.nombre" type="text" placeholder="Nombre" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />

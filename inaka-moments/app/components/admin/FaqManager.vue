@@ -24,7 +24,7 @@
     <Teleport to="body">
       <div v-if="editing" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="editing = null" />
-        <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">{{ editing.id ? 'Editar' : 'Nueva' }} pregunta</h2>
           <form class="flex flex-col gap-4" @submit.prevent="save">
             <div class="flex flex-col gap-1.5">
@@ -35,7 +35,7 @@
               <label class="text-sm font-semibold text-inaka-terra">Respuesta</label>
               <textarea v-model="editing.answer" rows="4" required class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-semibold text-inaka-terra">Categoría</label>
                 <input v-model="editing.category" type="text" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />

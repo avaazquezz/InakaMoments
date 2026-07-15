@@ -145,7 +145,7 @@
     <Teleport to="body">
       <div v-if="accepting" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="accepting = false" />
-        <div class="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">Aceptar presupuesto</h2>
           <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1.5">

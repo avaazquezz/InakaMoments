@@ -9,7 +9,9 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/supabase',
     '@nuxt/image',
+    '@nuxt/icon',
     '@nuxtjs/turnstile',
+    '@vite-pwa/nuxt',
     [
       '@nuxtjs/sitemap',
       {
@@ -38,6 +40,104 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  css: [
+    '@fontsource/fraunces/400.css',
+    '@fontsource/fraunces/500.css',
+    '@fontsource/fraunces/600.css',
+    '@fontsource/fraunces/700.css',
+    '@fontsource/inter/400.css',
+    '@fontsource/inter/500.css',
+    '@fontsource/inter/600.css',
+    '@fontsource/inter/700.css',
+  ],
+  icon: {
+    // Una sola colección explícita (no el paquete genérico @iconify/json,
+    // que arrastra miles de colecciones) — mantiene el bundle acotado.
+    serverBundle: { collections: ['lucide'] },
+  },
+  // PWA de la web pública. El manifest se inyecta a mano con <NuxtPwaManifest/>
+  // (el módulo NO lo inyecta solo) — así el panel /admin puede usar su propio
+  // manifest estático (`public/admin-manifest.webmanifest`) sin colisionar,
+  // ver app/layouts/default.vue y app/layouts/admin.vue.
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Inaka Moments',
+      short_name: 'Inaka Moments',
+      description: 'Decoración de eventos con globos: catálogo, packs y presupuesto al instante.',
+      lang: 'es',
+      theme_color: '#8B3A2A',
+      background_color: '#FAFAF8',
+      display: 'standalone',
+      scope: '/',
+      start_url: '/',
+      icons: [
+        { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        { src: '/icons/icon-maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+        { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ],
+    },
+    workbox: {
+      // Amplía los patrones por defecto (js/css/html) para precachear también
+      // iconos y fuentes autoalojadas.
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+      runtimeCaching: [
+        // Datos de negocio del panel: nunca servir nada obsoleto sin avisar.
+        {
+          urlPattern: ({ url }) => url.pathname.startsWith('/api/admin/'),
+          handler: 'NetworkOnly',
+        },
+        // Resto de la API pública (quotes, resena, geocode): red primero,
+        // con fallback de caché muy corto si no hay conexión.
+        {
+          urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            networkTimeoutSeconds: 6,
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
+        // Páginas públicas navegadas: quedan disponibles offline si ya se
+        // visitaron. El panel /admin queda fuera a propósito (depende de
+        // sesión + datos frescos, no de una experiencia offline real).
+        {
+          urlPattern: ({ request, url }) => request.mode === 'navigate' && !url.pathname.startsWith('/admin'),
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'pages-cache',
+            networkTimeoutSeconds: 6,
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
+        {
+          urlPattern: ({ request }) => request.destination === 'image',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'images-cache',
+            expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
+        {
+          urlPattern: ({ request }) => request.destination === 'font',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'fonts-cache',
+            expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
+      ],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: false,
+    },
+  },
   vite: {
     // @emailjs/browser solo lo importa configurador.vue; sin esto, Vite lo
     // descubre en caliente la primera vez y fuerza un reload completo de
@@ -102,6 +202,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      htmlAttrs: { lang: 'es' },
       title: 'Inaka Moments — Decoración de eventos con alma',
       meta: [
         { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
@@ -109,6 +210,11 @@ export default defineNuxtConfig({
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://inakamoments.com' },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'theme-color', content: '#8B3A2A' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'apple-mobile-web-app-title', content: 'Inaka Moments' },
       ],
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },

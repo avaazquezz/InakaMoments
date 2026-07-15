@@ -19,7 +19,7 @@
         v-for="cell in grid"
         :key="cell.iso"
         type="button"
-        class="flex min-h-[84px] flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-all duration-150"
+        class="flex min-h-[56px] flex-col items-start gap-1 rounded-lg border p-1.5 text-left transition-all duration-150 sm:min-h-[84px]"
         :class="[
           cell.inMonth ? 'border-inaka-beige/70 bg-white hover:border-inaka-terra/40 hover:bg-inaka-nude/40 hover:shadow-sm' : 'border-transparent bg-inaka-cream/60 text-inaka-terra/30 hover:bg-inaka-cream',
           cell.iso === todayIso ? 'bg-inaka-gold/10 ring-2 ring-inaka-terra' : '',

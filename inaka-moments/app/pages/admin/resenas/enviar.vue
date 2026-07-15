@@ -23,6 +23,7 @@
     <AdminEmptyState v-else-if="(data ?? []).length === 0" title="No hay clientes pendientes" message="Todos los eventos pasados ya tienen una solicitud de reseña enviada o programada." />
 
     <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
+      <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr>
@@ -47,6 +48,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </template>

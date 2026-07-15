@@ -74,7 +74,7 @@
         <input v-model="form.is_rental" type="checkbox" class="h-4 w-4 accent-inaka-terra" />
         <span class="text-sm font-semibold text-inaka-terra">Es alquiler de estructura</span>
       </label>
-      <div v-if="form.is_rental" class="mt-3 grid grid-cols-2 gap-4">
+      <div v-if="form.is_rental" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div class="flex flex-col gap-1.5">
           <label class="text-xs font-medium text-inaka-terra/70">Fianza (€)</label>
           <input v-model.number="form.deposit" type="number" min="0" step="1" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />

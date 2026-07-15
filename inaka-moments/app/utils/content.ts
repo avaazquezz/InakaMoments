@@ -12,22 +12,22 @@ export interface ProcesoPaso {
  */
 export const PROCESO_PASOS: ProcesoPaso[] = [
   {
-    icono: '🛍️',
+    icono: 'lucide:shopping-bag',
     titulo: 'Elige lo que te gusta',
     descripcion: 'Explora el catálogo y los packs. Cada elemento tiene su precio para que combines a tu gusto: arcos, columnas, letreros, candy bar…',
   },
   {
-    icono: '🧮',
+    icono: 'lucide:calculator',
     titulo: 'Configura tu presupuesto',
     descripcion: 'Móntalo en el configurador y ve el precio estimado al instante, o cuéntanos tu idea. Te respondemos en menos de 24 h.',
   },
   {
-    icono: '📅',
+    icono: 'lucide:calendar-check',
     titulo: 'Confirma tu fecha',
     descripcion: 'Cuando aceptes la propuesta, bloqueamos tu fecha en la agenda. El pago se realiza al momento de agendar.',
   },
   {
-    icono: '🎈',
+    icono: 'lucide:party-popper',
     titulo: 'Nosotros montamos',
     descripcion: 'El día del evento llegamos, montamos y lo dejamos todo perfecto. Tú solo tienes que disfrutar del momento.',
   },

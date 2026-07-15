@@ -5,20 +5,20 @@
         type="button"
         :disabled="!canGoPrev"
         aria-label="Mes anterior"
-        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 transition-colors hover:bg-inaka-nude/50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 outline-none transition-colors hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         @click="goPrev"
       >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        <Icon name="lucide:chevron-left" class="h-4 w-4" aria-hidden="true" />
       </button>
       <p class="text-sm font-semibold capitalize text-inaka-terra">{{ monthLabel }}</p>
       <button
         type="button"
         :disabled="!canGoNext"
         aria-label="Mes siguiente"
-        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 transition-colors hover:bg-inaka-nude/50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 outline-none transition-colors hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         @click="goNext"
       >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+        <Icon name="lucide:chevron-right" class="h-4 w-4" aria-hidden="true" />
       </button>
     </div>
 
@@ -36,7 +36,7 @@
         :aria-selected="cell.iso === modelValue"
         :aria-current="cell.iso === todayIso ? 'date' : undefined"
         :aria-label="fullLabel(cell.date)"
-        class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition-colors"
+        class="flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inaka-gold"
         :class="dayClasses(cell)"
         @click="selectDay(cell)"
       >
