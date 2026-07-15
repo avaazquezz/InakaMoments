@@ -6,6 +6,18 @@ import type { Product, Pack, Occasion, Faq, Testimonial } from '~/utils/catalog'
  * RLS garantiza que solo llega contenido publicado/activo.
  */
 
+/**
+ * Por defecto, useAsyncData reutiliza indefinidamente el payload de una
+ * key ya usada (incluida una navegación cliente de vuelta a una página ya
+ * visitada), así que un cambio hecho en el admin no se vería hasta recargar
+ * la pestaña entera. Reutilizamos el payload SOLO durante la hidratación
+ * inicial (evita duplicar la petición que el servidor ya hizo) y forzamos
+ * refetch en cualquier otra navegación.
+ */
+function alwaysFreshAfterHydration(key: string, nuxtApp: any) {
+  return nuxtApp.isHydrating ? nuxtApp.payload.data[key] : undefined
+}
+
 /** Imagen de galería con su álbum (solo álbumes publicados vía RLS). */
 export interface GalleryItem {
   id: string
@@ -29,7 +41,7 @@ export function useProducts() {
       .from('products').select('*').eq('active', true).order('sort_order')
     if (error) throw error
     return data as Product[]
-  }, { default: () => [] as Product[] })
+  }, { default: () => [] as Product[], getCachedData: alwaysFreshAfterHydration })
 }
 
 export function useProduct(slug: string) {
@@ -39,7 +51,7 @@ export function useProduct(slug: string) {
       .from('products').select('*').eq('slug', slug).eq('active', true).maybeSingle()
     if (error) throw error
     return data as Product | null
-  })
+  }, { getCachedData: alwaysFreshAfterHydration })
 }
 
 export function usePacks() {
@@ -49,7 +61,7 @@ export function usePacks() {
       .from('packs').select('*').eq('active', true).order('sort_order')
     if (error) throw error
     return data as Pack[]
-  }, { default: () => [] as Pack[] })
+  }, { default: () => [] as Pack[], getCachedData: alwaysFreshAfterHydration })
 }
 
 export function usePack(slug: string) {
@@ -59,7 +71,7 @@ export function usePack(slug: string) {
       .from('packs').select('*').eq('slug', slug).eq('active', true).maybeSingle()
     if (error) throw error
     return data as Pack | null
-  })
+  }, { getCachedData: alwaysFreshAfterHydration })
 }
 
 export function useOccasions() {
@@ -69,7 +81,7 @@ export function useOccasions() {
       .from('occasions').select('*').eq('published', true).order('sort_order')
     if (error) throw error
     return data as Occasion[]
-  }, { default: () => [] as Occasion[] })
+  }, { default: () => [] as Occasion[], getCachedData: alwaysFreshAfterHydration })
 }
 
 export function useOccasion(slug: string) {
@@ -79,7 +91,7 @@ export function useOccasion(slug: string) {
       .from('occasions').select('*').eq('slug', slug).eq('published', true).maybeSingle()
     if (error) throw error
     return data as Occasion | null
-  })
+  }, { getCachedData: alwaysFreshAfterHydration })
 }
 
 export function useFaqs() {
@@ -89,7 +101,7 @@ export function useFaqs() {
       .from('faqs').select('*').eq('published', true).order('sort_order')
     if (error) throw error
     return data as Faq[]
-  }, { default: () => [] as Faq[] })
+  }, { default: () => [] as Faq[], getCachedData: alwaysFreshAfterHydration })
 }
 
 export function useTestimonials() {
@@ -99,7 +111,7 @@ export function useTestimonials() {
       .from('testimonials').select('*').eq('published', true).order('sort_order')
     if (error) throw error
     return data as Testimonial[]
-  }, { default: () => [] as Testimonial[] })
+  }, { default: () => [] as Testimonial[], getCachedData: alwaysFreshAfterHydration })
 }
 
 /** Todas las imágenes de la galería (álbumes publicados). */
@@ -112,7 +124,7 @@ export function useGalleryImages() {
       .order('sort_order')
     if (error) throw error
     return (data ?? []) as unknown as GalleryItem[]
-  }, { default: () => [] as GalleryItem[] })
+  }, { default: () => [] as GalleryItem[], getCachedData: alwaysFreshAfterHydration })
 }
 
 /** Imágenes destacadas (carrusel "momentos reales" del home). */
@@ -127,7 +139,7 @@ export function useFeaturedImages() {
       .limit(10)
     if (error) throw error
     return (data ?? []) as unknown as GalleryItem[]
-  }, { default: () => [] as GalleryItem[] })
+  }, { default: () => [] as GalleryItem[], getCachedData: alwaysFreshAfterHydration })
 }
 
 /**
@@ -147,5 +159,5 @@ export function useSiteSection<T extends Record<string, unknown>>(section: strin
       console.error(`[site_content:${section}]`, err)
       return defaults
     }
-  }, { default: () => defaults })
+  }, { default: () => defaults, getCachedData: alwaysFreshAfterHydration })
 }

@@ -13,13 +13,7 @@ const props = defineProps<{
 }>()
 
 const COLORS: Record<Kind, Record<string, string>> = {
-  lead: {
-    nuevo: 'bg-inaka-gold/20 text-inaka-terra',
-    contactado: 'bg-inaka-nude text-inaka-terra',
-    presupuestado: 'bg-inaka-mauve/20 text-inaka-terra',
-    ganado: 'bg-green-100 text-green-700',
-    perdido: 'bg-red-100 text-red-700',
-  },
+  lead: Object.fromEntries(LEAD_STATUSES.map(s => [s, LEAD_STATUS_STYLES[s].chip])),
   quote: {
     borrador: 'bg-gray-100 text-gray-600',
     enviado: 'bg-inaka-gold/20 text-inaka-terra',
@@ -27,12 +21,7 @@ const COLORS: Record<Kind, Record<string, string>> = {
     rechazado: 'bg-red-100 text-red-700',
     caducado: 'bg-gray-100 text-gray-500',
   },
-  event: {
-    tentativo: 'bg-inaka-gold/20 text-inaka-terra',
-    confirmado: 'bg-green-100 text-green-700',
-    completado: 'bg-gray-100 text-gray-600',
-    cancelado: 'bg-red-100 text-red-700',
-  },
+  event: Object.fromEntries(EVENT_STATUSES.map(s => [s, EVENT_STATUS_STYLES[s].chip])),
   payment: {
     pendiente: 'bg-inaka-gold/20 text-inaka-terra',
     pagado: 'bg-green-100 text-green-700',
@@ -41,6 +30,11 @@ const COLORS: Record<Kind, Record<string, string>> = {
   },
 }
 
+const LABELS: Partial<Record<Kind, Record<string, string>>> = {
+  event: EVENT_STATUS_LABELS,
+  lead: LEAD_STATUS_LABELS,
+}
+
 const colorClass = computed(() => COLORS[props.kind][props.status] ?? 'bg-gray-100 text-gray-600')
-const label = computed(() => props.status.charAt(0).toUpperCase() + props.status.slice(1))
+const label = computed(() => LABELS[props.kind]?.[props.status] ?? (props.status.charAt(0).toUpperCase() + props.status.slice(1)))
 </script>

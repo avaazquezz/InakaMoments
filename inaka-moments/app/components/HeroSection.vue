@@ -29,7 +29,8 @@
 
             <a
               :href="catalogPdfUrl"
-              download="Catalogo-InakaMoments-2026.pdf"
+              target="_blank"
+              rel="noopener"
               class="rounded-md border border-inaka-terra px-6 py-3 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
             >
               {{ hero.cta_secundario }}
@@ -66,6 +67,8 @@
 </template>
 
 <script setup lang="ts">
+import { CATALOG_PDF_PATH } from '~~/shared/catalogPdf'
+
 // Textos editables por la dueña (site_content.hero); defaults = copy actual
 const { data: hero } = useSiteSection('hero', {
   tagline: 'Eventos con alma',
@@ -76,7 +79,7 @@ const { data: hero } = useSiteSection('hero', {
   cta_secundario: 'Descargar Catálogo',
 })
 
-const catalogPdfUrl = storagePublicUrl('catalog', 'catalogo-inaka-moments-2026.pdf')
+const catalogPdfUrl = storagePublicUrl('catalog', CATALOG_PDF_PATH)
 
 const logoCol        = ref<HTMLDivElement | null>(null)
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)

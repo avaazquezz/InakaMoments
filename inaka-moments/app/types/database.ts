@@ -721,42 +721,65 @@ export type Database = {
       }
       testimonials: {
         Row: {
-          author: string
+          author: string | null
+          client_email: string | null
           created_at: string
           event_type: Database["public"]["Enums"]["event_type"] | null
           id: string
           published: boolean
-          quote: string
+          quote: string | null
+          quote_id: string | null
           rating: number | null
+          requested_at: string | null
+          responded_at: string | null
           sort_order: number
           source: string | null
+          token: string | null
           updated_at: string
         }
         Insert: {
-          author: string
+          author?: string | null
+          client_email?: string | null
           created_at?: string
           event_type?: Database["public"]["Enums"]["event_type"] | null
           id?: string
           published?: boolean
-          quote: string
+          quote?: string | null
+          quote_id?: string | null
           rating?: number | null
+          requested_at?: string | null
+          responded_at?: string | null
           sort_order?: number
           source?: string | null
+          token?: string | null
           updated_at?: string
         }
         Update: {
-          author?: string
+          author?: string | null
+          client_email?: string | null
           created_at?: string
           event_type?: Database["public"]["Enums"]["event_type"] | null
           id?: string
           published?: boolean
-          quote?: string
+          quote?: string | null
+          quote_id?: string | null
           rating?: number | null
+          requested_at?: string | null
+          responded_at?: string | null
           sort_order?: number
           source?: string | null
+          token?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: true
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

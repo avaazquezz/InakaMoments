@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-5">
     <div class="flex items-center justify-end">
       <button type="button" class="rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="creating = true">
-        + Nuevo lead
+        + Nuevo cliente
       </button>
     </div>
 
@@ -36,7 +36,7 @@
       <div v-if="creating" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="creating = false" />
         <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-          <h2 class="mb-4 text-lg font-bold text-inaka-terra">Nuevo lead</h2>
+          <h2 class="mb-4 text-lg font-bold text-inaka-terra">Nuevo cliente</h2>
           <form class="flex flex-col gap-3" @submit.prevent="createLead">
             <input v-model="form.nombre" type="text" placeholder="Nombre" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             <input v-model="form.email" type="email" placeholder="Email" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
@@ -55,20 +55,14 @@
 
 <script setup lang="ts">
 definePageMeta({ layout: 'admin' })
-useHead({ title: 'Leads — Panel Inaka Moments' })
+useHead({ title: 'Clientes — Panel Inaka Moments' })
 
 interface AdminLead { id: string, nombre: string, email: string, tipo: string | null, status: string }
 
 const { data, pending, refresh } = await useFetch<AdminLead[]>('/api/admin/leads')
 const toast = useToast()
 
-const columns = [
-  { status: 'nuevo', label: 'Nuevo' },
-  { status: 'contactado', label: 'Contactado' },
-  { status: 'presupuestado', label: 'Presupuestado' },
-  { status: 'ganado', label: 'Ganado' },
-  { status: 'perdido', label: 'Perdido' },
-] as const
+const columns = LEAD_STATUSES.map(status => ({ status, label: LEAD_STATUS_LABELS[status] }))
 
 function leadsByStatus(status: string) {
   return (data.value ?? []).filter(l => l.status === status)
@@ -92,7 +86,7 @@ async function createLead() {
   submitting.value = true
   try {
     await $fetch('/api/admin/leads', { method: 'POST', body: form })
-    toast.success('Lead creado.')
+    toast.success('Cliente creado.')
     creating.value = false
     Object.assign(form, { nombre: '', email: '', telefono: '', tipo: '' })
     await refresh()

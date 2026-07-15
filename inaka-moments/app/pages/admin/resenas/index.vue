@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex items-center justify-end">
+    <div class="flex items-center justify-end gap-3">
+      <NuxtLink to="/admin/resenas/enviar" class="rounded-xl border border-inaka-beige px-4 py-2.5 text-sm font-semibold text-inaka-terra hover:bg-inaka-nude/40">
+        Enviar solicitudes
+      </NuxtLink>
       <button type="button" class="rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="openNew">
         + Nueva reseña
       </button>
@@ -17,8 +20,11 @@
             <span v-if="t.rating" class="text-xs text-inaka-gold">{{ '★'.repeat(t.rating) }}{{ '☆'.repeat(5 - t.rating) }}</span>
           </div>
           <p class="mt-1 line-clamp-2 text-sm text-inaka-terra/70">{{ t.quote }}</p>
-          <span class="mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold" :class="t.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
-            {{ t.published ? 'Publicada' : 'Oculta' }}
+          <span
+            class="mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            :class="t.published ? 'bg-green-100 text-green-700' : (t.responded_at ? 'bg-inaka-gold/20 text-inaka-terra' : 'bg-gray-100 text-gray-500')"
+          >
+            {{ t.published ? 'Publicada' : (t.responded_at ? 'Pendiente de aprobar' : 'Oculta') }}
           </span>
         </div>
         <div class="flex shrink-0 flex-col items-end gap-2">
@@ -100,6 +106,7 @@ interface Testimonial {
   source: string | null
   published: boolean
   sort_order: number
+  responded_at: string | null
 }
 
 const { data, pending, refresh } = await useFetch<Testimonial[]>('/api/admin/testimonials')

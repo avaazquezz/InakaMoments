@@ -7,6 +7,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
         <div class="flex items-center gap-3">
           <p class="text-lg font-bold text-inaka-terra">{{ quote.client_name ?? 'Sin nombre' }}</p>
+          <span v-if="quote.event_type" class="text-sm text-inaka-terra/50">{{ EVENT_TYPE_LABELS[quote.event_type] }}</span>
           <AdminStatusBadge :status="quote.status" kind="quote" />
         </div>
         <div class="flex items-center gap-2">
@@ -171,6 +172,7 @@
 
 <script setup lang="ts">
 import { round2 } from '~~/shared/configurator'
+import { EVENT_TYPE_LABELS, type EventType } from '~~/shared/eventTypes'
 
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Presupuesto — Panel Inaka Moments' })
@@ -179,7 +181,7 @@ interface QuoteItem { id: string, product_id: string | null, pack_id: string | n
 interface QuoteAdjustment { key: string, label: string, amount: number | null, note?: string }
 interface QuoteDetail {
   id: string, client_name: string | null, client_email: string | null, client_phone: string | null,
-  event_type: string | null, event_date: string | null, location: string | null, notes: string | null,
+  event_type: EventType | null, event_date: string | null, location: string | null, notes: string | null,
   status: string, subtotal: number, adjustments: QuoteAdjustment[], total: number, deposit_amount: number | null,
   deposit_status: string, items: QuoteItem[]
 }

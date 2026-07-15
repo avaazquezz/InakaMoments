@@ -17,21 +17,6 @@
     <!-- FAQs -->
     <AdminFaqManager v-if="activeTab === 'faqs'" />
 
-    <!-- Ocasiones -->
-    <div v-if="activeTab === 'ocasiones'" class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
-      <h3 class="mb-4 text-sm font-bold text-inaka-terra">Ocasiones (páginas SEO)</h3>
-      <div v-if="pendingOccasions" class="h-32 animate-pulse rounded-xl bg-inaka-cream" />
-      <ul v-else class="flex flex-col divide-y divide-inaka-nude/70">
-        <li v-for="oc in occasions" :key="oc.slug" class="flex items-center justify-between gap-3 py-3">
-          <div>
-            <p class="text-sm font-semibold text-inaka-terra">{{ oc.title }}</p>
-            <p class="text-xs text-inaka-terra/50">/ocasiones/{{ oc.slug }} · {{ oc.published ? 'Publicada' : 'Oculta' }}</p>
-          </div>
-          <NuxtLink :to="`/admin/contenido/ocasiones/${oc.slug}`" class="text-xs font-semibold text-inaka-gold hover:underline">Editar</NuxtLink>
-        </li>
-      </ul>
-    </div>
-
     <!-- Reglas de negocio -->
     <AdminSiteContentEditor
       v-if="activeTab === 'reglas'"
@@ -54,35 +39,59 @@
     <!-- PDF del catálogo -->
     <div v-if="activeTab === 'pdf'" class="max-w-md rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
       <h3 class="mb-2 text-sm font-bold text-inaka-terra">PDF del catálogo</h3>
-      <p class="mb-4 text-xs text-inaka-terra/50">Sustituye el catálogo descargable. El enlace público no cambia.</p>
-      <label class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-inaka-beige px-6 py-10 text-inaka-terra/50 hover:border-inaka-terra/40">
-        <svg v-if="!uploadingPdf" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-        <svg v-else class="h-6 w-6 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-        <span class="text-xs font-medium">{{ uploadingPdf ? 'Subiendo…' : 'Subir nuevo PDF' }}</span>
-        <input type="file" accept="application/pdf" class="hidden" :disabled="uploadingPdf" @change="onPdfSelect" />
-      </label>
+      <p class="mb-4 text-xs text-inaka-terra/50">El PDF que se descarga desde la web. El enlace público no cambia al reemplazarlo.</p>
+
+      <div v-if="pendingPdfStatus" class="h-16 animate-pulse rounded-xl bg-inaka-cream" />
+      <template v-else>
+        <div v-if="pdfStatus?.exists" class="mb-4 flex items-center justify-between gap-3 rounded-xl bg-inaka-cream px-4 py-3">
+          <div class="min-w-0">
+            <a :href="catalogPdfUrl" target="_blank" rel="noopener" class="text-sm font-semibold text-inaka-gold hover:underline">Ver catálogo actual</a>
+            <p v-if="pdfStatus.updatedAt" class="mt-0.5 text-xs text-inaka-terra/50">Actualizado el {{ formatFecha(pdfStatus.updatedAt) }}</p>
+          </div>
+          <button type="button" class="shrink-0 text-xs font-semibold text-red-500 hover:underline" @click="confirmingDeletePdf = true">Borrar</button>
+        </div>
+        <p v-else class="mb-4 text-xs text-inaka-terra/50">Sin catálogo subido todavía.</p>
+
+        <label class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-inaka-beige px-6 py-10 text-inaka-terra/50 hover:border-inaka-terra/40">
+          <svg v-if="!uploadingPdf" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+          <svg v-else class="h-6 w-6 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+          <span class="text-xs font-medium">{{ uploadingPdf ? 'Subiendo…' : (pdfStatus?.exists ? 'Subir y reemplazar' : 'Subir PDF') }}</span>
+          <input type="file" accept="application/pdf" class="hidden" :disabled="uploadingPdf" @change="onPdfSelect" />
+        </label>
+      </template>
     </div>
+
+    <AdminConfirmDialog
+      :open="confirmingDeletePdf"
+      title="¿Borrar el catálogo actual?"
+      message="La web se quedará sin PDF descargable hasta que subas uno nuevo."
+      danger
+      @cancel="confirmingDeletePdf = false"
+      @confirm="deletePdf"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { CATALOG_PDF_PATH } from '~~/shared/catalogPdf'
+
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Contenido y ajustes — Panel Inaka Moments' })
 
 const tabs = [
   { id: 'faqs', label: 'FAQs' },
-  { id: 'ocasiones', label: 'Ocasiones' },
   { id: 'reglas', label: 'Reglas de negocio' },
   { id: 'pdf', label: 'PDF catálogo' },
 ] as const
 
 const activeTab = ref<(typeof tabs)[number]['id']>('faqs')
 
-interface AdminOccasion { slug: string, title: string, published: boolean }
-const { data: occasions, pending: pendingOccasions } = await useFetch<AdminOccasion[]>('/api/admin/occasions')
-
 const toast = useToast()
 const uploadingPdf = ref(false)
+const catalogPdfUrl = storagePublicUrl('catalog', CATALOG_PDF_PATH)
+
+interface CatalogPdfStatus { exists: boolean, updatedAt: string | null }
+const { data: pdfStatus, pending: pendingPdfStatus, refresh: refreshPdfStatus } = await useFetch<CatalogPdfStatus>('/api/admin/catalog-pdf')
 
 async function onPdfSelect(e: Event) {
   const input = e.target as HTMLInputElement
@@ -96,6 +105,7 @@ async function onPdfSelect(e: Event) {
     form.append('file', file)
     await $fetch('/api/admin/catalog-pdf', { method: 'POST', body: form })
     toast.success('PDF actualizado.')
+    await refreshPdfStatus()
   }
   catch (err: any) {
     toast.error(err?.data?.message ?? 'No se ha podido subir el PDF.')
@@ -103,5 +113,24 @@ async function onPdfSelect(e: Event) {
   finally {
     uploadingPdf.value = false
   }
+}
+
+const confirmingDeletePdf = ref(false)
+async function deletePdf() {
+  try {
+    await $fetch('/api/admin/catalog-pdf', { method: 'DELETE' })
+    toast.success('Catálogo borrado.')
+    await refreshPdfStatus()
+  }
+  catch (err: any) {
+    toast.error(err?.data?.message ?? 'No se ha podido borrar el catálogo.')
+  }
+  finally {
+    confirmingDeletePdf.value = false
+  }
+}
+
+function formatFecha(iso: string): string {
+  return new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso))
 }
 </script>

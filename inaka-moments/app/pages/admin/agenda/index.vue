@@ -49,7 +49,7 @@
             <div class="grid grid-cols-2 gap-3">
               <input v-model="editing.event_date" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
               <select v-model="editing.status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-                <option v-for="s in ['tentativo', 'confirmado', 'completado', 'cancelado']" :key="s" :value="s">{{ s }}</option>
+                <option v-for="s in EVENT_STATUSES" :key="s" :value="s">{{ EVENT_STATUS_LABELS[s] }}</option>
               </select>
             </div>
             <input v-model="editing.location" type="text" placeholder="Ubicación (opcional)" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
