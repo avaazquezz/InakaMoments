@@ -9,15 +9,15 @@
         </button>
       </span>
     </div>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
       <input
         v-model="draft"
         type="text"
         :placeholder="placeholder"
-        class="flex-1 rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
         @keydown.enter.prevent="add"
       />
-      <button type="button" class="rounded-lg border border-inaka-beige px-3 py-2 text-xs font-semibold text-inaka-terra hover:bg-inaka-nude/40" @click="add">Añadir</button>
+      <button type="button" class="shrink-0 rounded-lg border border-inaka-beige px-3 py-2 text-xs font-semibold text-inaka-terra hover:bg-inaka-nude/40" @click="add">Añadir</button>
     </div>
   </div>
 </template>

@@ -1,8 +1,8 @@
 <template>
   <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
       <h3 class="text-sm font-bold text-inaka-terra">Preguntas frecuentes</h3>
-      <button type="button" class="rounded-lg bg-inaka-terra px-3 py-1.5 text-xs font-semibold text-inaka-cream hover:opacity-90" @click="openNew">
+      <button type="button" class="shrink-0 rounded-lg bg-inaka-terra px-3 py-1.5 text-xs font-semibold text-inaka-cream hover:opacity-90" @click="openNew">
         + Añadir
       </button>
     </div>
@@ -49,7 +49,7 @@
               <input v-model="editing.published" type="checkbox" class="h-4 w-4 accent-inaka-terra" />
               <span class="text-sm text-inaka-terra">Publicada</span>
             </label>
-            <div class="mt-2 flex justify-end gap-3">
+            <div class="mt-2 flex flex-wrap justify-end gap-3">
               <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="editing = null">Cancelar</button>
               <button type="submit" :disabled="saving" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90">Guardar</button>
             </div>

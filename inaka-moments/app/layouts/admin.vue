@@ -37,7 +37,7 @@
     </aside>
 
     <!-- Contenido -->
-    <div class="flex min-h-screen flex-1 flex-col">
+    <div class="flex min-h-screen min-w-0 flex-1 flex-col">
       <!-- Cabecera -->
       <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-inaka-beige bg-white px-4 sm:px-6">
         <div class="flex items-center gap-3">

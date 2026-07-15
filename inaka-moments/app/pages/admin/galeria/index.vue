@@ -43,7 +43,7 @@
               <label class="text-sm font-semibold text-inaka-terra">Fecha (opcional)</label>
               <input v-model="form.event_date" type="date" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>
-            <div class="mt-2 flex justify-end gap-3">
+            <div class="mt-2 flex flex-wrap justify-end gap-3">
               <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="creating = false">Cancelar</button>
               <button type="submit" :disabled="submitting" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90">Crear</button>
             </div>

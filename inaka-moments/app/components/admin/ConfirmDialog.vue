@@ -6,7 +6,7 @@
         <div class="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="text-lg font-bold text-inaka-terra">{{ title }}</h2>
           <p v-if="message" class="mt-2 text-sm text-inaka-terra/70">{{ message }}</p>
-          <div class="mt-6 flex justify-end gap-3">
+          <div class="mt-6 flex flex-wrap justify-end gap-3">
             <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 transition-colors hover:bg-inaka-nude/50" @click="$emit('cancel')">
               {{ cancelLabel ?? 'Cancelar' }}
             </button>

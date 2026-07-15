@@ -10,7 +10,7 @@
           <span v-if="quote.event_type" class="text-sm text-inaka-terra/50">{{ EVENT_TYPE_LABELS[quote.event_type] }}</span>
           <AdminStatusBadge :status="quote.status" kind="quote" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <button type="button" class="rounded-lg border border-inaka-beige px-3 py-1.5 text-xs font-semibold text-inaka-terra hover:bg-inaka-nude/40" @click="sendToClient">Reenviar email</button>
           <button v-if="quote.status !== 'aceptado'" type="button" class="rounded-lg bg-inaka-terra px-3 py-1.5 text-xs font-semibold text-inaka-cream hover:opacity-90" @click="openAccept">Aceptar</button>
           <button v-if="quote.status !== 'aceptado'" type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:underline" @click="confirmingDelete = true">Borrar</button>
@@ -89,8 +89,8 @@
 
         <ul v-if="!editingItems" class="flex flex-col divide-y divide-inaka-nude/70">
           <li v-for="it in quote.items" :key="it.id" class="flex items-center justify-between gap-3 py-2 text-sm">
-            <span class="text-inaka-terra">{{ it.label }} × {{ it.qty }}</span>
-            <span class="font-semibold text-inaka-terra">{{ it.line_total != null ? formatEUR(it.line_total) : 'A consultar' }}</span>
+            <span class="min-w-0 truncate text-inaka-terra">{{ it.label }} × {{ it.qty }}</span>
+            <span class="shrink-0 font-semibold text-inaka-terra">{{ it.line_total != null ? formatEUR(it.line_total) : 'A consultar' }}</span>
           </li>
         </ul>
 
@@ -157,7 +157,7 @@
               <p class="mt-0.5 text-xs text-inaka-terra/50">Se calcula sola según el % fijado en Contenido → Reglas de negocio.</p>
             </div>
             <p v-if="acceptError" class="text-xs text-red-500">{{ acceptError }}</p>
-            <div class="mt-2 flex justify-end gap-3">
+            <div class="mt-2 flex flex-wrap justify-end gap-3">
               <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="accepting = false">Cancelar</button>
               <button type="button" :disabled="acceptSubmitting" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="confirmAccept">Confirmar</button>
             </div>

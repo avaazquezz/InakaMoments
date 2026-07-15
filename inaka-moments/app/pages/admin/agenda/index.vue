@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex items-center justify-between gap-3">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex gap-2">
         <button type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold" :class="view === 'calendario' ? 'bg-inaka-terra text-inaka-cream' : 'bg-inaka-nude/60 text-inaka-terra/70'" @click="view = 'calendario'">Calendario</button>
         <button type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold" :class="view === 'lista' ? 'bg-inaka-terra text-inaka-cream' : 'bg-inaka-nude/60 text-inaka-terra/70'" @click="view = 'lista'">Lista</button>
       </div>
-      <button type="button" class="rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="openNew()">
+      <button type="button" class="shrink-0 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="openNew()">
         + Nuevo evento
       </button>
     </div>
@@ -64,7 +64,7 @@
             <div class="mt-2 flex justify-between">
               <button v-if="editing.id" type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="confirmingDeleteEvent = true">Borrar</button>
               <span v-else />
-              <div class="flex gap-3">
+              <div class="flex flex-wrap gap-3">
                 <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="editing = null">Cancelar</button>
                 <button type="submit" :disabled="saving" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90">Guardar</button>
               </div>
