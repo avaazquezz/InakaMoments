@@ -26,32 +26,32 @@ export function useBusinessRules() {
 
   const rules = computed<BusinessRule[]>(() => [
     {
-      icono: '🔧',
+      icono: 'lucide:wrench',
       titulo: 'Montaje incluido',
       texto: `Todos los precios incluyen el montaje. Desmontaje opcional por +${formatEUR(settings.value.desmontaje_precio)}.`,
     },
     {
-      icono: '🚗',
+      icono: 'lucide:car',
       titulo: 'Nos desplazamos',
       texto: `Los primeros ${settings.value.km_incluidos} km están incluidos. A partir de ahí, un pequeño plus de gasolina (${settings.value.plus_gasolina}).`,
     },
     {
-      icono: '🎁',
+      icono: 'lucide:gift',
       titulo: 'Detallito de regalo',
       texto: `Si tu pedido supera los ${formatEUR(settings.value.umbral_detallito)}, te llevas un detallito de Inaka Moments acorde a tu evento.`,
     },
     {
-      icono: '⏰',
+      icono: 'lucide:clock',
       titulo: 'Reserva con antelación',
       texto: `Agenda con un mínimo de ${Math.max(1, Math.round(settings.value.antelacion_dias / 30))} mes de antelación para preparar cada detalle con mimo.`,
     },
     {
-      icono: '💳',
+      icono: 'lucide:credit-card',
       titulo: 'Pago al agendar',
       texto: 'El pago se realiza al momento de agendar: así tu fecha queda bloqueada en nuestra agenda.',
     },
     {
-      icono: '🔄',
+      icono: 'lucide:refresh-cw',
       titulo: 'Alquiler con fianza',
       texto: `Algunas estructuras pueden alquilarse con fianza (${settings.value.fianza_alquiler}).`,
     },

@@ -3,10 +3,13 @@
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
       <!-- Logo -->
       <NuxtLink to="/" aria-label="Inaka Moments — inicio" class="relative z-50">
-        <img
+        <NuxtImg
           src="/logo.png"
           alt="Inaka Moments"
           class="h-14 w-auto"
+          width="112"
+          height="112"
+          format="webp"
           loading="eager"
         />
       </NuxtLink>
@@ -17,7 +20,8 @@
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="text-sm font-medium text-inaka-terra/70 transition-colors hover:text-inaka-terra"
+          class="rounded text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inaka-gold"
+          :class="isActive(link.to) ? 'text-inaka-terra' : 'text-inaka-terra/70 hover:text-inaka-terra'"
         >
           {{ link.label }}
         </NuxtLink>
@@ -29,7 +33,7 @@
           :href="catalogPdfUrl"
           target="_blank"
           rel="noopener"
-          class="rounded-md border border-inaka-terra px-4 py-2 text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
+          class="rounded-md border border-inaka-terra px-4 py-2 text-sm font-medium text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
         >
           Catálogo PDF
         </a>
@@ -38,7 +42,7 @@
       <!-- Mobile hamburger button -->
       <button
         type="button"
-        class="relative z-50 flex h-10 w-10 items-center justify-center rounded-lg md:hidden"
+        class="relative z-50 flex h-10 w-10 items-center justify-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold md:hidden"
         :aria-expanded="menuAbierto"
         aria-label="Abrir menú de navegación"
         @click="menuAbierto = !menuAbierto"
@@ -72,7 +76,8 @@
             v-for="link in navLinks"
             :key="link.to"
             :to="link.to"
-            class="rounded-lg px-4 py-3 text-base font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
+            class="rounded-lg px-4 py-3 text-base font-medium outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
+            :class="isActive(link.to) ? 'text-inaka-terra bg-inaka-nude/60' : 'text-inaka-terra'"
             @click="menuAbierto = false"
           >
             {{ link.label }}
@@ -83,7 +88,7 @@
             :href="catalogPdfUrl"
             target="_blank"
             rel="noopener"
-            class="block w-full rounded-md border border-inaka-terra px-4 py-3 text-center text-sm font-medium text-inaka-terra transition-colors hover:bg-inaka-nude"
+            class="block w-full rounded-md border border-inaka-terra px-4 py-3 text-center text-sm font-medium text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
             @click="menuAbierto = false"
           >
             Descargar Catálogo PDF
@@ -115,6 +120,11 @@ const route = useRoute()
 watch(() => route.path, () => {
   menuAbierto.value = false
 })
+
+function isActive(to: string): boolean {
+  if (to === '/') return route.path === '/'
+  return route.path.startsWith(to)
+}
 </script>
 
 <style scoped>

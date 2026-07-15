@@ -17,7 +17,7 @@
           Nuestra historia
           <span class="h-px w-8 bg-inaka-gold/60 inline-block" />
         </span>
-        <h2 class="mt-5 text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
+        <h2 class="mt-5 font-display text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
           {{ about.titulo_principal }}<br>
           <em class="not-italic text-inaka-mauve">{{ about.titulo_secundario }}</em>
         </h2>
@@ -31,9 +31,7 @@
           <!-- Marco decorativo con comillas grandes -->
           <div class="relative rounded-3xl bg-gradient-to-br from-inaka-nude/60 to-inaka-beige/40 p-10 shadow-sm ring-1 ring-inaka-nude">
             <!-- Comilla decorativa -->
-            <svg class="absolute -top-5 -left-3 h-16 w-16 text-inaka-gold/30" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-              <path d="M10 8C6.134 8 3 11.134 3 15v9h9v-9H6c0-2.206 1.794-4 4-4V8zm13 0c-3.866 0-7 3.134-7 7v9h9v-9h-6c0-2.206 1.794-4 4-4V8z"/>
-            </svg>
+            <Icon name="lucide:quote" class="absolute -top-5 -left-3 h-16 w-16 text-inaka-gold/30" aria-hidden="true" />
 
             <blockquote class="relative z-10">
               <p class="text-xl font-medium leading-relaxed text-inaka-terra/90 sm:text-2xl">
@@ -54,10 +52,7 @@
           <!-- Tarjeta flotante de credencial -->
           <div class="mt-8 flex items-center gap-5 rounded-2xl bg-white px-7 py-5 shadow-md ring-1 ring-inaka-nude/80">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-inaka-gold/15">
-              <!-- Icono estrella -->
-              <svg class="h-6 w-6 text-inaka-gold" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/>
-              </svg>
+              <Icon name="lucide:star" class="h-6 w-6 text-inaka-gold" aria-hidden="true" />
             </div>
             <div>
               <p class="text-sm font-semibold text-inaka-terra">Eventos diseñados a medida</p>
@@ -78,9 +73,7 @@
           <!-- Separador decorativo -->
           <div class="flex items-center gap-4">
             <div class="h-px flex-1 bg-inaka-nude" />
-            <svg class="h-5 w-5 text-inaka-gold/60" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M10 1l1.39 4.26H16l-3.7 2.69 1.41 4.32L10 9.59l-3.71 2.68 1.41-4.32L4 5.26h4.61L10 1z"/>
-            </svg>
+            <Icon name="lucide:sparkle" class="h-5 w-5 text-inaka-gold/60" aria-hidden="true" />
             <div class="h-px flex-1 bg-inaka-nude" />
           </div>
 
@@ -92,12 +85,10 @@
           <div class="pt-2">
             <NuxtLink
               to="/contacto"
-              class="group inline-flex items-center gap-2 text-sm font-semibold text-inaka-gold transition-gap hover:gap-3"
+              class="group inline-flex items-center gap-2 rounded text-sm font-semibold text-inaka-gold outline-none transition-gap hover:gap-3 focus-visible:ring-2 focus-visible:ring-inaka-gold"
             >
               Conoce cómo trabajamos
-              <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-              </svg>
+              <Icon name="lucide:arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </NuxtLink>
           </div>
         </div>
@@ -114,7 +105,7 @@
           <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-inaka-gold/0 via-inaka-gold to-inaka-gold/0 opacity-0 transition-opacity group-hover:opacity-100" />
 
           <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-inaka-nude/70 transition-colors group-hover:bg-inaka-gold/15">
-            <component :is="pilar.icono" class="h-5 w-5 text-inaka-terra/70 transition-colors group-hover:text-inaka-gold" />
+            <Icon :name="pilar.icono" class="h-5 w-5 text-inaka-terra/70 transition-colors group-hover:text-inaka-gold" aria-hidden="true" />
           </div>
           <h3 class="mb-2 text-base font-bold text-inaka-terra">{{ pilar.titulo }}</h3>
           <p class="text-sm leading-relaxed text-inaka-terra/60">{{ pilar.descripcion }}</p>
@@ -126,8 +117,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, h } from 'vue'
-
 // Textos editables por la dueña (site_content.about); defaults = copy actual
 const { data: about } = useSiteSection('about', {
   titulo_principal: 'Cada momento,',
@@ -135,43 +124,21 @@ const { data: about } = useSiteSection('about', {
   quote: 'Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo.',
 })
 
-function makeIcon(paths: string[]) {
-  return defineComponent({
-    render() {
-      return h('svg', { fill: 'none', stroke: 'currentColor', 'stroke-width': '1.8', viewBox: '0 0 24 24', 'aria-hidden': 'true' },
-        paths.map(d => h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d }))
-      )
-    },
-  })
-}
-
-const IconCreatividad = makeIcon([
-  'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
-])
-
-const IconDetalle = makeIcon([
-  'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
-])
-
-const IconAmor = makeIcon([
-  'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
-])
-
 const pilares = [
   {
     titulo: 'Creatividad sin límites',
     descripcion: 'Cada evento es un lienzo en blanco. Exploramos ideas, tendencias y referencias para crear algo que nunca hayas visto antes.',
-    icono: IconCreatividad,
+    icono: 'lucide:sparkles',
   },
   {
     titulo: 'Obsesión por el detalle',
     descripcion: 'Los grandes momentos se construyen con pequeños detalles. Cuidamos cada elemento como si fuese el más importante del evento.',
-    icono: IconDetalle,
+    icono: 'lucide:gem',
   },
   {
     titulo: 'Hecho con amor',
     descripcion: 'Ponemos corazón en todo lo que hacemos. Tu celebración se convierte en nuestra misión y la vivimos contigo desde el primer momento.',
-    icono: IconAmor,
+    icono: 'lucide:heart',
   },
 ]
 </script>

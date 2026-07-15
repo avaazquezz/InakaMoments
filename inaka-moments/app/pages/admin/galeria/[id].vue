@@ -39,10 +39,16 @@
             <img :src="storagePublicUrl('gallery', img.storage_path)" class="h-full w-full object-cover" :alt="img.alt ?? ''" />
             <span v-if="album.cover_image_id === img.id" class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream">Portada</span>
             <span v-if="img.featured" class="absolute right-1.5 top-1.5 rounded bg-inaka-gold px-1.5 py-0.5 text-[10px] font-bold text-inaka-terra">★</span>
-            <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-inaka-terra/0 p-1 opacity-0 transition-all group-hover:bg-inaka-terra/60 group-hover:opacity-100">
-              <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="setCover(img.id)">Portada</button>
-              <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-inaka-terra" @click="toggleFeatured(img)">{{ img.featured ? 'Quitar ★' : 'Destacar' }}</button>
-              <button type="button" class="rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-red-600" @click="imageToDelete = img.id">Borrar</button>
+            <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-inaka-terra/60 p-1.5 transition-all md:bg-inaka-terra/0 md:opacity-0 md:group-hover:bg-inaka-terra/60 md:group-hover:opacity-100 md:focus-within:opacity-100">
+              <button type="button" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra" aria-label="Marcar como portada" @click="setCover(img.id)">
+                <Icon name="lucide:image" class="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button type="button" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90" :class="img.featured ? 'text-inaka-gold' : 'text-inaka-terra'" :aria-label="img.featured ? 'Quitar de destacadas' : 'Destacar foto'" @click="toggleFeatured(img)">
+                <Icon name="lucide:star" class="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button type="button" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-red-600" aria-label="Borrar foto" @click="imageToDelete = img.id">
+                <Icon name="lucide:trash-2" class="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
             </div>
           </div>
 

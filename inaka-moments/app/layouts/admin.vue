@@ -1,5 +1,6 @@
 <template>
   <div class="flex min-h-screen bg-inaka-cream font-sans text-inaka-terra">
+    <OfflineBanner />
     <!-- Sidebar (desktop) -->
     <aside class="hidden w-64 shrink-0 flex-col border-r border-inaka-beige bg-white md:flex md:sticky md:top-0 md:h-screen">
       <div class="flex h-16 items-center gap-2 border-b border-inaka-beige px-5">
@@ -36,7 +37,7 @@
     </aside>
 
     <!-- Contenido -->
-    <div class="flex min-h-screen flex-1 flex-col">
+    <div class="flex min-h-screen min-w-0 flex-1 flex-col">
       <!-- Cabecera -->
       <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-inaka-beige bg-white px-4 sm:px-6">
         <div class="flex items-center gap-3">
@@ -99,6 +100,14 @@
 </template>
 
 <script setup lang="ts">
+// Manifest propio del panel: `/admin-manifest.webmanifest` (scope /admin/,
+// nombre "Inaka Moments — Panel") en vez de `<NuxtPwaManifest/>` (el de la
+// web pública) — cada layout monta solo el suyo, sin colisión entre ambos.
+useHead({
+  link: [{ rel: 'manifest', href: '/admin-manifest.webmanifest' }],
+  meta: [{ name: 'apple-mobile-web-app-title', content: 'Inaka Panel' }],
+})
+
 const route = useRoute()
 const supabase = useSupabaseClient()
 const menuAbierto = ref(false)

@@ -10,7 +10,7 @@
           <span v-if="quote.event_type" class="text-sm text-inaka-terra/50">{{ EVENT_TYPE_LABELS[quote.event_type] }}</span>
           <AdminStatusBadge :status="quote.status" kind="quote" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <button type="button" class="rounded-lg border border-inaka-beige px-3 py-1.5 text-xs font-semibold text-inaka-terra hover:bg-inaka-nude/40" @click="sendToClient">Reenviar email</button>
           <button v-if="quote.status !== 'aceptado'" type="button" class="rounded-lg bg-inaka-terra px-3 py-1.5 text-xs font-semibold text-inaka-cream hover:opacity-90" @click="openAccept">Aceptar</button>
           <button v-if="quote.status !== 'aceptado'" type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-500 hover:underline" @click="confirmingDelete = true">Borrar</button>
@@ -89,8 +89,8 @@
 
         <ul v-if="!editingItems" class="flex flex-col divide-y divide-inaka-nude/70">
           <li v-for="it in quote.items" :key="it.id" class="flex items-center justify-between gap-3 py-2 text-sm">
-            <span class="text-inaka-terra">{{ it.label }} × {{ it.qty }}</span>
-            <span class="font-semibold text-inaka-terra">{{ it.line_total != null ? formatEUR(it.line_total) : 'A consultar' }}</span>
+            <span class="min-w-0 truncate text-inaka-terra">{{ it.label }} × {{ it.qty }}</span>
+            <span class="shrink-0 font-semibold text-inaka-terra">{{ it.line_total != null ? formatEUR(it.line_total) : 'A consultar' }}</span>
           </li>
         </ul>
 
@@ -145,7 +145,7 @@
     <Teleport to="body">
       <div v-if="accepting" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="accepting = false" />
-        <div class="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">Aceptar presupuesto</h2>
           <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1.5">
@@ -157,7 +157,7 @@
               <p class="mt-0.5 text-xs text-inaka-terra/50">Se calcula sola según el % fijado en Contenido → Reglas de negocio.</p>
             </div>
             <p v-if="acceptError" class="text-xs text-red-500">{{ acceptError }}</p>
-            <div class="mt-2 flex justify-end gap-3">
+            <div class="mt-2 flex flex-wrap justify-end gap-3">
               <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="accepting = false">Cancelar</button>
               <button type="button" :disabled="acceptSubmitting" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="confirmAccept">Confirmar</button>
             </div>

@@ -10,7 +10,31 @@
     <div v-if="pending" class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
     <AdminEmptyState v-else-if="filtered.length === 0" title="No hay presupuestos" />
 
-    <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
+    <!-- Tarjetas (móvil/tablet) -->
+    <div v-else class="flex flex-col gap-3 md:hidden">
+      <NuxtLink
+        v-for="q in filtered"
+        :key="q.id"
+        :to="`/admin/presupuestos/${q.id}`"
+        class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude"
+      >
+        <div class="flex items-start justify-between gap-2">
+          <p class="font-semibold text-inaka-terra">{{ q.client_name ?? '—' }}</p>
+          <span class="shrink-0 font-bold text-inaka-terra">{{ formatEUR(q.total) }}</span>
+        </div>
+        <p class="text-xs text-inaka-terra/55">
+          {{ q.event_type ? EVENT_TYPE_LABELS[q.event_type] : 'Sin ocasión' }} · {{ q.event_date ?? 'Sin fecha' }}
+        </p>
+        <div class="flex flex-wrap items-center gap-2">
+          <AdminStatusBadge :status="q.status" kind="quote" />
+          <AdminStatusBadge v-if="q.status === 'aceptado'" :status="q.deposit_status" kind="payment" />
+        </div>
+      </NuxtLink>
+    </div>
+
+    <!-- Tabla (desktop) -->
+    <div v-if="!pending && filtered.length" class="hidden overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude md:block">
+      <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr>
@@ -40,6 +64,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </template>

@@ -373,10 +373,23 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 **Cómo:** `quotes.deposit_status` + `shared/bizum.ts` + teléfono en `site_content.settings.bizum_telefono` + `<select>` en la ficha del presupuesto (ver detalle arriba).
 **Aceptación:** aceptar un presupuesto con señal envía email con teléfono + concepto Bizum ✅; marcar la señal como pagada actualiza badge y listado ✅; fianzas de alquiler operativas desde Fase 4 ✅; nada de Stripe/checkout/webhook en el código ✅.
 
-## FASE 6 — Diseño elevado, i18n y PWA
-**Objetivo:** subir el listón visual (paleta intacta), optimizar mobile/tablet/web, bilingüe + PWA.
-**Cómo:** tipografía autoalojada (`@fontsource`: serif display + sans cuerpo) y extender `tailwind.config.js`; pulir componentes y microanimaciones (`prefers-reduced-motion`); QA responsive 375/768/1280 + accesibilidad (focus, ARIA, contraste `gold`) — **incluir las nuevas secciones de la home (§3.1)** en la QA responsive; **i18n** (`@nuxtjs/i18n`) extrayendo textos a `i18n/locales/{ca,es}.json` + selector + hreflang — **incluir los copys de las secciones nuevas de la home** (§3.1); **PWA** (`@vite-pwa/nuxt`) alcance `/admin`. Admin con estética de marca.
-**Aceptación:** Lighthouse mobile bueno; ca↔es traduce toda la UI; panel instalable; sin regresiones responsive.
+## FASE 6 — Diseño elevado y PWA ✅ COMPLETADA
+> **✅ HECHA Y VERIFICADA** (julio 2026). **Decisión de alcance cerrada con el usuario, distinta de la redacción original de esta fase:** **sin i18n** — la web y el admin se quedan 100% y únicamente en español (se descartó `@nuxtjs/i18n` explícitamente); el **diseño elevado** (tipografía, iconos, microanimaciones, accesibilidad) es **solo para la web pública** (el admin no se toca visualmente); el **PWA y el pulido responsive** cubren **ambas** apps (web pública + panel `/admin`), no solo `/admin` como decía el plan original.
+>
+> **Diseño elevado (web pública):** tipografía de marca **Fraunces** (display) + **Inter** (cuerpo) autoalojadas vía `@fontsource`; sistema de iconos **`@nuxt/icon`** (colección `lucide`) sustituyendo el mix de SVG a mano + emoji en toda la web y el configurador; componentes nuevos `PageHero.vue`/`CtaBand.vue`/`BaseButtonLink.vue` que eliminan la duplicación de markup "hero con blobs" (9 páginas) y "banda CTA final" (7 páginas); `prefers-reduced-motion` respetado (confeti del Hero, carrusel de `SocialProofGallery`, scroll suave global) + `focus-visible` de marca en botones/enlaces/inputs; carrusel de galería con teclado y flechas; `@tailwindcss/typography` instalado y tema `prose-inaka` configurado (las páginas legales usaban clases `prose` muertas desde antes); logo optimizado con `NuxtImg`.
+>
+> **PWA (web + admin):** iconos generados desde el logo con `sharp` (192/512/maskable); **manifest dual** — público vía `<NuxtPwaManifest/>` en `app/layouts/default.vue` (scope `/`) y `public/admin-manifest.webmanifest` propio inyectado en `app/layouts/admin.vue`/`admin-auth.vue` (scope `/admin/`), ambos bajo el mismo Service Worker — **verificado en build de producción** que cada manifest se sirve correctamente en su sección sin colisión. Workbox: `NetworkOnly` para `/api/admin/**`, `NetworkFirst` para API/páginas públicas, `CacheFirst` para imágenes/fuentes. `OfflineBanner.vue` compartido en ambos layouts.
+>
+> **Responsive perfecto (admin, verificado con navegación real en viewport móvil):** vista de tarjetas añadida en `productos/index.vue` y `resenas/enviar.vue` (antes tablas crudas sin alternativa); botones de miniatura en `galeria/[id].vue` pasados a iconos compactos; `ChipListEditor.vue` (compartido por Productos/Packs/Leads) con `min-w-0`/`flex-wrap`; `flex-wrap` defensivo en los 8 footers de modal del panel; cabeceras con búsqueda+botón corregidas en Productos/Packs/Agenda.
+>
+> **🐛 Bug raíz encontrado y corregido durante la verificación (no listado en el plan original):** el contenedor de contenido de `app/layouts/admin.vue` (`flex-1` dentro de la fila flex raíz) no tenía `min-w-0` — un clásico de Flexbox: sin él, cualquier contenido interno con un poco más de ancho (p. ej. la barra de pestañas de FAQs) forzaba a **todo el panel** a estirarse por debajo del viewport real, recortando botones y acciones en cualquier página sin que las comprobaciones de ancho lo delataran (`scrollWidth`/`innerWidth` quedaban igual de "inflados" entre sí). Una sola línea (`min-w-0`) lo corrigió de raíz para todo el panel, no solo para la pestaña donde se detectó.
+> **⚠️ Verificación:** recorrido completo en Chrome con viewport móvil real (~375-500px) tanto en `/admin/**` (los 10 módulos) como en toda la web pública (home completa, catálogo+ficha, packs+ficha, configurador completo con hoja inferior de presupuesto, galería, FAQ, cómo funciona, reseñas, contacto, ocasión, legal) — cero desbordamiento horizontal, cero elemento recortado. `npm run build` limpio.
+>
+> **Fuera de alcance (decisión del usuario, no pendiente):** i18n ca/es completo — descartado.
+
+**Objetivo:** subir el listón visual de la web pública (paleta intacta) y dejar la web y el admin instalables como PWA con un responsive móvil sin fallos.
+**Cómo:** tipografía autoalojada (`@fontsource`: serif display + sans cuerpo) y extender `tailwind.config.js`; pulir componentes y microanimaciones (`prefers-reduced-motion`); QA responsive 375/768/1280 + accesibilidad (focus, ARIA, contraste `gold`); `@vite-pwa/nuxt` con manifest dual (web + admin) y Workbox.
+**Aceptación:** Lighthouse mobile bueno ✅; web y panel instalables por separado ✅; sin regresiones responsive en ninguna de las dos apps ✅.
 
 ## FASE 7 — Docker + despliegue
 > **✅ ADELANTADA A FASE 0 (dockerización hecha y verificada).** Compose **integrado en la raíz del proyecto**: `docker-compose.yml` (DEV por defecto → `docker compose up`, hot reload, instalación inteligente solo si cambia el lockfile, node_modules/.nuxt/.output en volúmenes) y `docker-compose.prod.yml` (PROD tras Traefik: apex+www, redirect www→apex, HSTS/nosniff/referrer-policy/frameDeny, **puente de env** `SUPABASE_*` → `NUXT_*` porque la imagen se construye sin secretos). Además: `docker/Dockerfile` (multi-stage node:22-alpine, non-root, caché npm BuildKit, HEALTHCHECK → imagen 167MB), `docker/traefik-dynamic.yml` (alternativa proveedor file), `server/api/health.get.ts`, `.dockerignore` (excluye `.env*`, supabase/, docs/), scripts npm `docker:dev|dev:down|build|prod|prod:down` y `docker/DEPLOY.md`.
@@ -410,8 +423,8 @@ Todas las escrituras vía `server/api/admin/**` con zod + `serverSupabaseUser`. 
 - [x] Agenda + inventario
 - [x] CRM + reportes
 - [ ] Landings ocasión + FAQ + reseñas (SEO)
-- [ ] i18n ca/es
-- [ ] PWA
+- [~] i18n ca/es — descartado (decisión del usuario, Fase 6): web y admin solo en español
+- [x] PWA (web pública + admin, con manifest dual) + diseño elevado + responsive móvil sin fallos
 - [ ] Docker dev+prod + TLS + CSP/HSTS
 - [ ] Tests + CI
 - [ ] Backups + Sentry + uptime

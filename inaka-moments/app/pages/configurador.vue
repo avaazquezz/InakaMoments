@@ -8,7 +8,7 @@
       </div>
       <div class="relative mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
         <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-inaka-gold">Tú eliges, nosotros creamos</p>
-        <h1 class="text-3xl font-bold text-inaka-terra sm:text-4xl lg:text-5xl">Configura tu presupuesto</h1>
+        <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl lg:text-5xl">Configura tu presupuesto</h1>
         <p class="mx-auto mt-3 max-w-2xl text-inaka-terra/65">
           Combina los productos que quieras y ve el precio estimado al instante. Sin compromiso: al final te preparamos una propuesta a medida.
         </p>
@@ -22,7 +22,7 @@
           <li v-for="s in steps" :key="s.n" class="flex flex-1 items-center gap-2">
             <button
               type="button"
-              class="flex items-center gap-2 rounded-full transition-colors"
+              class="flex items-center gap-2 rounded-full outline-none transition-colors focus-visible:ring-2 focus-visible:ring-inaka-gold"
               :class="s.n <= maxReachable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'"
               :disabled="s.n > maxReachable"
               @click="s.n <= maxReachable && (step = s.n)"
@@ -33,7 +33,7 @@
                   ? 'bg-inaka-terra text-inaka-cream ring-2 ring-inaka-terra/20'
                   : s.n < step ? 'bg-inaka-gold text-inaka-terra' : 'bg-inaka-nude text-inaka-terra/50'"
               >
-                <svg v-if="s.n < step" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                <Icon v-if="s.n < step" name="lucide:check" class="h-3.5 w-3.5" aria-hidden="true" />
                 <template v-else>{{ s.n }}</template>
               </span>
               <span class="hidden text-sm font-medium sm:inline" :class="s.n === step ? 'text-inaka-terra' : 'text-inaka-terra/50'">{{ s.label }}</span>
@@ -48,9 +48,9 @@
     <section v-if="done" class="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <div class="rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-inaka-nude sm:p-12">
         <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-inaka-gold/15">
-          <svg class="h-10 w-10 text-inaka-gold" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <Icon name="lucide:check-circle-2" class="h-10 w-10 text-inaka-gold" aria-hidden="true" />
         </div>
-        <h2 class="text-2xl font-bold text-inaka-terra sm:text-3xl">¡Propuesta enviada!</h2>
+        <h2 class="font-display text-2xl font-bold text-inaka-terra sm:text-3xl">¡Propuesta enviada!</h2>
         <p class="mx-auto mt-3 max-w-md text-inaka-terra/65">
           Hemos recibido tu configuración. Te enviaremos la confirmación a
           <strong class="text-inaka-terra">{{ contact.email }}</strong> y te contactaremos en menos de 24 h para cerrar los detalles.
@@ -87,12 +87,12 @@
         <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <button
             type="button"
-            class="rounded-xl bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream transition-opacity hover:opacity-90"
+            class="rounded-xl bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
             @click="startOver"
           >
             Crear otro presupuesto
           </button>
-          <NuxtLink to="/catalogo" class="rounded-xl border border-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude">
+          <NuxtLink to="/catalogo" class="rounded-xl border border-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold">
             Volver al catálogo
           </NuxtLink>
         </div>
@@ -106,18 +106,18 @@
         <div class="lg:col-span-2">
           <!-- PASO 1: Ocasión -->
             <div v-if="step === 1" key="s1">
-              <h2 class="text-2xl font-bold text-inaka-terra">¿Qué celebras?</h2>
+              <h2 class="font-display text-2xl font-bold text-inaka-terra">¿Qué celebras?</h2>
               <p class="mb-6 mt-1 text-sm text-inaka-terra/55">Elige la ocasión para personalizar tu presupuesto.</p>
               <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <button
                   v-for="opt in eventoOptions"
                   :key="opt.value"
                   type="button"
-                  class="group flex flex-col items-center gap-3 rounded-2xl border-2 p-5 transition-all duration-200"
+                  class="group flex flex-col items-center gap-3 rounded-2xl border-2 p-5 outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-inaka-gold"
                   :class="state.event_type === opt.value ? 'border-inaka-terra bg-inaka-terra/5 shadow-sm' : 'border-inaka-beige bg-white hover:border-inaka-terra/50 hover:bg-inaka-nude/20'"
                   @click="selectOccasion(opt.value)"
                 >
-                  <span class="text-3xl transition-transform duration-200 group-hover:scale-110" aria-hidden="true">{{ opt.icon }}</span>
+                  <Icon :name="opt.icon" class="h-8 w-8 text-inaka-gold transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
                   <span class="text-sm font-semibold text-inaka-terra">{{ opt.label }}</span>
                 </button>
               </div>
@@ -125,7 +125,7 @@
 
             <!-- PASO 2: Fecha -->
             <div v-else-if="step === 2" key="s2">
-              <h2 class="text-2xl font-bold text-inaka-terra">¿Cuándo será?</h2>
+              <h2 class="font-display text-2xl font-bold text-inaka-terra">¿Cuándo será?</h2>
               <p class="mb-6 mt-1 text-sm text-inaka-terra/55">La fecha nos ayuda a comprobar disponibilidad. Puedes ajustarla más adelante.</p>
 
               <div class="flex max-w-md flex-col gap-5">
@@ -133,7 +133,7 @@
                   <label for="cfg-fecha" class="text-sm font-semibold text-inaka-terra">Fecha aproximada del evento</label>
                   <DatePicker id="cfg-fecha" v-model="state.event_date" :min="minDate" aria-label="Fecha del evento" />
                   <p class="flex items-center gap-1 text-xs text-inaka-terra/50">
-                    <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <Icon name="lucide:info" class="h-3 w-3 shrink-0" aria-hidden="true" />
                     Recuerda agendar con al menos {{ rules.antelacion_dias }} días de antelación.
                   </p>
                 </div>
@@ -146,17 +146,17 @@
                     type="text"
                     autocomplete="street-address"
                     placeholder="Calle, número, ciudad"
-                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all"
+                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                     :class="state.location ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
                   />
 
                   <!-- Feedback en vivo de distancia calculada -->
                   <p v-if="geocodeStatus === 'loading'" class="flex items-center gap-1.5 text-xs text-inaka-terra/50">
-                    <svg class="h-3 w-3 shrink-0 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <Icon name="lucide:loader-2" class="h-3 w-3 shrink-0 animate-spin" aria-hidden="true" />
                     Calculando distancia…
                   </p>
                   <p v-else-if="geocodeStatus === 'ok' && state.distance_km != null" class="flex items-center gap-1.5 text-xs" :class="isFarAway ? 'text-inaka-terra/70' : 'text-inaka-terra/50'">
-                    <span aria-hidden="true">📍</span>
+                    <Icon name="lucide:map-pin" class="h-3 w-3 shrink-0" aria-hidden="true" />
                     A {{ state.distance_km }} km de Abrera.
                     <span v-if="isFarAway">Se añadirá un pequeño plus de desplazamiento (a consultar).</span>
                     <span v-else>Dentro de la zona incluida.</span>
@@ -178,7 +178,7 @@
                     <select
                       id="cfg-invitados"
                       v-model="state.invitados"
-                      class="w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-sm text-inaka-terra outline-none transition-all"
+                      class="w-full appearance-none rounded-xl border bg-white px-4 py-3 pr-10 text-sm text-inaka-terra outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                       :class="state.invitados ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
                     >
                       <option value="">Selecciona un rango</option>
@@ -186,7 +186,7 @@
                       <option value="50 – 100">Entre 50 y 100 personas</option>
                       <option value="Más de 100">Más de 100 personas</option>
                     </select>
-                    <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-inaka-terra/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                    <Icon name="lucide:chevron-down" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-inaka-terra/40" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -194,7 +194,7 @@
 
             <!-- PASO 3: Productos -->
             <div v-else-if="step === 3" key="s3">
-              <h2 class="text-2xl font-bold text-inaka-terra">Elige tus productos</h2>
+              <h2 class="font-display text-2xl font-bold text-inaka-terra">Elige tus productos</h2>
               <p class="mb-5 mt-1 text-sm text-inaka-terra/55">Añade lo que quieras y ajusta cantidades. Todo es combinable entre sí.</p>
 
               <div v-if="productsPending" class="py-16 text-center text-inaka-terra/50">Cargando catálogo…</div>
@@ -203,7 +203,7 @@
                 <!-- Packs recomendados -->
                 <div v-if="packsForOccasion.length" class="mb-8">
                   <h3 class="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-inaka-gold">
-                    <span aria-hidden="true">✨</span> Packs recomendados
+                    <Icon name="lucide:sparkles" class="h-4 w-4" aria-hidden="true" /> Packs recomendados
                   </h3>
                   <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div
@@ -221,10 +221,10 @@
                       <p class="line-clamp-2 text-xs text-inaka-terra/55">{{ pk.description }}</p>
                       <button
                         type="button"
-                        class="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-inaka-terra px-4 py-2 text-xs font-semibold text-inaka-cream transition-opacity hover:opacity-90"
+                        class="mt-1 inline-flex items-center justify-center gap-1.5 rounded-lg bg-inaka-terra px-4 py-2 text-xs font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold"
                         @click="addPack(pk)"
                       >
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                        <Icon name="lucide:plus" class="h-3.5 w-3.5" aria-hidden="true" />
                         Añadir pack
                       </button>
                     </div>
@@ -237,7 +237,7 @@
                     v-for="cat in categorias"
                     :key="cat.value"
                     type="button"
-                    class="rounded-full px-4 py-1.5 text-xs font-medium transition-all"
+                    class="rounded-full px-4 py-1.5 text-xs font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                     :class="categoriaActiva === cat.value ? 'bg-inaka-terra text-inaka-cream' : 'bg-inaka-nude/60 text-inaka-terra/70 hover:bg-inaka-nude'"
                     @click="categoriaActiva = cat.value"
                   >
@@ -269,7 +269,7 @@
                       <select
                         v-if="productTiers(p).length"
                         v-model="draftFor(p).tier"
-                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra"
+                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold"
                         :aria-label="`Opción de precio de ${p.name}`"
                       >
                         <option v-for="t in productTiers(p)" :key="t.label" :value="t.label">{{ t.label }} — {{ formatEUR(t.price) }}</option>
@@ -277,7 +277,7 @@
                       <select
                         v-if="productSizes(p).length"
                         v-model="draftFor(p).size"
-                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra"
+                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold"
                         :aria-label="`Tamaño de ${p.name}`"
                       >
                         <option value="">Tamaño…</option>
@@ -286,7 +286,7 @@
                       <select
                         v-if="productOptions(p).length"
                         v-model="draftFor(p).option"
-                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra"
+                        class="min-w-0 flex-1 rounded-lg border border-inaka-beige bg-inaka-cream px-3 py-2 text-xs text-inaka-terra outline-none focus:border-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold"
                         :aria-label="`Opción de ${p.name}`"
                       >
                         <option value="">Opción…</option>
@@ -297,22 +297,21 @@
                     <!-- Cantidad + añadir -->
                     <div class="mt-auto flex items-center gap-2">
                       <div class="flex items-center rounded-lg border border-inaka-beige">
-                        <button type="button" class="flex h-8 w-8 items-center justify-center text-inaka-terra/70 hover:bg-inaka-nude/50" :aria-label="`Menos ${p.name}`" @click="draftFor(p).qty = Math.max(1, draftFor(p).qty - 1)">
-                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" /></svg>
+                        <button type="button" class="flex h-8 w-8 items-center justify-center text-inaka-terra/70 outline-none hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold" :aria-label="`Menos ${p.name}`" @click="draftFor(p).qty = Math.max(1, draftFor(p).qty - 1)">
+                          <Icon name="lucide:minus" class="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                         <span class="w-8 text-center text-sm font-semibold text-inaka-terra tabular-nums">{{ draftFor(p).qty }}</span>
-                        <button type="button" class="flex h-8 w-8 items-center justify-center text-inaka-terra/70 hover:bg-inaka-nude/50" :aria-label="`Más ${p.name}`" @click="draftFor(p).qty = Math.min(99, draftFor(p).qty + 1)">
-                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                        <button type="button" class="flex h-8 w-8 items-center justify-center text-inaka-terra/70 outline-none hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold" :aria-label="`Más ${p.name}`" @click="draftFor(p).qty = Math.min(99, draftFor(p).qty + 1)">
+                          <Icon name="lucide:plus" class="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
                       <button
                         type="button"
-                        class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold transition-all"
+                        class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                         :class="justAdded === p.id ? 'bg-inaka-gold text-inaka-terra' : 'bg-inaka-terra text-inaka-cream hover:opacity-90'"
                         @click="addProduct(p)"
                       >
-                        <svg v-if="justAdded === p.id" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                        <svg v-else class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                        <Icon :name="justAdded === p.id ? 'lucide:check' : 'lucide:plus'" class="h-3.5 w-3.5" aria-hidden="true" />
                         {{ justAdded === p.id ? 'Añadido' : 'Añadir' }}
                       </button>
                     </div>
@@ -325,7 +324,7 @@
 
             <!-- PASO 4: Contacto -->
             <div v-else-if="step === 4" key="s4">
-              <h2 class="text-2xl font-bold text-inaka-terra">Tus datos</h2>
+              <h2 class="font-display text-2xl font-bold text-inaka-terra">Tus datos</h2>
               <p class="mb-6 mt-1 text-sm text-inaka-terra/55">Te enviaremos la propuesta y te contactaremos para confirmar. Campos con <span class="font-bold text-inaka-mauve">*</span> obligatorios.</p>
 
               <div class="flex max-w-md flex-col gap-5">
@@ -341,7 +340,7 @@
                 <div class="flex flex-col gap-1.5">
                   <label for="cfg-nombre" class="text-sm font-semibold text-inaka-terra">Nombre completo <span class="text-inaka-mauve">*</span></label>
                   <input id="cfg-nombre" v-model="contact.nombre" type="text" autocomplete="name" placeholder="María García López"
-                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all"
+                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                     :class="touched.nombre && !contact.nombre.trim() ? 'border-red-300 ring-1 ring-red-200' : contact.nombre ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
                     @blur="touched.nombre = true" />
                   <p v-if="touched.nombre && !contact.nombre.trim()" class="text-xs text-red-500">Este campo es obligatorio.</p>
@@ -350,7 +349,7 @@
                 <div class="flex flex-col gap-1.5">
                   <label for="cfg-email" class="text-sm font-semibold text-inaka-terra">Correo electrónico <span class="text-inaka-mauve">*</span></label>
                   <input id="cfg-email" v-model="contact.email" type="email" autocomplete="email" placeholder="maria@ejemplo.com"
-                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all"
+                    class="rounded-xl border bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus-visible:ring-2 focus-visible:ring-inaka-gold"
                     :class="touched.email && !emailValido ? 'border-red-300 ring-1 ring-red-200' : contact.email && emailValido ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus:border-inaka-terra'"
                     @blur="touched.email = true" />
                   <p v-if="touched.email && !emailValido" class="text-xs text-red-500">Introduce un correo válido.</p>
@@ -361,13 +360,13 @@
                   <div class="flex overflow-hidden rounded-xl border transition-all"
                     :class="touched.telefono && !telefonoValido ? 'border-red-300 ring-1 ring-red-200' : phoneNumero && telefonoValido ? 'border-inaka-terra ring-1 ring-inaka-terra/20' : 'border-inaka-beige focus-within:border-inaka-terra'">
                     <div class="relative shrink-0">
-                      <select v-model="phonePrefijo" class="h-full cursor-pointer appearance-none border-r border-inaka-beige bg-inaka-nude/60 pl-3 pr-7 text-sm font-medium text-inaka-terra outline-none" aria-label="Prefijo de país">
+                      <select v-model="phonePrefijo" class="h-full cursor-pointer appearance-none border-r border-inaka-beige bg-inaka-nude/60 pl-3 pr-7 text-sm font-medium text-inaka-terra outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold" aria-label="Prefijo de país">
                         <option v-for="pfx in prefijos" :key="pfx.code" :value="pfx.dial">{{ pfx.flag }} {{ pfx.dial }}</option>
                       </select>
-                      <svg class="pointer-events-none absolute right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 text-inaka-terra/50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                      <Icon name="lucide:chevron-down" class="pointer-events-none absolute right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 text-inaka-terra/50" aria-hidden="true" />
                     </div>
                     <input id="cfg-tel" v-model="phoneNumero" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="600 000 000"
-                      class="flex-1 bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none" @blur="touched.telefono = true" />
+                      class="flex-1 bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold" @blur="touched.telefono = true" />
                   </div>
                   <p v-if="touched.telefono && !telefonoValido" class="text-xs text-red-500">Introduce un número válido.</p>
                 </div>
@@ -375,7 +374,7 @@
                 <div class="flex flex-col gap-1.5">
                   <label for="cfg-msg" class="text-sm font-semibold text-inaka-terra">Peticiones especiales <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
                   <textarea id="cfg-msg" v-model="contact.mensaje" rows="3" placeholder="Colores, temática, alguna idea concreta…"
-                    class="resize-none rounded-xl border border-inaka-beige bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus:border-inaka-terra" />
+                    class="resize-none rounded-xl border border-inaka-beige bg-white px-4 py-3 text-sm text-inaka-terra placeholder:text-inaka-terra/30 outline-none transition-all focus:border-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold" />
                 </div>
 
                 <!-- Honeypot -->
@@ -389,7 +388,7 @@
                   <input v-model="consent" type="checkbox" class="mt-0.5 h-4 w-4 shrink-0 accent-inaka-terra" />
                   <span class="text-xs leading-relaxed text-inaka-terra/70">
                     He leído y acepto la
-                    <NuxtLink to="/politica-privacidad" target="_blank" class="font-semibold text-inaka-gold hover:underline">política de privacidad</NuxtLink>
+                    <NuxtLink to="/politica-privacidad" target="_blank" class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold">política de privacidad</NuxtLink>
                     y consiento el tratamiento de mis datos para gestionar esta solicitud. <span class="font-bold text-inaka-mauve">*</span>
                   </span>
                 </label>
@@ -399,7 +398,7 @@
                 </ClientOnly>
 
                 <div v-if="submitError" class="flex gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                  <svg class="mt-0.5 h-4 w-4 shrink-0 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <Icon name="lucide:alert-circle" class="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true" />
                   <p class="text-sm text-red-700">{{ submitError }}</p>
                 </div>
               </div>
@@ -410,10 +409,10 @@
             <button
               v-if="step > 1"
               type="button"
-              class="inline-flex items-center gap-1.5 rounded-xl border border-inaka-beige px-5 py-3 text-sm font-semibold text-inaka-terra/70 transition-colors hover:bg-inaka-nude/50"
+              class="inline-flex items-center gap-1.5 rounded-xl border border-inaka-beige px-5 py-3 text-sm font-semibold text-inaka-terra/70 outline-none transition-colors hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold"
               @click="step--"
             >
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              <Icon name="lucide:arrow-left" class="h-4 w-4" aria-hidden="true" />
               Atrás
             </button>
             <span v-else />
@@ -422,22 +421,21 @@
               v-if="step < 4"
               type="button"
               :disabled="!canAdvance"
-              class="inline-flex items-center gap-2 rounded-xl bg-inaka-terra px-7 py-3 text-sm font-semibold text-inaka-cream shadow-sm transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
+              class="inline-flex items-center gap-2 rounded-xl bg-inaka-terra px-7 py-3 text-sm font-semibold text-inaka-cream shadow-sm outline-none transition-all hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35"
               @click="goNext"
             >
               {{ step === 3 ? 'Ir a mis datos' : 'Siguiente' }}
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+              <Icon name="lucide:arrow-right" class="h-4 w-4" aria-hidden="true" />
             </button>
 
             <button
               v-else
               type="button"
               :disabled="!canSubmit || isSending"
-              class="inline-flex items-center gap-2 rounded-xl bg-inaka-terra px-7 py-3.5 text-sm font-semibold text-inaka-cream shadow-sm transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
+              class="inline-flex items-center gap-2 rounded-xl bg-inaka-terra px-7 py-3.5 text-sm font-semibold text-inaka-cream shadow-sm outline-none transition-all hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-35"
               @click="submit"
             >
-              <svg v-if="isSending" class="h-4 w-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-              <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+              <Icon :name="isSending ? 'lucide:loader-2' : 'lucide:send'" class="h-4 w-4" :class="{ 'animate-spin': isSending }" aria-hidden="true" />
               {{ isSending ? 'Enviando…' : 'Enviar propuesta' }}
             </button>
           </div>
@@ -456,7 +454,7 @@
     <div v-if="!done" class="fixed inset-x-0 bottom-0 z-40 border-t border-inaka-nude bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm lg:hidden">
       <button
         type="button"
-        class="flex w-full items-center justify-between gap-3 rounded-xl bg-inaka-cream px-4 py-3"
+        class="flex w-full items-center justify-between gap-3 rounded-xl bg-inaka-cream px-4 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold"
         @click="sheetOpen = true"
       >
         <span class="flex items-center gap-2 text-sm font-semibold text-inaka-terra">
@@ -474,8 +472,8 @@
         <div class="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white">
           <div class="sticky top-0 flex items-center justify-between border-b border-inaka-nude bg-white px-5 py-3">
             <span class="text-sm font-bold text-inaka-terra">Tu presupuesto</span>
-            <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/60 hover:bg-inaka-nude" aria-label="Cerrar" @click="sheetOpen = false">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/60 outline-none hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold" aria-label="Cerrar" @click="sheetOpen = false">
+              <Icon name="lucide:x" class="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
           <ConfiguratorSummary />
@@ -546,15 +544,15 @@ const maxReachable = computed(() => {
 
 // ── Opciones de ocasión ────────────────────────────────────────────────────
 const eventoOptions = [
-  { value: 'cumpleanos', label: 'Cumpleaños', icon: '🎂' },
-  { value: 'baby_shower', label: 'Baby Shower', icon: '🍼' },
-  { value: 'bautizo', label: 'Bautizo', icon: '🕊️' },
-  { value: 'comunion', label: 'Comunión', icon: '✨' },
-  { value: 'graduacion', label: 'Graduación', icon: '🎓' },
-  { value: 'despedida', label: 'Despedida', icon: '🥂' },
-  { value: 'jubilacion', label: 'Jubilación', icon: '🌅' },
-  { value: 'corporativo', label: 'Corporativo', icon: '🏢' },
-  { value: 'otro', label: 'Otro', icon: '💡' },
+  { value: 'cumpleanos', label: 'Cumpleaños', icon: 'lucide:cake' },
+  { value: 'baby_shower', label: 'Baby Shower', icon: 'lucide:baby' },
+  { value: 'bautizo', label: 'Bautizo', icon: 'lucide:church' },
+  { value: 'comunion', label: 'Comunión', icon: 'lucide:sparkles' },
+  { value: 'graduacion', label: 'Graduación', icon: 'lucide:graduation-cap' },
+  { value: 'despedida', label: 'Despedida', icon: 'lucide:martini' },
+  { value: 'jubilacion', label: 'Jubilación', icon: 'lucide:sunrise' },
+  { value: 'corporativo', label: 'Corporativo', icon: 'lucide:building-2' },
+  { value: 'otro', label: 'Otro', icon: 'lucide:lightbulb' },
 ]
 
 function selectOccasion(value: string) {

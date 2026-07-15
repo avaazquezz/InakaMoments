@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex flex-1 flex-wrap items-center gap-2">
         <input v-model="search" type="text" placeholder="Buscar por nombre…" class="w-56 rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
         <select v-model="activeFilter" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
@@ -9,8 +9,8 @@
           <option value="false">Inactivos</option>
         </select>
       </div>
-      <NuxtLink to="/admin/productos/nuevo" class="inline-flex items-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+      <NuxtLink to="/admin/productos/nuevo" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">
+        <Icon name="lucide:plus" class="h-4 w-4" aria-hidden="true" />
         Nuevo producto
       </NuxtLink>
     </div>
@@ -18,7 +18,26 @@
     <div v-if="pending" class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
     <AdminEmptyState v-else-if="filtered.length === 0" title="No hay productos" message="Crea el primero o ajusta los filtros." />
 
-    <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
+    <!-- Tarjetas (móvil/tablet) -->
+    <div v-else class="flex flex-col gap-3 md:hidden">
+      <div v-for="p in filtered" :key="p.id" class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude">
+        <div class="flex items-start justify-between gap-2">
+          <p class="min-w-0 font-semibold text-inaka-terra">{{ p.name }}</p>
+          <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold" :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
+            {{ p.active ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+        <p class="text-xs text-inaka-terra/55">{{ p.category }} · {{ p.base_price != null ? formatEUR(p.base_price) : 'A consultar' }}</p>
+        <div class="mt-1 flex items-center gap-3">
+          <NuxtLink :to="`/admin/productos/${p.id}`" class="text-xs font-semibold text-inaka-gold hover:underline">Editar</NuxtLink>
+          <button type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="askDelete(p)">Borrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla (desktop) -->
+    <div v-if="!pending && filtered.length" class="hidden overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude md:block">
+      <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr>
@@ -46,6 +65,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <AdminConfirmDialog

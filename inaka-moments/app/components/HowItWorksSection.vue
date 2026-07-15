@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="mb-12 text-center">
         <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-inaka-gold">Así de fácil</p>
-        <h2 class="text-3xl font-bold text-inaka-terra sm:text-4xl">Cómo funciona</h2>
+        <h2 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">Cómo funciona</h2>
         <p class="mx-auto mt-3 max-w-2xl text-inaka-terra/65">
           De la idea al momento inolvidable en cuatro pasos, con precios claros y sin sorpresas.
         </p>
@@ -17,7 +17,7 @@
         >
           <div class="mb-4 flex items-center gap-3">
             <span class="flex h-9 w-9 items-center justify-center rounded-full bg-inaka-terra text-sm font-bold text-inaka-cream">{{ i + 1 }}</span>
-            <span class="text-3xl" aria-hidden="true">{{ paso.icono }}</span>
+            <Icon :name="paso.icono" class="h-7 w-7 text-inaka-gold" aria-hidden="true" />
           </div>
           <h3 class="mb-1.5 font-bold text-inaka-terra">{{ paso.titulo }}</h3>
           <p class="text-sm leading-relaxed text-inaka-terra/65">{{ paso.descripcion }}</p>
@@ -32,10 +32,10 @@
       <div class="mt-10 text-center">
         <NuxtLink
           to="/como-funciona"
-          class="inline-flex items-center gap-1.5 text-sm font-semibold text-inaka-gold hover:underline"
+          class="inline-flex items-center gap-1.5 rounded text-sm font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold"
         >
           Ver todos los detalles y condiciones
-          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          <Icon name="lucide:arrow-right" class="h-3.5 w-3.5" aria-hidden="true" />
         </NuxtLink>
       </div>
     </div>

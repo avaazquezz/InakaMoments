@@ -7,7 +7,7 @@
     >
       <img :src="storagePublicUrl(bucket, path)" class="h-full w-full object-cover" :alt="`Imagen ${i + 1}`" />
       <span v-if="i === 0" class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream">Portada</span>
-      <div class="absolute inset-0 flex items-center justify-center gap-1.5 bg-inaka-terra/0 opacity-0 transition-all group-hover:bg-inaka-terra/50 group-hover:opacity-100">
+      <div class="absolute inset-0 flex items-center justify-center gap-1.5 bg-inaka-terra/50 transition-all md:bg-inaka-terra/0 md:opacity-0 md:group-hover:bg-inaka-terra/50 md:group-hover:opacity-100 md:focus-within:opacity-100">
         <button type="button" class="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-inaka-terra disabled:opacity-30" :disabled="i === 0" aria-label="Mover antes" @click="moveUp(i)">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
         </button>

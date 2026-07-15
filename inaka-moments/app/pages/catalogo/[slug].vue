@@ -4,7 +4,7 @@
     <section class="py-16 bg-inaka-cream sm:py-20">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <nav class="mb-8 text-sm text-inaka-terra/50" aria-label="Migas de pan">
-          <NuxtLink to="/catalogo" class="hover:text-inaka-terra transition-colors">Catálogo</NuxtLink>
+          <NuxtLink to="/catalogo" class="rounded outline-none transition-colors hover:text-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold">Catálogo</NuxtLink>
           <span class="mx-2">/</span>
           <span class="text-inaka-terra/80">{{ producto.name }}</span>
         </nav>
@@ -35,7 +35,7 @@
             <p class="text-xs font-semibold uppercase tracking-widest text-inaka-gold">
               {{ CATEGORY_LABELS[producto.category] ?? producto.category }}
             </p>
-            <h1 class="text-3xl font-bold text-inaka-terra sm:text-4xl">{{ producto.name }}</h1>
+            <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">{{ producto.name }}</h1>
             <p class="text-2xl font-bold text-inaka-terra">{{ productPriceLabel(producto) }}</p>
             <p class="text-inaka-terra/70 leading-relaxed">{{ producto.description }}</p>
 
@@ -64,7 +64,7 @@
 
             <!-- Alquiler / fianza -->
             <div v-if="producto.is_rental" class="flex gap-3 rounded-xl bg-inaka-gold/10 border border-inaka-gold/25 px-4 py-3">
-              <svg class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <Icon name="lucide:info" class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold" aria-hidden="true" />
               <p class="text-xs text-inaka-terra/70 leading-relaxed">
                 La estructura puede alquilarse abonando una <strong>fianza reembolsable</strong>,
                 que se devuelve al finalizar el evento tras comprobar el estado del material. Consúltanos.
@@ -73,15 +73,12 @@
 
             <!-- CTA -->
             <div class="mt-2 flex flex-col gap-3 sm:flex-row">
-              <NuxtLink
-                :to="`/configurador?add=${producto.slug}`"
-                class="rounded-md bg-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-cream shadow-sm transition-opacity hover:opacity-90"
-              >
+              <BaseButtonLink :to="`/configurador?add=${producto.slug}`" :icon="undefined">
                 Añadir a mi presupuesto
-              </NuxtLink>
+              </BaseButtonLink>
               <NuxtLink
                 to="/catalogo"
-                class="rounded-md border border-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-terra transition-colors hover:bg-inaka-nude"
+                class="rounded-md border border-inaka-terra px-8 py-3.5 text-center text-sm font-semibold text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"
               >
                 Seguir explorando
               </NuxtLink>
@@ -98,7 +95,7 @@
     <!-- Relacionados -->
     <section v-if="relacionados.length" class="py-16 bg-white">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 class="mb-8 text-2xl font-bold text-inaka-terra">También te puede gustar</h2>
+        <h2 class="mb-8 font-display text-2xl font-bold text-inaka-terra">También te puede gustar</h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <NuxtLink
             v-for="p in relacionados"

@@ -3,10 +3,10 @@
     <Transition name="dialog-fade">
       <div v-if="open" class="fixed inset-0 z-[150] flex items-center justify-center p-4" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="$emit('cancel')" />
-        <div class="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="text-lg font-bold text-inaka-terra">{{ title }}</h2>
           <p v-if="message" class="mt-2 text-sm text-inaka-terra/70">{{ message }}</p>
-          <div class="mt-6 flex justify-end gap-3">
+          <div class="mt-6 flex flex-wrap justify-end gap-3">
             <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 transition-colors hover:bg-inaka-nude/50" @click="$emit('cancel')">
               {{ cancelLabel ?? 'Cancelar' }}
             </button>

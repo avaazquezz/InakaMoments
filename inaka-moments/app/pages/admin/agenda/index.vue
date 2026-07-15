@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex items-center justify-between gap-3">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex gap-2">
         <button type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold" :class="view === 'calendario' ? 'bg-inaka-terra text-inaka-cream' : 'bg-inaka-nude/60 text-inaka-terra/70'" @click="view = 'calendario'">Calendario</button>
         <button type="button" class="rounded-lg px-3 py-1.5 text-xs font-semibold" :class="view === 'lista' ? 'bg-inaka-terra text-inaka-cream' : 'bg-inaka-nude/60 text-inaka-terra/70'" @click="view = 'lista'">Lista</button>
       </div>
-      <button type="button" class="rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="openNew()">
+      <button type="button" class="shrink-0 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90" @click="openNew()">
         + Nuevo evento
       </button>
     </div>
@@ -24,7 +24,8 @@
 
     <div v-else class="overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude">
       <AdminEmptyState v-if="(data ?? []).length === 0" title="Sin eventos" />
-      <table v-else class="w-full text-left text-sm">
+      <div v-else class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
         <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
           <tr><th class="px-4 py-3">Título</th><th class="px-4 py-3">Fecha</th><th class="px-4 py-3">Estado</th></tr>
         </thead>
@@ -36,24 +37,25 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- Modal crear/editar -->
     <Teleport to="body">
       <div v-if="editing" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm" @click="editing = null" />
-        <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
           <h2 class="mb-4 text-lg font-bold text-inaka-terra">{{ editing.id ? 'Editar evento' : 'Nuevo evento' }}</h2>
           <form class="flex flex-col gap-3" @submit.prevent="save">
             <input v-model="editing.title" type="text" placeholder="Título" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input v-model="editing.event_date" type="date" required class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
               <select v-model="editing.status" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
                 <option v-for="s in EVENT_STATUSES" :key="s" :value="s">{{ EVENT_STATUS_LABELS[s] }}</option>
               </select>
             </div>
             <input v-model="editing.location" type="text" placeholder="Ubicación (opcional)" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input v-model="editing.client_name" type="text" placeholder="Cliente" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
               <input v-model="editing.client_contact" type="text" placeholder="Contacto" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
             </div>
@@ -62,7 +64,7 @@
             <div class="mt-2 flex justify-between">
               <button v-if="editing.id" type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="confirmingDeleteEvent = true">Borrar</button>
               <span v-else />
-              <div class="flex gap-3">
+              <div class="flex flex-wrap gap-3">
                 <button type="button" class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50" @click="editing = null">Cancelar</button>
                 <button type="submit" :disabled="saving" class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90">Guardar</button>
               </div>
