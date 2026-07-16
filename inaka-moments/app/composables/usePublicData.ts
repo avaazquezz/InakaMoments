@@ -29,10 +29,11 @@ export interface GalleryItem {
     id: string
     title: string
     event_type: string
+    cover_image_id: string | null
   }
 }
 
-const GALLERY_SELECT = 'id, storage_path, alt, featured, sort_order, album:event_albums!album_id!inner(id, title, event_type)'
+const GALLERY_SELECT = 'id, storage_path, alt, featured, sort_order, album:event_albums!album_id!inner(id, title, event_type, cover_image_id)'
 
 export function useProducts() {
   const supabase = useSupabaseClient<Database>()
