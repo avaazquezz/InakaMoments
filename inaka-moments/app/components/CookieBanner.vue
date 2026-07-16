@@ -10,7 +10,10 @@
         <p class="flex-1 text-sm leading-relaxed text-inaka-cream/85">
           🍪 Esta web solo utiliza <strong>cookies esenciales</strong> para su funcionamiento
           (no usamos cookies publicitarias ni de rastreo). Más información en nuestra
-          <NuxtLink to="/politica-privacidad" class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold">política de privacidad</NuxtLink>.
+          <NuxtLink
+            to="/politica-privacidad"
+            class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold"
+          >política de privacidad</NuxtLink>.
         </p>
         <button
           type="button"

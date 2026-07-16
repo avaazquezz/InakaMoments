@@ -1,9 +1,16 @@
 <template>
-  <section v-if="ocasiones.length" class="py-20 bg-inaka-cream sm:py-24">
+  <section
+    v-if="ocasiones.length"
+    class="py-20 bg-inaka-cream sm:py-24"
+  >
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="mb-12 text-center">
-        <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-inaka-gold">Para cada momento</p>
-        <h2 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">¿Qué celebras?</h2>
+        <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-inaka-gold">
+          Para cada momento
+        </p>
+        <h2 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
+          ¿Qué celebras?
+        </h2>
         <p class="mx-auto mt-3 max-w-2xl text-inaka-terra/65">
           Diseñamos la decoración perfecta para cada tipo de evento. Encuentra ideas para el tuyo.
         </p>

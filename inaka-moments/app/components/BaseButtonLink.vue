@@ -6,7 +6,12 @@
     :class="variantClasses"
   >
     <slot />
-    <Icon v-if="icon" :name="icon" class="h-4 w-4 shrink-0" aria-hidden="true" />
+    <Icon
+      v-if="icon"
+      :name="icon"
+      class="h-4 w-4 shrink-0"
+      aria-hidden="true"
+    />
   </NuxtLink>
   <a
     v-else
@@ -17,7 +22,12 @@
     :class="variantClasses"
   >
     <slot />
-    <Icon v-if="icon" :name="icon" class="h-4 w-4 shrink-0" aria-hidden="true" />
+    <Icon
+      v-if="icon"
+      :name="icon"
+      class="h-4 w-4 shrink-0"
+      aria-hidden="true"
+    />
   </a>
 </template>
 

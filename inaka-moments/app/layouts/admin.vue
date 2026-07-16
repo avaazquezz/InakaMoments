@@ -4,14 +4,27 @@
     <!-- Sidebar (desktop) -->
     <aside class="hidden w-64 shrink-0 flex-col border-r border-inaka-beige bg-white md:flex md:sticky md:top-0 md:h-screen">
       <div class="flex h-16 items-center gap-2 border-b border-inaka-beige px-5">
-        <NuxtLink to="/admin" class="flex items-center gap-2">
-          <img src="/logo.png" alt="Inaka Moments" class="h-9 w-auto" />
+        <NuxtLink
+          to="/admin"
+          class="flex items-center gap-2"
+        >
+          <img
+            src="/logo.png"
+            alt="Inaka Moments"
+            class="h-9 w-auto"
+          >
           <span class="text-sm font-bold text-inaka-terra">Panel</span>
         </NuxtLink>
       </div>
       <nav class="flex-1 overflow-y-auto px-3 py-4">
-        <template v-for="item in navItems" :key="item.to">
-          <p v-if="item.sectionLabel" class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0">
+        <template
+          v-for="item in navItems"
+          :key="item.to"
+        >
+          <p
+            v-if="item.sectionLabel"
+            class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0"
+          >
             {{ item.sectionLabel }}
           </p>
           <NuxtLink
@@ -19,7 +32,10 @@
             class="mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
             :class="isActive(item.to) ? 'bg-inaka-terra text-inaka-cream' : 'text-inaka-terra/70 hover:bg-inaka-nude/50 hover:text-inaka-terra'"
           >
-            <span class="shrink-0" v-html="item.icon" />
+            <span
+              class="shrink-0"
+              v-html="item.icon"
+            />
             {{ item.label }}
           </NuxtLink>
         </template>
@@ -30,7 +46,17 @@
           class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-inaka-terra/60 transition-colors hover:bg-inaka-nude/50 hover:text-inaka-terra"
           @click="signOut"
         >
-          <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          <svg
+            class="h-5 w-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          /></svg>
           Cerrar sesión
         </button>
       </div>
@@ -48,9 +74,21 @@
             aria-label="Abrir menú"
             @click="menuAbierto = !menuAbierto"
           >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            /></svg>
           </button>
-          <h1 class="text-base font-bold text-inaka-terra sm:text-lg">{{ currentTitle }}</h1>
+          <h1 class="text-base font-bold text-inaka-terra sm:text-lg">
+            {{ currentTitle }}
+          </h1>
         </div>
         <button
           type="button"
@@ -58,7 +96,17 @@
           aria-label="Cerrar sesión"
           @click="signOut"
         >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          /></svg>
         </button>
       </header>
 
@@ -69,16 +117,40 @@
 
     <!-- Menú móvil -->
     <Transition name="menu-fade">
-      <div v-if="menuAbierto" class="fixed inset-0 z-40 flex flex-col bg-white md:hidden">
+      <div
+        v-if="menuAbierto"
+        class="fixed inset-0 z-40 flex flex-col bg-white md:hidden"
+      >
         <div class="flex h-16 items-center justify-between border-b border-inaka-beige px-4">
           <span class="text-sm font-bold text-inaka-terra">Panel</span>
-          <button type="button" class="flex h-9 w-9 items-center justify-center rounded-lg text-inaka-terra" aria-label="Cerrar menú" @click="menuAbierto = false">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          <button
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-inaka-terra"
+            aria-label="Cerrar menú"
+            @click="menuAbierto = false"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            /></svg>
           </button>
         </div>
         <nav class="flex-1 overflow-y-auto px-3 py-4">
-          <template v-for="item in navItems" :key="item.to">
-            <p v-if="item.sectionLabel" class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0">
+          <template
+            v-for="item in navItems"
+            :key="item.to"
+          >
+            <p
+              v-if="item.sectionLabel"
+              class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0"
+            >
               {{ item.sectionLabel }}
             </p>
             <NuxtLink
@@ -87,7 +159,10 @@
               :class="isActive(item.to) ? 'bg-inaka-terra text-inaka-cream' : 'text-inaka-terra/70 hover:bg-inaka-nude/50'"
               @click="menuAbierto = false"
             >
-              <span class="shrink-0" v-html="item.icon" />
+              <span
+                class="shrink-0"
+                v-html="item.icon"
+              />
               {{ item.label }}
             </NuxtLink>
           </template>

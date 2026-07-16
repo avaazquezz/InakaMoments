@@ -11,9 +11,14 @@
     </PageHero>
 
     <!-- Packs para esta ocasión -->
-    <section v-if="packsOcasion.length" class="py-16 bg-inaka-terra text-inaka-cream">
+    <section
+      v-if="packsOcasion.length"
+      class="py-16 bg-inaka-terra text-inaka-cream"
+    >
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 class="mb-8 text-center font-display text-2xl font-bold sm:text-3xl">El pack perfecto para esta ocasión</h2>
+        <h2 class="mb-8 text-center font-display text-2xl font-bold sm:text-3xl">
+          El pack perfecto para esta ocasión
+        </h2>
         <div class="mx-auto grid max-w-3xl grid-cols-1 gap-6">
           <NuxtLink
             v-for="pack in packsOcasion"
@@ -25,7 +30,10 @@
               <h3 class="text-xl font-bold">{{ pack.name }}</h3>
               <p class="mt-1 text-sm text-inaka-cream/70">{{ pack.description }}</p>
             </div>
-            <span v-if="pack.price != null" class="shrink-0 rounded-full bg-inaka-gold px-5 py-2 text-base font-bold text-inaka-terra">
+            <span
+              v-if="pack.price != null"
+              class="shrink-0 rounded-full bg-inaka-gold px-5 py-2 text-base font-bold text-inaka-terra"
+            >
               {{ formatEUR(pack.price) }}
             </span>
           </NuxtLink>
@@ -36,7 +44,9 @@
     <!-- Productos recomendados -->
     <section class="py-16 bg-white">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 class="mb-8 font-display text-2xl font-bold text-inaka-terra sm:text-3xl">Productos recomendados</h2>
+        <h2 class="mb-8 font-display text-2xl font-bold text-inaka-terra sm:text-3xl">
+          Productos recomendados
+        </h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <NuxtLink
             v-for="p in productosOcasion"
@@ -66,12 +76,17 @@
     <!-- CTA final -->
     <section class="py-20 bg-inaka-cream">
       <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="mb-5 font-display text-3xl font-bold text-inaka-terra sm:text-4xl">Cuéntanos tu idea</h2>
+        <h2 class="mb-5 font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
+          Cuéntanos tu idea
+        </h2>
         <p class="text-inaka-terra/70 text-lg mb-8 max-w-2xl mx-auto">
           Te asesoramos sin compromiso según tu espacio y presupuesto. Servicio en Abrera,
           Baix Llobregat y alrededores de Barcelona.
         </p>
-        <BaseButtonLink :to="`/configurador?ocasion=${ocasion.event_type}`" :icon="undefined">
+        <BaseButtonLink
+          :to="`/configurador?ocasion=${ocasion.event_type}`"
+          :icon="undefined"
+        >
           Configurar mi presupuesto
         </BaseButtonLink>
       </div>
@@ -80,6 +95,8 @@
 </template>
 
 <script setup lang="ts">
+import { buildBreadcrumbSchema } from '~~/shared/schema'
+
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -111,4 +128,12 @@ useHead(() => ({
     { property: 'og:description', content: ocasion.value?.seo_description ?? '' },
   ],
 }))
+
+useJsonLd('occasion', () => {
+  if (!ocasion.value) return null
+  return buildBreadcrumbSchema([
+    { name: 'Ocasiones', url: 'https://inakamoments.com/#ocasiones' },
+    { name: ocasion.value.title, url: `https://inakamoments.com/ocasiones/${slug}` },
+  ])
+})
 </script>

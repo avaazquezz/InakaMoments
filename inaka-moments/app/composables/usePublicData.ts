@@ -1,3 +1,4 @@
+import type { NuxtApp } from 'nuxt/app'
 import type { Database } from '~/types/database'
 import type { Product, Pack, Occasion, Faq, Testimonial } from '~/utils/catalog'
 
@@ -14,7 +15,7 @@ import type { Product, Pack, Occasion, Faq, Testimonial } from '~/utils/catalog'
  * inicial (evita duplicar la petición que el servidor ya hizo) y forzamos
  * refetch en cualquier otra navegación.
  */
-function alwaysFreshAfterHydration(key: string, nuxtApp: any) {
+function alwaysFreshAfterHydration(key: string, nuxtApp: NuxtApp) {
   return nuxtApp.isHydrating ? nuxtApp.payload.data[key] : undefined
 }
 

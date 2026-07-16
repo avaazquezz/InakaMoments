@@ -3,7 +3,11 @@
     <OfflineBanner />
     <div class="w-full max-w-sm">
       <div class="mb-8 flex justify-center">
-        <img src="/logo.png" alt="Inaka Moments" class="h-16 w-auto" />
+        <img
+          src="/logo.png"
+          alt="Inaka Moments"
+          class="h-16 w-auto"
+        >
       </div>
       <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-inaka-nude">
         <slot />

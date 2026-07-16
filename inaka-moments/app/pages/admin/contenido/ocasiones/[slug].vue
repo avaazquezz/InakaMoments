@@ -1,29 +1,63 @@
 <template>
   <div class="max-w-2xl">
-    <div v-if="pending" class="h-96 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
-    <form v-else-if="occasion" class="flex flex-col gap-5 rounded-2xl bg-white p-6 ring-1 ring-inaka-nude" @submit.prevent="save">
+    <div
+      v-if="pending"
+      class="h-96 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude"
+    />
+    <form
+      v-else-if="occasion"
+      class="flex flex-col gap-5 rounded-2xl bg-white p-6 ring-1 ring-inaka-nude"
+      @submit.prevent="save"
+    >
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-semibold text-inaka-terra">Título</label>
-        <input v-model="form.title" type="text" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+        <input
+          v-model="form.title"
+          type="text"
+          class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        >
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-semibold text-inaka-terra">Ocasión (event_type)</label>
-        <select v-model="form.event_type" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-          <option v-for="et in EVENT_TYPES" :key="et" :value="et">{{ EVENT_TYPE_LABELS[et] }}</option>
+        <select
+          v-model="form.event_type"
+          class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        >
+          <option
+            v-for="et in EVENT_TYPES"
+            :key="et"
+            :value="et"
+          >
+            {{ EVENT_TYPE_LABELS[et] }}
+          </option>
         </select>
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-semibold text-inaka-terra">Introducción</label>
-        <textarea v-model="form.intro" rows="4" class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+        <textarea
+          v-model="form.intro"
+          rows="4"
+          class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        />
       </div>
 
       <div class="flex flex-col gap-2">
         <label class="text-sm font-semibold text-inaka-terra">Productos destacados</label>
         <div class="max-h-56 overflow-y-auto rounded-lg border border-inaka-beige p-2">
-          <label v-for="p in products" :key="p.id" class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-inaka-terra hover:bg-inaka-cream">
-            <input type="checkbox" :value="p.id" class="h-4 w-4 accent-inaka-terra" :checked="form.featured_product_ids.includes(p.id)" @change="toggleProduct(p.id)" />
+          <label
+            v-for="p in products"
+            :key="p.id"
+            class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-inaka-terra hover:bg-inaka-cream"
+          >
+            <input
+              type="checkbox"
+              :value="p.id"
+              class="h-4 w-4 accent-inaka-terra"
+              :checked="form.featured_product_ids.includes(p.id)"
+              @change="toggleProduct(p.id)"
+            >
             {{ p.name }}
           </label>
         </div>
@@ -31,20 +65,35 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label class="flex items-center gap-2">
-          <input v-model="form.published" type="checkbox" class="h-4 w-4 accent-inaka-terra" />
+          <input
+            v-model="form.published"
+            type="checkbox"
+            class="h-4 w-4 accent-inaka-terra"
+          >
           <span class="text-sm text-inaka-terra">Publicada</span>
         </label>
         <div class="flex flex-col gap-1.5">
           <label class="text-xs font-semibold text-inaka-terra/70">Orden</label>
-          <input v-model.number="form.sort_order" type="number" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
+          <input
+            v-model.number="form.sort_order"
+            type="number"
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          >
         </div>
       </div>
 
       <div class="flex items-center gap-3">
-        <button type="submit" :disabled="saving" class="rounded-xl bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream hover:opacity-90">
+        <button
+          type="submit"
+          :disabled="saving"
+          class="rounded-xl bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream hover:opacity-90"
+        >
           {{ saving ? 'Guardando…' : 'Guardar' }}
         </button>
-        <NuxtLink to="/admin/contenido" class="text-sm font-medium text-inaka-terra/60 hover:text-inaka-terra">Volver</NuxtLink>
+        <NuxtLink
+          to="/admin/contenido"
+          class="text-sm font-medium text-inaka-terra/60 hover:text-inaka-terra"
+        >Volver</NuxtLink>
       </div>
     </form>
   </div>
@@ -107,8 +156,8 @@ async function save() {
     toast.success('Ocasión guardada.')
     await navigateTo('/admin/contenido')
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido guardar.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido guardar.'))
   }
   finally {
     saving.value = false

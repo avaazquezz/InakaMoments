@@ -1,9 +1,16 @@
 <template>
-  <section v-if="destacados.length" class="py-20 bg-white">
+  <section
+    v-if="destacados.length"
+    class="py-20 bg-white"
+  >
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="mb-12 text-center">
-        <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-3">Tú eliges, nosotros creamos</p>
-        <h2 class="font-display text-3xl font-bold text-inaka-terra md:text-4xl mb-3">Nuestro catálogo</h2>
+        <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-3">
+          Tú eliges, nosotros creamos
+        </p>
+        <h2 class="font-display text-3xl font-bold text-inaka-terra md:text-4xl mb-3">
+          Nuestro catálogo
+        </h2>
         <p class="text-inaka-terra/70 text-base max-w-md mx-auto">
           Cada elemento con su precio, todo combinable. Monta tu decoración a medida.
         </p>
@@ -25,7 +32,9 @@
       </div>
 
       <div class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <BaseButtonLink to="/configurador">Configurar mi presupuesto</BaseButtonLink>
+        <BaseButtonLink to="/configurador">
+          Configurar mi presupuesto
+        </BaseButtonLink>
         <NuxtLink
           to="/catalogo"
           class="inline-flex items-center gap-2 rounded-md border border-inaka-terra px-8 py-3.5 text-sm font-semibold text-inaka-terra outline-none transition-colors hover:bg-inaka-nude focus-visible:ring-2 focus-visible:ring-inaka-gold"

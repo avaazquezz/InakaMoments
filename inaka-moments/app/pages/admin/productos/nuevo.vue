@@ -1,6 +1,9 @@
 <template>
   <div class="max-w-2xl rounded-2xl bg-white p-6 ring-1 ring-inaka-nude">
-    <AdminProductForm :submitting="submitting" @submit="onSubmit" />
+    <AdminProductForm
+      :submitting="submitting"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 
@@ -20,8 +23,8 @@ async function onSubmit(form: ProductFormData) {
     toast.success('Producto creado.')
     await navigateTo('/admin/productos')
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido crear el producto.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido crear el producto.'))
   }
   finally {
     submitting.value = false

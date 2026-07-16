@@ -13,6 +13,6 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Not Found', message: 'Álbum no encontrado.' })
   }
 
-  const images = ((data.gallery_images as unknown[]) ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order)
+  const images = ((data.gallery_images as { sort_order: number }[]) ?? []).sort((a, b) => a.sort_order - b.sort_order)
   return { ...data, gallery_images: images }
 })

@@ -1,5 +1,10 @@
 <template>
-  <div :id="id" role="group" :aria-label="ariaLabel ?? 'Selector de fecha'" class="w-full rounded-2xl border border-inaka-beige bg-white p-4">
+  <div
+    :id="id"
+    role="group"
+    :aria-label="ariaLabel ?? 'Selector de fecha'"
+    class="w-full rounded-2xl border border-inaka-beige bg-white p-4"
+  >
     <div class="mb-3 flex items-center justify-between">
       <button
         type="button"
@@ -8,9 +13,15 @@
         class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 outline-none transition-colors hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         @click="goPrev"
       >
-        <Icon name="lucide:chevron-left" class="h-4 w-4" aria-hidden="true" />
+        <Icon
+          name="lucide:chevron-left"
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
-      <p class="text-sm font-semibold capitalize text-inaka-terra">{{ monthLabel }}</p>
+      <p class="text-sm font-semibold capitalize text-inaka-terra">
+        {{ monthLabel }}
+      </p>
       <button
         type="button"
         :disabled="!canGoNext"
@@ -18,15 +29,25 @@
         class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 outline-none transition-colors hover:bg-inaka-nude/50 focus-visible:ring-2 focus-visible:ring-inaka-gold disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         @click="goNext"
       >
-        <Icon name="lucide:chevron-right" class="h-4 w-4" aria-hidden="true" />
+        <Icon
+          name="lucide:chevron-right"
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
       </button>
     </div>
 
     <div class="mb-1 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-inaka-terra/50">
-      <span v-for="wd in weekdayLabels" :key="wd">{{ wd }}</span>
+      <span
+        v-for="wd in weekdayLabels"
+        :key="wd"
+      >{{ wd }}</span>
     </div>
 
-    <div role="grid" class="grid grid-cols-7 gap-1">
+    <div
+      role="grid"
+      class="grid grid-cols-7 gap-1"
+    >
       <button
         v-for="cell in grid"
         :key="cell.iso"
@@ -121,13 +142,19 @@ const canGoNext = computed(() => {
 
 function goPrev() {
   if (!canGoPrev.value) return
-  if (viewMonth.value === 0) { viewMonth.value = 11; viewYear.value-- }
+  if (viewMonth.value === 0) {
+    viewMonth.value = 11
+    viewYear.value--
+  }
   else viewMonth.value--
 }
 
 function goNext() {
   if (!canGoNext.value) return
-  if (viewMonth.value === 11) { viewMonth.value = 0; viewYear.value++ }
+  if (viewMonth.value === 11) {
+    viewMonth.value = 0
+    viewYear.value++
+  }
   else viewMonth.value++
 }
 

@@ -1,8 +1,18 @@
 <template>
   <div class="max-w-2xl">
-    <div v-if="pending" class="h-96 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
-    <div v-else-if="data" class="rounded-2xl bg-white p-6 ring-1 ring-inaka-nude">
-      <AdminProductForm :initial="data" :submitting="submitting" @submit="onSubmit" />
+    <div
+      v-if="pending"
+      class="h-96 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude"
+    />
+    <div
+      v-else-if="data"
+      class="rounded-2xl bg-white p-6 ring-1 ring-inaka-nude"
+    >
+      <AdminProductForm
+        :initial="data"
+        :submitting="submitting"
+        @submit="onSubmit"
+      />
     </div>
   </div>
 </template>
@@ -26,8 +36,8 @@ async function onSubmit(form: ProductFormData) {
     toast.success('Producto guardado.')
     await navigateTo('/admin/productos')
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido guardar el producto.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido guardar el producto.'))
   }
   finally {
     submitting.value = false

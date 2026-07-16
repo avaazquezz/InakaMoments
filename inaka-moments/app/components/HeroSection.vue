@@ -2,7 +2,6 @@
   <section class="flex min-h-screen items-center">
     <div class="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-
         <!-- Text column (contenido editable desde el panel: site_content.hero) -->
         <div class="order-2 flex flex-col gap-6 lg:order-1">
           <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold">
@@ -10,7 +9,7 @@
           </p>
 
           <h1 class="font-display text-4xl font-bold leading-tight text-inaka-terra sm:text-5xl lg:text-6xl">
-            {{ hero.titulo }}<br class="hidden sm:block" />
+            {{ hero.titulo }}<br class="hidden sm:block">
             <span class="text-inaka-mauve">{{ hero.titulo_span }}</span>
           </h1>
 
@@ -20,7 +19,12 @@
 
           <!-- CTA buttons -->
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <BaseButtonLink to="/configurador" :icon="undefined">{{ hero.cta_principal }}</BaseButtonLink>
+            <BaseButtonLink
+              to="/configurador"
+              :icon="undefined"
+            >
+              {{ hero.cta_principal }}
+            </BaseButtonLink>
 
             <a
               :href="catalogPdfUrl"
@@ -61,7 +65,6 @@
             class="pointer-events-none absolute inset-0 z-20 h-full w-full"
           />
         </div>
-
       </div>
     </div>
   </section>
@@ -82,7 +85,7 @@ const { data: hero } = useSiteSection('hero', {
 
 const catalogPdfUrl = storagePublicUrl('catalog', CATALOG_PDF_PATH)
 
-const logoCol        = ref<HTMLDivElement | null>(null)
+const logoCol = ref<HTMLDivElement | null>(null)
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
 
 let animationId: number | null = null
@@ -107,31 +110,31 @@ function launchConfetti() {
   lastLaunch = now
 
   const canvas = confettiCanvas.value
-  const col    = logoCol.value
+  const col = logoCol.value
   if (!canvas || !col) return
 
   // Iguala el canvas al tamaño real del contenedor
-  canvas.width  = col.clientWidth
+  canvas.width = col.clientWidth
   canvas.height = col.clientHeight
 
   const ctx = canvas.getContext('2d')!
 
   // Origen: centro horizontal, 75 % de altura (base del logo)
-  const ox = canvas.width  * 0.5
+  const ox = canvas.width * 0.5
   const oy = canvas.height * 0.75
 
   const particles: Particle[] = Array.from({ length: 65 }, () => ({
-    x:        ox + (Math.random() - 0.5) * canvas.width * 0.45,
-    y:        oy,
-    vx:       (Math.random() - 0.5) * 5,
-    vy:       -(Math.random() * 7 + 3),
-    size:     Math.random() * 7 + 3,
-    color:    randomColor(),
+    x: ox + (Math.random() - 0.5) * canvas.width * 0.45,
+    y: oy,
+    vx: (Math.random() - 0.5) * 5,
+    vy: -(Math.random() * 7 + 3),
+    size: Math.random() * 7 + 3,
+    color: randomColor(),
     rotation: Math.random() * Math.PI * 2,
     rotSpeed: (Math.random() - 0.5) * 0.22,
-    shape:    (Math.random() > 0.4 ? 'rect' : 'circle') as 'rect' | 'circle',
-    alpha:    1,
-    decay:    Math.random() * 0.014 + 0.010,
+    shape: (Math.random() > 0.4 ? 'rect' : 'circle') as 'rect' | 'circle',
+    alpha: 1,
+    decay: Math.random() * 0.014 + 0.010,
   }))
 
   if (animationId !== null) cancelAnimationFrame(animationId)
@@ -145,12 +148,12 @@ function launchConfetti() {
     for (const p of particles) {
       if (p.alpha <= 0) continue
       alive = true
-      p.x  += p.vx
-      p.y  += p.vy
+      p.x += p.vx
+      p.y += p.vy
       p.vy += 0.2
       p.vx *= 0.99
       p.rotation += p.rotSpeed
-      p.alpha    -= p.decay
+      p.alpha -= p.decay
 
       ctx.save()
       ctx.globalAlpha = Math.max(p.alpha, 0)
@@ -160,7 +163,8 @@ function launchConfetti() {
 
       if (p.shape === 'rect') {
         ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2)
-      } else {
+      }
+      else {
         ctx.beginPath()
         ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2)
         ctx.fill()
@@ -170,7 +174,8 @@ function launchConfetti() {
 
     if (alive) {
       animationId = requestAnimationFrame(draw)
-    } else {
+    }
+    else {
       ctx.clearRect(0, 0, c.width, c.height)
       animationId = null
     }
