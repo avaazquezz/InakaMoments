@@ -1,7 +1,6 @@
 <template>
   <!-- sin overflow-hidden para que el scroll lateral funcione -->
   <section class="py-20 bg-inaka-cream">
-
     <!-- Header -->
     <div class="text-center px-4 mb-12">
       <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-3">
@@ -23,7 +22,11 @@
         aria-label="Desplazar galería a la izquierda"
         @click="scrollByCard(-1)"
       >
-        <Icon name="lucide:chevron-left" class="h-5 w-5" aria-hidden="true" />
+        <Icon
+          name="lucide:chevron-left"
+          class="h-5 w-5"
+          aria-hidden="true"
+        />
       </button>
       <button
         type="button"
@@ -31,7 +34,11 @@
         aria-label="Desplazar galería a la derecha"
         @click="scrollByCard(1)"
       >
-        <Icon name="lucide:chevron-right" class="h-5 w-5" aria-hidden="true" />
+        <Icon
+          name="lucide:chevron-right"
+          class="h-5 w-5"
+          aria-hidden="true"
+        />
       </button>
       <div
         ref="carouselRef"
@@ -47,43 +54,43 @@
         @keydown.left.prevent="scrollByCard(-1)"
         @keydown.right.prevent="scrollByCard(1)"
       >
-      <div
-        v-for="item in gallery"
-        :key="item.id"
-        class="shrink-0 w-64 sm:w-72 md:w-80 snap-center relative group overflow-hidden rounded-2xl shadow-md aspect-[4/5] bg-inaka-beige"
-      >
-        <NuxtImg
-          :src="storagePublicUrl('gallery', item.storage_path)"
-          :alt="item.alt ?? item.album.title"
-          loading="lazy"
-          draggable="false"
-          sizes="256px sm:288px md:320px"
-          class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 pointer-events-none"
-        />
-
-        <!-- Overlay label -->
         <div
-          class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-inaka-terra/70 to-transparent px-5 py-5 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
+          v-for="item in gallery"
+          :key="item.id"
+          class="shrink-0 w-64 sm:w-72 md:w-80 snap-center relative group overflow-hidden rounded-2xl shadow-md aspect-[4/5] bg-inaka-beige"
         >
-          <span class="text-inaka-cream text-sm font-semibold tracking-wide drop-shadow">
-            {{ item.album.title }}
-          </span>
-        </div>
-      </div>
+          <NuxtImg
+            :src="storagePublicUrl('gallery', item.storage_path)"
+            :alt="item.alt ?? item.album.title"
+            loading="lazy"
+            draggable="false"
+            sizes="256px sm:288px md:320px"
+            class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 pointer-events-none"
+          />
 
-      <!-- Tarjeta final CTA -->
-      <div class="shrink-0 w-64 sm:w-72 md:w-80 snap-center flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-inaka-beige aspect-[4/5] px-6 text-center">
-        <span class="text-4xl">✨</span>
-        <p class="text-sm font-semibold text-inaka-terra leading-snug">
-          ¿Te imaginas tu evento así de especial?
-        </p>
-        <NuxtLink
-          to="/configurador"
-          class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
-        >
-          Diseñar el mío
-        </NuxtLink>
-      </div>
+          <!-- Overlay label -->
+          <div
+            class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-inaka-terra/70 to-transparent px-5 py-5 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
+          >
+            <span class="text-inaka-cream text-sm font-semibold tracking-wide drop-shadow">
+              {{ item.album.title }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Tarjeta final CTA -->
+        <div class="shrink-0 w-64 sm:w-72 md:w-80 snap-center flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-inaka-beige aspect-[4/5] px-6 text-center">
+          <span class="text-4xl">✨</span>
+          <p class="text-sm font-semibold text-inaka-terra leading-snug">
+            ¿Te imaginas tu evento así de especial?
+          </p>
+          <NuxtLink
+            to="/configurador"
+            class="rounded-lg bg-inaka-terra px-5 py-2.5 text-xs font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
+          >
+            Diseñar el mío
+          </NuxtLink>
+        </div>
       </div>
     </div>
 
@@ -93,7 +100,6 @@
       <span>Desliza para explorar</span>
       <span>→</span>
     </div>
-
   </section>
 </template>
 

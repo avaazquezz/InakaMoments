@@ -100,8 +100,8 @@ export default defineEventHandler(async (event) => {
   const productIds = [...new Set(body.lines.filter(l => l.kind === 'product').map(l => l.id))]
   const packIds = [...new Set(body.lines.filter(l => l.kind === 'pack').map(l => l.id))]
 
-  const [{ data: products, error: prodErr }, { data: packs, error: packErr }, { data: settingsRow }, geo] =
-    await Promise.all([
+  const [{ data: products, error: prodErr }, { data: packs, error: packErr }, { data: settingsRow }, geo]
+    = await Promise.all([
       productIds.length
         ? supabase.from('products')
             .select('id, name, slug, category, base_price, price_is_from, pricing, sizes, options, is_rental, deposit')

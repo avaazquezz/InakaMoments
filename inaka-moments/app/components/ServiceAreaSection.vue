@@ -4,8 +4,12 @@
       <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         <!-- Texto -->
         <div>
-          <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-inaka-gold">Dónde trabajamos</p>
-          <h2 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">Llevamos la magia hasta tu evento</h2>
+          <p class="mb-3 text-sm font-semibold uppercase tracking-widest text-inaka-gold">
+            Dónde trabajamos
+          </p>
+          <h2 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
+            Llevamos la magia hasta tu evento
+          </h2>
           <p class="mt-4 text-inaka-terra/70 leading-relaxed">
             Tenemos base en <strong class="text-inaka-terra">{{ contacto.ubicacion }}</strong> y nos desplazamos por
             el Baix Llobregat y los alrededores de Barcelona. Los primeros
@@ -25,24 +29,42 @@
 
           <p class="mt-6 text-sm text-inaka-terra/55">
             ¿Tu evento es un poco más lejos?
-            <NuxtLink to="/contacto" class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold">Consúltanos sin compromiso</NuxtLink>, seguro que llegamos.
+            <NuxtLink
+              to="/contacto"
+              class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold"
+            >Consúltanos sin compromiso</NuxtLink>, seguro que llegamos.
           </p>
         </div>
 
         <!-- Tarjeta decorativa -->
         <div class="relative overflow-hidden rounded-3xl bg-white p-10 shadow-sm ring-1 ring-inaka-nude">
-          <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div
+            class="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+          >
             <div class="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-inaka-mauve/15 blur-3xl" />
             <div class="absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-inaka-gold/15 blur-3xl" />
           </div>
           <div class="relative flex flex-col items-center gap-4 text-center">
             <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-inaka-cream shadow-sm ring-1 ring-inaka-nude">
-              <Icon name="lucide:map-pin" class="h-7 w-7 text-inaka-gold" aria-hidden="true" />
+              <Icon
+                name="lucide:map-pin"
+                class="h-7 w-7 text-inaka-gold"
+                aria-hidden="true"
+              />
             </span>
-            <p class="text-lg font-bold text-inaka-terra">{{ contacto.ubicacion }}</p>
-            <p class="text-sm text-inaka-terra/60">Baix Llobregat · Área metropolitana de Barcelona</p>
+            <p class="text-lg font-bold text-inaka-terra">
+              {{ contacto.ubicacion }}
+            </p>
+            <p class="text-sm text-inaka-terra/60">
+              Baix Llobregat · Área metropolitana de Barcelona
+            </p>
             <span class="mt-2 inline-flex items-center gap-2 rounded-full bg-inaka-cream px-4 py-2 text-xs font-semibold text-inaka-terra shadow-sm ring-1 ring-inaka-nude">
-              <Icon name="lucide:car" class="h-3.5 w-3.5" aria-hidden="true" />
+              <Icon
+                name="lucide:car"
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
               Primeros {{ settings.km_incluidos }} km incluidos
             </span>
           </div>

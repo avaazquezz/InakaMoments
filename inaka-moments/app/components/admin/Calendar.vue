@@ -1,17 +1,52 @@
 <template>
   <div class="rounded-2xl border border-inaka-beige bg-white p-4">
     <div class="mb-3 flex items-center justify-between">
-      <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 hover:bg-inaka-nude/50" aria-label="Mes anterior" @click="goPrev">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+      <button
+        type="button"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 hover:bg-inaka-nude/50"
+        aria-label="Mes anterior"
+        @click="goPrev"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          viewBox="0 0 24 24"
+        ><path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 19l-7-7 7-7"
+        /></svg>
       </button>
-      <p class="text-sm font-semibold capitalize text-inaka-terra">{{ monthLabel }}</p>
-      <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 hover:bg-inaka-nude/50" aria-label="Mes siguiente" @click="goNext">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+      <p class="text-sm font-semibold capitalize text-inaka-terra">
+        {{ monthLabel }}
+      </p>
+      <button
+        type="button"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-inaka-terra/70 hover:bg-inaka-nude/50"
+        aria-label="Mes siguiente"
+        @click="goNext"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          viewBox="0 0 24 24"
+        ><path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 5l7 7-7 7"
+        /></svg>
       </button>
     </div>
 
     <div class="mb-1 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-inaka-terra/50">
-      <span v-for="wd in weekdayLabels" :key="wd">{{ wd }}</span>
+      <span
+        v-for="wd in weekdayLabels"
+        :key="wd"
+      >{{ wd }}</span>
     </div>
 
     <div class="grid grid-cols-7 gap-1">
@@ -41,14 +76,24 @@
         >
           {{ ev.title }}
         </span>
-        <span v-if="cell.events.length > 2" class="text-[10px] font-medium text-inaka-terra/50">+{{ cell.events.length - 2 }} más</span>
+        <span
+          v-if="cell.events.length > 2"
+          class="text-[10px] font-medium text-inaka-terra/50"
+        >+{{ cell.events.length - 2 }} más</span>
       </button>
     </div>
 
     <!-- Leyenda de estados -->
     <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-inaka-beige/70 pt-3">
-      <div v-for="s in EVENT_STATUSES" :key="s" class="flex items-center gap-1.5">
-        <span class="h-2.5 w-2.5 shrink-0 rounded-full" :class="EVENT_STATUS_STYLES[s].dot" />
+      <div
+        v-for="s in EVENT_STATUSES"
+        :key="s"
+        class="flex items-center gap-1.5"
+      >
+        <span
+          class="h-2.5 w-2.5 shrink-0 rounded-full"
+          :class="EVENT_STATUS_STYLES[s].dot"
+        />
         <span class="text-xs text-inaka-terra/70">{{ EVENT_STATUS_LABELS[s] }}</span>
       </div>
       <div class="flex items-center gap-1.5">

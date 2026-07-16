@@ -3,7 +3,9 @@
     <TheHeader />
     <main class="flex flex-1 items-center justify-center py-24">
       <div class="px-4 text-center">
-        <p class="mb-6 text-8xl font-bold text-inaka-gold/30">{{ error.statusCode }}</p>
+        <p class="mb-6 text-8xl font-bold text-inaka-gold/30">
+          {{ error.statusCode }}
+        </p>
         <h1 class="mb-4 font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
           {{ error.statusCode === 404 ? 'Página no encontrada' : 'Algo ha salido mal' }}
         </h1>

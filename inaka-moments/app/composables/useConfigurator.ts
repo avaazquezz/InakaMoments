@@ -106,7 +106,10 @@ export function useConfigurator() {
     const l = state.value.lines[index]
     if (!l) return
     const n = Math.floor(qty)
-    if (!Number.isFinite(n) || n < 1) { removeAt(index); return }
+    if (!Number.isFinite(n) || n < 1) {
+      removeAt(index)
+      return
+    }
     l.qty = Math.min(99, n)
   }
 

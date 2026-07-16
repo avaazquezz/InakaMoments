@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     adjustments: (q.adjustments as { label: string, amount: number | null, note?: string }[]) ?? [],
     itemsSubtotal: q.subtotal,
     total: q.total,
-    hasConsulta: items.some(i => i.line_total == null) || ((q.adjustments as any[]) ?? []).some((a: any) => a.amount == null),
+    hasConsulta: items.some(i => i.line_total == null) || ((q.adjustments as { amount: number | null }[]) ?? []).some(a => a.amount == null),
     hasRental: false,
     message: q.notes ?? undefined,
   })

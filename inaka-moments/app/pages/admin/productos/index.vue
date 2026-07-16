@@ -2,69 +2,153 @@
   <div class="flex flex-col gap-5">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex flex-1 flex-wrap items-center gap-2">
-        <input v-model="search" type="text" placeholder="Buscar por nombre…" class="w-56 rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra" />
-        <select v-model="activeFilter" class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra">
-          <option value="">Todos</option>
-          <option value="true">Activos</option>
-          <option value="false">Inactivos</option>
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Buscar por nombre…"
+          class="w-56 rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        >
+        <select
+          v-model="activeFilter"
+          class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        >
+          <option value="">
+            Todos
+          </option>
+          <option value="true">
+            Activos
+          </option>
+          <option value="false">
+            Inactivos
+          </option>
         </select>
       </div>
-      <NuxtLink to="/admin/productos/nuevo" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">
-        <Icon name="lucide:plus" class="h-4 w-4" aria-hidden="true" />
+      <NuxtLink
+        to="/admin/productos/nuevo"
+        class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
+      >
+        <Icon
+          name="lucide:plus"
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
         Nuevo producto
       </NuxtLink>
     </div>
 
-    <div v-if="pending" class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
-    <AdminEmptyState v-else-if="filtered.length === 0" title="No hay productos" message="Crea el primero o ajusta los filtros." />
+    <div
+      v-if="pending"
+      class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude"
+    />
+    <AdminEmptyState
+      v-else-if="filtered.length === 0"
+      title="No hay productos"
+      message="Crea el primero o ajusta los filtros."
+    />
 
     <!-- Tarjetas (móvil/tablet) -->
-    <div v-else class="flex flex-col gap-3 md:hidden">
-      <div v-for="p in filtered" :key="p.id" class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude">
+    <div
+      v-else
+      class="flex flex-col gap-3 md:hidden"
+    >
+      <div
+        v-for="p in filtered"
+        :key="p.id"
+        class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude"
+      >
         <div class="flex items-start justify-between gap-2">
-          <p class="min-w-0 font-semibold text-inaka-terra">{{ p.name }}</p>
-          <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold" :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
+          <p class="min-w-0 font-semibold text-inaka-terra">
+            {{ p.name }}
+          </p>
+          <span
+            class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
+            :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+          >
             {{ p.active ? 'Activo' : 'Inactivo' }}
           </span>
         </div>
-        <p class="text-xs text-inaka-terra/55">{{ p.category }} · {{ p.base_price != null ? formatEUR(p.base_price) : 'A consultar' }}</p>
+        <p class="text-xs text-inaka-terra/55">
+          {{ p.category }} · {{ p.base_price != null ? formatEUR(p.base_price) : 'A consultar' }}
+        </p>
         <div class="mt-1 flex items-center gap-3">
-          <NuxtLink :to="`/admin/productos/${p.id}`" class="text-xs font-semibold text-inaka-gold hover:underline">Editar</NuxtLink>
-          <button type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="askDelete(p)">Borrar</button>
+          <NuxtLink
+            :to="`/admin/productos/${p.id}`"
+            class="text-xs font-semibold text-inaka-gold hover:underline"
+          >Editar</NuxtLink>
+          <button
+            type="button"
+            class="text-xs font-semibold text-red-500 hover:underline"
+            @click="askDelete(p)"
+          >
+            Borrar
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Tabla (desktop) -->
-    <div v-if="!pending && filtered.length" class="hidden overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude md:block">
+    <div
+      v-if="!pending && filtered.length"
+      class="hidden overflow-hidden rounded-2xl bg-white ring-1 ring-inaka-nude md:block"
+    >
       <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm">
-        <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
-          <tr>
-            <th class="px-4 py-3">Producto</th>
-            <th class="px-4 py-3">Categoría</th>
-            <th class="px-4 py-3">Precio</th>
-            <th class="px-4 py-3">Estado</th>
-            <th class="px-4 py-3" />
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-inaka-nude/70">
-          <tr v-for="p in filtered" :key="p.id" class="hover:bg-inaka-cream/50">
-            <td class="px-4 py-3 font-medium text-inaka-terra">{{ p.name }}</td>
-            <td class="px-4 py-3 text-inaka-terra/60">{{ p.category }}</td>
-            <td class="px-4 py-3 text-inaka-terra/60">{{ p.base_price != null ? formatEUR(p.base_price) : 'A consultar' }}</td>
-            <td class="px-4 py-3">
-              <span class="rounded-full px-2.5 py-1 text-xs font-semibold" :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
-                {{ p.active ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td class="px-4 py-3 text-right">
-              <NuxtLink :to="`/admin/productos/${p.id}`" class="mr-3 text-xs font-semibold text-inaka-gold hover:underline">Editar</NuxtLink>
-              <button type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="askDelete(p)">Borrar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table class="w-full text-left text-sm">
+          <thead class="bg-inaka-cream text-xs uppercase tracking-wide text-inaka-terra/50">
+            <tr>
+              <th class="px-4 py-3">
+                Producto
+              </th>
+              <th class="px-4 py-3">
+                Categoría
+              </th>
+              <th class="px-4 py-3">
+                Precio
+              </th>
+              <th class="px-4 py-3">
+                Estado
+              </th>
+              <th class="px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-inaka-nude/70">
+            <tr
+              v-for="p in filtered"
+              :key="p.id"
+              class="hover:bg-inaka-cream/50"
+            >
+              <td class="px-4 py-3 font-medium text-inaka-terra">
+                {{ p.name }}
+              </td>
+              <td class="px-4 py-3 text-inaka-terra/60">
+                {{ p.category }}
+              </td>
+              <td class="px-4 py-3 text-inaka-terra/60">
+                {{ p.base_price != null ? formatEUR(p.base_price) : 'A consultar' }}
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+                >
+                  {{ p.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <NuxtLink
+                  :to="`/admin/productos/${p.id}`"
+                  class="mr-3 text-xs font-semibold text-inaka-gold hover:underline"
+                >Editar</NuxtLink>
+                <button
+                  type="button"
+                  class="text-xs font-semibold text-red-500 hover:underline"
+                  @click="askDelete(p)"
+                >
+                  Borrar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -118,8 +202,8 @@ async function confirmDelete() {
     toast.success('Producto borrado.')
     await refresh()
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido borrar el producto.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido borrar el producto.'))
   }
   finally {
     toDelete.value = null

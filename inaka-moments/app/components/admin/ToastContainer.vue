@@ -8,10 +8,30 @@
           class="flex items-start gap-3 rounded-xl border-l-4 bg-white px-4 py-3 shadow-lg"
           :class="borderClass(toast.type)"
         >
-          <span class="mt-0.5 shrink-0" v-html="icon(toast.type)" />
-          <p class="flex-1 text-sm text-inaka-terra">{{ toast.message }}</p>
-          <button type="button" class="shrink-0 text-inaka-terra/40 hover:text-inaka-terra" aria-label="Cerrar" @click="dismiss(toast.id)">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          <span
+            class="mt-0.5 shrink-0"
+            v-html="icon(toast.type)"
+          />
+          <p class="flex-1 text-sm text-inaka-terra">
+            {{ toast.message }}
+          </p>
+          <button
+            type="button"
+            class="shrink-0 text-inaka-terra/40 hover:text-inaka-terra"
+            aria-label="Cerrar"
+            @click="dismiss(toast.id)"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            /></svg>
           </button>
         </div>
       </TransitionGroup>

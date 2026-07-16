@@ -1,9 +1,22 @@
 <template>
   <div class="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-inaka-beige bg-white px-6 py-14 text-center">
-    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-inaka-nude/60 text-inaka-terra/50" v-html="icon ?? defaultIcon" />
-    <p class="text-sm font-semibold text-inaka-terra">{{ title }}</p>
-    <p v-if="message" class="max-w-xs text-xs text-inaka-terra/50">{{ message }}</p>
-    <div v-if="$slots.action" class="mt-1">
+    <span
+      class="flex h-12 w-12 items-center justify-center rounded-full bg-inaka-nude/60 text-inaka-terra/50"
+      v-html="icon ?? defaultIcon"
+    />
+    <p class="text-sm font-semibold text-inaka-terra">
+      {{ title }}
+    </p>
+    <p
+      v-if="message"
+      class="max-w-xs text-xs text-inaka-terra/50"
+    >
+      {{ message }}
+    </p>
+    <div
+      v-if="$slots.action"
+      class="mt-1"
+    >
       <slot name="action" />
     </div>
   </div>

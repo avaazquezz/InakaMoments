@@ -2,9 +2,6 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: true,
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: false },
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/supabase',
@@ -12,10 +9,18 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/turnstile',
     '@vite-pwa/nuxt',
+    '@nuxt/eslint',
+    '@sentry/nuxt/module',
     [
       '@nuxtjs/sitemap',
       {
-        // Sitemap estático por ahora; en Fase 8 pasa a dinámico (BD).
+        // Sin esto, el módulo autodescubre TODAS las páginas del proyecto,
+        // incluido /admin/** (panel privado) — se colaban 15 rutas del
+        // panel (login, productos/nuevo, etc.) en el sitemap público.
+        exclude: ['/admin/**'],
+        // Fuente dinámica (productos/packs activos) — ver server/api/__sitemap__/urls.ts.
+        // Se fusiona sola con la lista estática de abajo (páginas fijas + ocasiones).
+        sources: ['/api/__sitemap__/urls'],
         urls: [
           { loc: '/', changefreq: 'weekly', priority: 1.0 },
           { loc: '/catalogo', changefreq: 'weekly', priority: 0.9 },
@@ -40,6 +45,38 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  ssr: true,
+  devtools: { enabled: false },
+  app: {
+    head: {
+      htmlAttrs: { lang: 'es' },
+      title: 'Inaka Moments — Decoración de eventos con alma',
+      meta: [
+        { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
+        { property: 'og:site_name', content: 'Inaka Moments' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: 'https://inakamoments.com' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'theme-color', content: '#8B3A2A' },
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'apple-mobile-web-app-title', content: 'Inaka Moments' },
+      ],
+      link: [
+        // Canonical dinámico por ruta: ver app/composables/useCanonical.ts,
+        // llamado desde app/layouts/default.vue. Fijarlo aquí a la home
+        // hacía que Google tratase el resto del sitio como duplicado.
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      ],
+      // Umami Cloud: sin NUXT_PUBLIC_UMAMI_WEBSITE_ID (sin cuenta creada
+      // todavía) no se inyecta el script — ni en dev ni en prod.
+      script: process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID
+        ? [{ 'src': 'https://cloud.umami.is/script.js', 'defer': true, 'data-website-id': process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID }]
+        : [],
+    },
+  },
   css: [
     '@fontsource/fraunces/400.css',
     '@fontsource/fraunces/500.css',
@@ -50,10 +87,69 @@ export default defineNuxtConfig({
     '@fontsource/inter/600.css',
     '@fontsource/inter/700.css',
   ],
+  runtimeConfig: {
+    // ── Solo servidor (override en runtime con NUXT_<KEY>) ──
+    turnstile: {
+      // Secreto de TEST (siempre pasa). Producción: NUXT_TURNSTILE_SECRET_KEY.
+      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA',
+    },
+    resendApiKey: '', // NUXT_RESEND_API_KEY (si vacío → sin email server-side)
+    emailFrom: 'Inaka Moments <onboarding@resend.dev>', // NUXT_EMAIL_FROM (dominio verificado en prod)
+    emailBusiness: 'nadine.tcae@gmail.com', // NUXT_EMAIL_BUSINESS (aviso de nuevos leads)
+    adminAllowedEmails: '', // NUXT_ADMIN_ALLOWED_EMAILS (coma-separado; vacío = sin restricción)
+    public: {
+      emailjsServiceId: '',
+      emailjsTemplateId: '',
+      emailjsPublicKey: '',
+      emailjsRecipient: 'nadine.tcae@gmail.com',
+      sentry: {
+        dsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '', // vacío → SDK no-op, sin cuenta de Sentry todavía
+      },
+      umamiWebsiteId: process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || '', // vacío → no se carga el script
+    },
+  },
+  routeRules: {
+    // La antigua página de servicios queda absorbida por el catálogo
+    '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },
+    // El panel /admin va sin SSR: es privado (sin SEO que ganar) y así se
+    // evita el problema clásico de Nuxt donde las llamadas `useFetch` a
+    // rutas propias durante el render de servidor NO reenvían las cookies
+    // de la petición original — provocaba 401 en /api/admin/** aunque el
+    // navegador ya tuviera sesión. Con ssr:false, todo el fetch de datos
+    // ocurre en el cliente, donde el navegador sí adjunta la cookie.
+    '/admin/**': { ssr: false },
+    // ponytail: se intentó swr/isr en páginas públicas para caché de Nitro,
+    // pero el driver de cache en fs (unstorage) rompe con EISDIR al escribir
+    // '.nuxt/cache/nuxt/payload' en este entorno Docker (volumen bind-mount)
+    // en cuanto hay más de una variante de una misma ruta — 500 real,
+    // reproducible con cualquier query string. Revertido: sin caché de
+    // rutas por ahora. Retomar si hace falta, probando primero fuera de
+    // Docker o con otro storage driver (redis/memory) para el cache de Nitro.
+  },
+  sourcemap: { client: 'hidden' },
+  compatibilityDate: '2025-07-15',
+  vite: {
+    // @emailjs/browser solo lo importa configurador.vue; sin esto, Vite lo
+    // descubre en caliente la primera vez y fuerza un reload completo de
+    // página (dev) — se nota como "el primer click en Presupuesto se cuelga".
+    optimizeDeps: { include: ['@emailjs/browser'] },
+  },
+  eslint: {
+    config: {
+      // El estilo del proyecto ya coincide con los defaults de stylistic
+      // (comillas simples, sin punto y coma, indent 2) — sin Prettier
+      // como segundo binario para evitar reglas contradictorias.
+      stylistic: true,
+    },
+  },
   icon: {
     // Una sola colección explícita (no el paquete genérico @iconify/json,
     // que arrastra miles de colecciones) — mantiene el bundle acotado.
     serverBundle: { collections: ['lucide'] },
+  },
+  image: {
+    // Dominios remotos que IPX puede optimizar (placeholders + Supabase Storage)
+    domains: ['picsum.photos', 'kdjsbvvmcilbcycgxygo.supabase.co'],
   },
   // PWA de la web pública. El manifest se inyecta a mano con <NuxtPwaManifest/>
   // (el módulo NO lo inyecta solo) — así el panel /admin puede usar su propio
@@ -138,22 +234,13 @@ export default defineNuxtConfig({
       enabled: false,
     },
   },
-  vite: {
-    // @emailjs/browser solo lo importa configurador.vue; sin esto, Vite lo
-    // descubre en caliente la primera vez y fuerza un reload completo de
-    // página (dev) — se nota como "el primer click en Presupuesto se cuelga".
-    optimizeDeps: { include: ['@emailjs/browser'] },
-  },
-  routeRules: {
-    // La antigua página de servicios queda absorbida por el catálogo
-    '/servicios': { redirect: { to: '/catalogo', statusCode: 301 } },
-    // El panel /admin va sin SSR: es privado (sin SEO que ganar) y así se
-    // evita el problema clásico de Nuxt donde las llamadas `useFetch` a
-    // rutas propias durante el render de servidor NO reenvían las cookies
-    // de la petición original — provocaba 401 en /api/admin/** aunque el
-    // navegador ya tuviera sesión. Con ssr:false, todo el fetch de datos
-    // ocurre en el cliente, donde el navegador sí adjunta la cookie.
-    '/admin/**': { ssr: false },
+  // Sin DSN configurado (NUXT_PUBLIC_SENTRY_DSN vacío) el SDK no envía nada.
+  sentry: {
+    sourceMapsUploadOptions: {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    },
   },
   // Supabase: URL y claves se leen de SUPABASE_URL / SUPABASE_KEY /
   // SUPABASE_SERVICE_KEY (esta última SOLO servidor, nunca llega al cliente).
@@ -175,53 +262,9 @@ export default defineNuxtConfig({
     },
     types: '~~/app/types/database.ts',
   },
-  image: {
-    // Dominios remotos que IPX puede optimizar (placeholders + Supabase Storage)
-    domains: ['picsum.photos', 'kdjsbvvmcilbcycgxygo.supabase.co'],
-  },
   turnstile: {
     // Clave de TEST de Cloudflare (siempre pasa). En producción define
     // NUXT_PUBLIC_TURNSTILE_SITE_KEY con la clave real del dominio.
     siteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
-  },
-  runtimeConfig: {
-    // ── Solo servidor (override en runtime con NUXT_<KEY>) ──
-    turnstile: {
-      // Secreto de TEST (siempre pasa). Producción: NUXT_TURNSTILE_SECRET_KEY.
-      secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA',
-    },
-    resendApiKey: '',                        // NUXT_RESEND_API_KEY (si vacío → sin email server-side)
-    emailFrom: 'Inaka Moments <onboarding@resend.dev>', // NUXT_EMAIL_FROM (dominio verificado en prod)
-    emailBusiness: 'nadine.tcae@gmail.com',  // NUXT_EMAIL_BUSINESS (aviso de nuevos leads)
-    adminAllowedEmails: '',                  // NUXT_ADMIN_ALLOWED_EMAILS (coma-separado; vacío = sin restricción)
-    public: {
-      emailjsServiceId: '',
-      emailjsTemplateId: '',
-      emailjsPublicKey: '',
-      emailjsRecipient: 'nadine.tcae@gmail.com',
-    },
-  },
-  app: {
-    head: {
-      htmlAttrs: { lang: 'es' },
-      title: 'Inaka Moments — Decoración de eventos con alma',
-      meta: [
-        { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
-        { property: 'og:site_name', content: 'Inaka Moments' },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://inakamoments.com' },
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'theme-color', content: '#8B3A2A' },
-        { name: 'mobile-web-app-capable', content: 'yes' },
-        { name: 'apple-mobile-web-app-capable', content: 'yes' },
-        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'apple-mobile-web-app-title', content: 'Inaka Moments' },
-      ],
-      link: [
-        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
-        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'canonical', href: 'https://inakamoments.com' },
-      ],
-    },
   },
 })

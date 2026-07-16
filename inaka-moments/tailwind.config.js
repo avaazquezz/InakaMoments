@@ -9,10 +9,10 @@ export default {
       colors: {
         inaka: {
           terra: '#8B3A2A',
-          gold:  '#C9A96E',
+          gold: '#C9A96E',
           mauve: '#C4909A',
           beige: '#D4BFA0',
-          nude:  '#E8D0C8',
+          nude: '#E8D0C8',
           cream: '#FAFAF8',
         },
       },
@@ -31,7 +31,7 @@ export default {
             '--tw-prose-hr': theme('colors.inaka.beige'),
             '--tw-prose-quotes': theme('colors.inaka.terra'),
             '--tw-prose-quote-borders': theme('colors.inaka.gold'),
-            fontFamily: theme('fontFamily.sans').join(', '),
+            'fontFamily': theme('fontFamily.sans').join(', '),
             'h1, h2, h3': { fontFamily: theme('fontFamily.display').join(', ') },
           },
         },

@@ -1,6 +1,9 @@
 <template>
   <div class="max-w-2xl rounded-2xl bg-white p-6 ring-1 ring-inaka-nude">
-    <AdminPackForm :submitting="submitting" @submit="onSubmit" />
+    <AdminPackForm
+      :submitting="submitting"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 
@@ -20,8 +23,8 @@ async function onSubmit(form: PackFormData) {
     toast.success('Pack creado.')
     await navigateTo('/admin/packs')
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido crear el pack.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido crear el pack.'))
   }
   finally {
     submitting.value = false

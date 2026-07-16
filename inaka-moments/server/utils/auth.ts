@@ -20,7 +20,7 @@ export async function requireAdminUser(event: H3Event): Promise<JwtPayload> {
 
   const allowed = useRuntimeConfig(event)
     .adminAllowedEmails.split(',')
-    .map((email) => email.trim().toLowerCase())
+    .map(email => email.trim().toLowerCase())
     .filter(Boolean)
 
   if (allowed.length && !allowed.includes(user.email?.toLowerCase() ?? '')) {

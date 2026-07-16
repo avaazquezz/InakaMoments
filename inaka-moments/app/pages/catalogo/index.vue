@@ -29,9 +29,17 @@
     <!-- Grid de productos -->
     <section class="py-16 bg-white">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div v-if="pending" class="py-20 text-center text-inaka-terra/50">Cargando catálogo…</div>
+        <div
+          v-if="pending"
+          class="py-20 text-center text-inaka-terra/50"
+        >
+          Cargando catálogo…
+        </div>
 
-        <div v-else class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          v-else
+          class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+        >
           <NuxtLink
             v-for="p in productosFiltrados"
             :key="p.id"
@@ -48,7 +56,10 @@
                 sizes="sm:100vw md:50vw lg:400px"
                 class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div v-else class="flex h-full w-full items-center justify-center">
+              <div
+                v-else
+                class="flex h-full w-full items-center justify-center"
+              >
                 <span class="text-6xl opacity-70">{{ categoryEmoji(p.category) }}</span>
               </div>
               <span
@@ -70,16 +81,29 @@
                 <span class="text-base font-bold text-inaka-terra">{{ productPriceLabel(p) }}</span>
                 <span class="inline-flex items-center gap-1 text-xs font-semibold text-inaka-gold transition-transform group-hover:translate-x-0.5">
                   Ver detalle
-                  <Icon name="lucide:arrow-right" class="h-3.5 w-3.5" aria-hidden="true" />
+                  <Icon
+                    name="lucide:arrow-right"
+                    class="h-3.5 w-3.5"
+                    aria-hidden="true"
+                  />
                 </span>
               </div>
             </div>
           </NuxtLink>
         </div>
 
-        <div v-if="!pending && productosFiltrados.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
-          <Icon name="lucide:package-search" class="mb-4 h-12 w-12 text-inaka-terra/30" aria-hidden="true" />
-          <p class="text-inaka-terra/60 text-lg">No hay productos en esta categoría todavía.</p>
+        <div
+          v-if="!pending && productosFiltrados.length === 0"
+          class="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <Icon
+            name="lucide:package-search"
+            class="mb-4 h-12 w-12 text-inaka-terra/30"
+            aria-hidden="true"
+          />
+          <p class="text-inaka-terra/60 text-lg">
+            No hay productos en esta categoría todavía.
+          </p>
           <button
             type="button"
             class="mt-4 rounded-lg bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
@@ -95,8 +119,19 @@
       title="Montaje incluido en todos los precios"
       subtitle="Y si tu pedido supera los 120 €, te llevas un detallito de Inaka Moments acorde a tu evento. Cuéntanos qué tienes en mente y te preparamos una propuesta a medida."
     >
-      <BaseButtonLink to="/configurador" variant="accent">Configurar mi presupuesto</BaseButtonLink>
-      <BaseButtonLink to="/como-funciona" variant="outline" :icon="undefined">Cómo funciona</BaseButtonLink>
+      <BaseButtonLink
+        to="/configurador"
+        variant="accent"
+      >
+        Configurar mi presupuesto
+      </BaseButtonLink>
+      <BaseButtonLink
+        to="/como-funciona"
+        variant="outline"
+        :icon="undefined"
+      >
+        Cómo funciona
+      </BaseButtonLink>
     </CtaBand>
   </main>
 </template>

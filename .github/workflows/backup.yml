@@ -1,0 +1,40 @@
+name: Backup
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # domingos 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: inaka-moments
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: supabase/setup-cli@v2
+        with:
+          version: latest
+
+      - name: Dump de la base de datos
+        run: supabase db dump --db-url "${{ secrets.SUPABASE_DB_URL }}" -f backup.sql
+
+      - name: Backup de Storage (gallery, catalog-media, catalog)
+        run: node scripts/backup-storage.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inaka-backup-${{ github.run_id }}
+          path: |
+            inaka-moments/backup.sql
+            inaka-moments/storage-backup/
+          retention-days: 90

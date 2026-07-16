@@ -3,8 +3,14 @@
     <!-- Migas + detalle -->
     <section class="py-16 bg-inaka-cream sm:py-20">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <nav class="mb-8 text-sm text-inaka-terra/50" aria-label="Migas de pan">
-          <NuxtLink to="/catalogo" class="rounded outline-none transition-colors hover:text-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold">Catálogo</NuxtLink>
+        <nav
+          class="mb-8 text-sm text-inaka-terra/50"
+          aria-label="Migas de pan"
+        >
+          <NuxtLink
+            to="/catalogo"
+            class="rounded outline-none transition-colors hover:text-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold"
+          >Catálogo</NuxtLink>
           <span class="mx-2">/</span>
           <span class="text-inaka-terra/80">{{ producto.name }}</span>
         </nav>
@@ -19,7 +25,10 @@
               sizes="sm:100vw lg:600px"
               class="h-full w-full object-cover"
             />
-            <div v-else class="flex h-full w-full items-center justify-center">
+            <div
+              v-else
+              class="flex h-full w-full items-center justify-center"
+            >
               <span class="text-8xl opacity-70">🎈</span>
             </div>
             <span
@@ -35,15 +44,30 @@
             <p class="text-xs font-semibold uppercase tracking-widest text-inaka-gold">
               {{ CATEGORY_LABELS[producto.category] ?? producto.category }}
             </p>
-            <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">{{ producto.name }}</h1>
-            <p class="text-2xl font-bold text-inaka-terra">{{ productPriceLabel(producto) }}</p>
-            <p class="text-inaka-terra/70 leading-relaxed">{{ producto.description }}</p>
+            <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
+              {{ producto.name }}
+            </h1>
+            <p class="text-2xl font-bold text-inaka-terra">
+              {{ productPriceLabel(producto) }}
+            </p>
+            <p class="text-inaka-terra/70 leading-relaxed">
+              {{ producto.description }}
+            </p>
 
             <!-- Tramos de precio -->
-            <div v-if="tiers.length" class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
-              <p class="mb-3 text-sm font-semibold text-inaka-terra">Precios</p>
+            <div
+              v-if="tiers.length"
+              class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude"
+            >
+              <p class="mb-3 text-sm font-semibold text-inaka-terra">
+                Precios
+              </p>
               <ul class="flex flex-col gap-2">
-                <li v-for="t in tiers" :key="t.label" class="flex items-center justify-between text-sm">
+                <li
+                  v-for="t in tiers"
+                  :key="t.label"
+                  class="flex items-center justify-between text-sm"
+                >
                   <span class="text-inaka-terra/70">{{ t.label }}</span>
                   <span class="font-bold text-inaka-terra">{{ formatEUR(t.price) }}</span>
                 </li>
@@ -51,20 +75,44 @@
             </div>
 
             <!-- Tamaños y opciones -->
-            <div v-if="sizes.length || options.length" class="flex flex-col gap-3">
-              <div v-if="sizes.length" class="flex flex-wrap items-center gap-2">
+            <div
+              v-if="sizes.length || options.length"
+              class="flex flex-col gap-3"
+            >
+              <div
+                v-if="sizes.length"
+                class="flex flex-wrap items-center gap-2"
+              >
                 <span class="text-sm font-semibold text-inaka-terra">Tamaños:</span>
-                <span v-for="s in sizes" :key="s" class="rounded-full bg-inaka-nude/60 px-3 py-1 text-xs font-medium text-inaka-terra/80">{{ s }}</span>
+                <span
+                  v-for="s in sizes"
+                  :key="s"
+                  class="rounded-full bg-inaka-nude/60 px-3 py-1 text-xs font-medium text-inaka-terra/80"
+                >{{ s }}</span>
               </div>
-              <div v-if="options.length" class="flex flex-wrap items-center gap-2">
+              <div
+                v-if="options.length"
+                class="flex flex-wrap items-center gap-2"
+              >
                 <span class="text-sm font-semibold text-inaka-terra">Opciones:</span>
-                <span v-for="o in options" :key="o" class="rounded-full bg-inaka-gold/15 px-3 py-1 text-xs font-medium text-inaka-terra/80">{{ o }}</span>
+                <span
+                  v-for="o in options"
+                  :key="o"
+                  class="rounded-full bg-inaka-gold/15 px-3 py-1 text-xs font-medium text-inaka-terra/80"
+                >{{ o }}</span>
               </div>
             </div>
 
             <!-- Alquiler / fianza -->
-            <div v-if="producto.is_rental" class="flex gap-3 rounded-xl bg-inaka-gold/10 border border-inaka-gold/25 px-4 py-3">
-              <Icon name="lucide:info" class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold" aria-hidden="true" />
+            <div
+              v-if="producto.is_rental"
+              class="flex gap-3 rounded-xl bg-inaka-gold/10 border border-inaka-gold/25 px-4 py-3"
+            >
+              <Icon
+                name="lucide:info"
+                class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold"
+                aria-hidden="true"
+              />
               <p class="text-xs text-inaka-terra/70 leading-relaxed">
                 La estructura puede alquilarse abonando una <strong>fianza reembolsable</strong>,
                 que se devuelve al finalizar el evento tras comprobar el estado del material. Consúltanos.
@@ -73,7 +121,10 @@
 
             <!-- CTA -->
             <div class="mt-2 flex flex-col gap-3 sm:flex-row">
-              <BaseButtonLink :to="`/configurador?add=${producto.slug}`" :icon="undefined">
+              <BaseButtonLink
+                :to="`/configurador?add=${producto.slug}`"
+                :icon="undefined"
+              >
                 Añadir a mi presupuesto
               </BaseButtonLink>
               <NuxtLink
@@ -93,9 +144,14 @@
     </section>
 
     <!-- Relacionados -->
-    <section v-if="relacionados.length" class="py-16 bg-white">
+    <section
+      v-if="relacionados.length"
+      class="py-16 bg-white"
+    >
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 class="mb-8 font-display text-2xl font-bold text-inaka-terra">También te puede gustar</h2>
+        <h2 class="mb-8 font-display text-2xl font-bold text-inaka-terra">
+          También te puede gustar
+        </h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <NuxtLink
             v-for="p in relacionados"
@@ -114,6 +170,8 @@
 </template>
 
 <script setup lang="ts">
+import { buildProductSchema, buildBreadcrumbSchema } from '~~/shared/schema'
+
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -139,12 +197,27 @@ const relacionados = computed(() =>
     .slice(0, 3),
 )
 
+const pageUrl = computed(() => `https://inakamoments.com/catalogo/${slug}`)
+
 useHead(() => ({
   title: `${producto.value?.name} — Catálogo Inaka Moments`,
   meta: [
     { name: 'description', content: `${producto.value?.description ?? ''} ${productPriceLabel(producto.value!)}. Decoración de eventos en Abrera y Barcelona.` },
     { property: 'og:title', content: `${producto.value?.name} — Inaka Moments` },
     { property: 'og:description', content: producto.value?.description ?? '' },
+    { property: 'og:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
+    { name: 'twitter:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
   ],
 }))
+
+useJsonLd('product', () => {
+  if (!producto.value) return null
+  return [
+    buildProductSchema(producto.value, { url: pageUrl.value, imageUrl: imagen.value }),
+    buildBreadcrumbSchema([
+      { name: 'Catálogo', url: 'https://inakamoments.com/catalogo' },
+      { name: producto.value.name, url: pageUrl.value },
+    ]),
+  ]
+})
 </script>

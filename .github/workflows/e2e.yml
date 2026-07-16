@@ -1,0 +1,36 @@
+name: E2E (manual)
+
+# Manual a propósito: el test real escribe y autolimpia un lead/quote en la
+# Supabase de producción (no hay proyecto de staging) — ver el comentario
+# `ponytail:` en inaka-moments/e2e/configurador.spec.ts.
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: inaka-moments
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: inaka-moments/package-lock.json
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: inaka-moments/playwright-report/
+          retention-days: 14

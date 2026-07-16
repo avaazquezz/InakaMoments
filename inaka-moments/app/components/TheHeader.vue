@@ -2,7 +2,11 @@
   <header class="w-full border-b border-inaka-nude bg-inaka-cream sticky top-0 z-50">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
       <!-- Logo -->
-      <NuxtLink to="/" aria-label="Inaka Moments — inicio" class="relative z-50">
+      <NuxtLink
+        to="/"
+        aria-label="Inaka Moments — inicio"
+        class="relative z-50"
+      >
         <NuxtImg
           src="/logo.png"
           alt="Inaka Moments"

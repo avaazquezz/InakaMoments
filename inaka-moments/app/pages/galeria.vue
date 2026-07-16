@@ -29,7 +29,12 @@
     <!-- Gallery grid -->
     <section class="py-16 bg-white">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div v-if="pending" class="py-20 text-center text-inaka-terra/50">Cargando galería…</div>
+        <div
+          v-if="pending"
+          class="py-20 text-center text-inaka-terra/50"
+        >
+          Cargando galería…
+        </div>
 
         <TransitionGroup
           v-else
@@ -55,7 +60,11 @@
               v-if="grupo.images.length > 1"
               class="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-inaka-terra/80 px-2.5 py-1 text-xs font-semibold text-inaka-cream backdrop-blur-sm"
             >
-              <Icon name="lucide:images" class="h-3.5 w-3.5" aria-hidden="true" />
+              <Icon
+                name="lucide:images"
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
               {{ grupo.images.length }}
             </span>
             <div class="absolute inset-0 bg-gradient-to-t from-inaka-terra/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -71,8 +80,14 @@
           v-if="!pending && albumesFiltrados.length === 0"
           class="flex flex-col items-center justify-center py-20 text-center"
         >
-          <Icon name="lucide:image-off" class="mb-4 h-12 w-12 text-inaka-terra/30" aria-hidden="true" />
-          <p class="text-inaka-terra/60 text-lg">No hay imágenes en esta categoría todavía.</p>
+          <Icon
+            name="lucide:image-off"
+            class="mb-4 h-12 w-12 text-inaka-terra/30"
+            aria-hidden="true"
+          />
+          <p class="text-inaka-terra/60 text-lg">
+            No hay imágenes en esta categoría todavía.
+          </p>
           <button
             type="button"
             class="mt-4 rounded-lg bg-inaka-terra px-6 py-3 text-sm font-semibold text-inaka-cream outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-inaka-gold focus-visible:ring-offset-2"
@@ -108,7 +123,11 @@
             aria-label="Cerrar"
             @click="cerrarAlbum"
           >
-            <Icon name="lucide:x" class="h-5 w-5" aria-hidden="true" />
+            <Icon
+              name="lucide:x"
+              class="h-5 w-5"
+              aria-hidden="true"
+            />
           </button>
 
           <button
@@ -118,7 +137,11 @@
             aria-label="Foto anterior"
             @click="fotoAnterior"
           >
-            <Icon name="lucide:chevron-left" class="h-6 w-6" aria-hidden="true" />
+            <Icon
+              name="lucide:chevron-left"
+              class="h-6 w-6"
+              aria-hidden="true"
+            />
           </button>
           <button
             v-if="albumAbierto.images.length > 1"
@@ -127,7 +150,11 @@
             aria-label="Foto siguiente"
             @click="fotoSiguiente"
           >
-            <Icon name="lucide:chevron-right" class="h-6 w-6" aria-hidden="true" />
+            <Icon
+              name="lucide:chevron-right"
+              class="h-6 w-6"
+              aria-hidden="true"
+            />
           </button>
 
           <figure class="flex max-h-[85vh] w-full max-w-4xl flex-col items-center gap-4">
@@ -141,7 +168,10 @@
             />
             <figcaption class="text-center text-inaka-cream">
               <span class="text-sm font-semibold">{{ albumAbierto.title }}</span>
-              <span v-if="albumAbierto.images.length > 1" class="ml-2 text-xs text-inaka-cream/70">
+              <span
+                v-if="albumAbierto.images.length > 1"
+                class="ml-2 text-xs text-inaka-cream/70"
+              >
                 {{ indiceActivo + 1 }} / {{ albumAbierto.images.length }}
               </span>
             </figcaption>
@@ -161,7 +191,7 @@ useHead({
     { name: 'description', content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.' },
     { property: 'og:title', content: 'Galería — Inaka Moments' },
     { property: 'og:description', content: 'Descubre los trabajos reales de Inaka Moments.' },
-    { property: 'og:image', content: '/logo.png' },
+    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
   ],
 })
 

@@ -1,28 +1,70 @@
 <template>
   <div class="flex flex-col gap-5">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <input v-model="search" type="text" placeholder="Buscar por nombre…" class="w-full rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra sm:w-56" />
-      <NuxtLink to="/admin/packs/nuevo" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90">
-        <Icon name="lucide:plus" class="h-4 w-4" aria-hidden="true" />
+      <input
+        v-model="search"
+        type="text"
+        placeholder="Buscar por nombre…"
+        class="w-full rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra sm:w-56"
+      >
+      <NuxtLink
+        to="/admin/packs/nuevo"
+        class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
+      >
+        <Icon
+          name="lucide:plus"
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
         Nuevo pack
       </NuxtLink>
     </div>
 
-    <div v-if="pending" class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude" />
-    <AdminEmptyState v-else-if="filtered.length === 0" title="No hay packs" message="Crea el primero o ajusta la búsqueda." />
+    <div
+      v-if="pending"
+      class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude"
+    />
+    <AdminEmptyState
+      v-else-if="filtered.length === 0"
+      title="No hay packs"
+      message="Crea el primero o ajusta la búsqueda."
+    />
 
-    <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div v-for="p in filtered" :key="p.id" class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude">
+    <div
+      v-else
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+    >
+      <div
+        v-for="p in filtered"
+        :key="p.id"
+        class="flex flex-col gap-2 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude"
+      >
         <div class="flex items-start justify-between gap-2">
-          <p class="font-bold text-inaka-terra">{{ p.name }}</p>
-          <span class="rounded-full px-2 py-0.5 text-[11px] font-semibold" :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'">
+          <p class="font-bold text-inaka-terra">
+            {{ p.name }}
+          </p>
+          <span
+            class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            :class="p.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+          >
             {{ p.active ? 'Activo' : 'Inactivo' }}
           </span>
         </div>
-        <p class="text-sm font-semibold text-inaka-terra/70">{{ p.price != null ? formatEUR(p.price) : 'A consultar' }}</p>
+        <p class="text-sm font-semibold text-inaka-terra/70">
+          {{ p.price != null ? formatEUR(p.price) : 'A consultar' }}
+        </p>
         <div class="mt-2 flex items-center gap-3">
-          <NuxtLink :to="`/admin/packs/${p.id}`" class="text-xs font-semibold text-inaka-gold hover:underline">Editar</NuxtLink>
-          <button type="button" class="text-xs font-semibold text-red-500 hover:underline" @click="askDelete(p)">Borrar</button>
+          <NuxtLink
+            :to="`/admin/packs/${p.id}`"
+            class="text-xs font-semibold text-inaka-gold hover:underline"
+          >Editar</NuxtLink>
+          <button
+            type="button"
+            class="text-xs font-semibold text-red-500 hover:underline"
+            @click="askDelete(p)"
+          >
+            Borrar
+          </button>
         </div>
       </div>
     </div>
@@ -69,8 +111,8 @@ async function confirmDelete() {
     toast.success('Pack borrado.')
     await refresh()
   }
-  catch (err: any) {
-    toast.error(err?.data?.message ?? 'No se ha podido borrar el pack.')
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido borrar el pack.'))
   }
   finally {
     toDelete.value = null

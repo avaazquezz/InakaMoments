@@ -9,10 +9,21 @@
     <!-- FAQ agrupadas por categoría -->
     <section class="py-16 bg-white">
       <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div v-if="pending" class="py-20 text-center text-inaka-terra/50">Cargando…</div>
+        <div
+          v-if="pending"
+          class="py-20 text-center text-inaka-terra/50"
+        >
+          Cargando…
+        </div>
 
-        <div v-else class="flex flex-col gap-10">
-          <div v-for="grupo in grupos" :key="grupo.categoria">
+        <div
+          v-else
+          class="flex flex-col gap-10"
+        >
+          <div
+            v-for="grupo in grupos"
+            :key="grupo.categoria"
+          >
             <h2 class="mb-4 text-sm font-semibold uppercase tracking-widest text-inaka-gold">
               {{ grupo.label }}
             </h2>
@@ -24,9 +35,15 @@
               >
                 <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-6 py-4 font-semibold text-inaka-terra outline-none [&::-webkit-details-marker]:hidden focus-visible:ring-2 focus-visible:ring-inaka-gold">
                   {{ faq.question }}
-                  <Icon name="lucide:chevron-down" class="h-4 w-4 shrink-0 text-inaka-gold transition-transform group-open:rotate-180" aria-hidden="true" />
+                  <Icon
+                    name="lucide:chevron-down"
+                    class="h-4 w-4 shrink-0 text-inaka-gold transition-transform group-open:rotate-180"
+                    aria-hidden="true"
+                  />
                 </summary>
-                <p class="px-6 pb-5 text-inaka-terra/70 leading-relaxed">{{ faq.answer }}</p>
+                <p class="px-6 pb-5 text-inaka-terra/70 leading-relaxed">
+                  {{ faq.answer }}
+                </p>
               </details>
             </div>
           </div>
@@ -44,15 +61,21 @@
 </template>
 
 <script setup lang="ts">
+import { buildFaqPageSchema } from '~~/shared/schema'
+
 useHead({
   title: 'Preguntas frecuentes — Inaka Moments',
   meta: [
     { name: 'description', content: 'Dudas sobre decoración de eventos con globos: montaje incluido, desmontaje, desplazamiento, reservas con antelación, pagos y fianzas de alquiler.' },
     { property: 'og:title', content: 'FAQ — Inaka Moments' },
+    { property: 'og:description', content: 'Resolvemos tus dudas sobre precios, reservas, montaje y alquiler de estructuras.' },
+    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
   ],
 })
 
 const { data: faqs, pending } = useFaqs()
+
+useJsonLd('faq', () => buildFaqPageSchema(faqs.value))
 
 const CATEGORIA_LABELS: Record<string, string> = {
   general: 'General',
