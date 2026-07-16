@@ -193,6 +193,7 @@ export default defineNuxtConfig({
     resendApiKey: '',                        // NUXT_RESEND_API_KEY (si vacío → sin email server-side)
     emailFrom: 'Inaka Moments <onboarding@resend.dev>', // NUXT_EMAIL_FROM (dominio verificado en prod)
     emailBusiness: 'nadine.tcae@gmail.com',  // NUXT_EMAIL_BUSINESS (aviso de nuevos leads)
+    adminAllowedEmails: '',                  // NUXT_ADMIN_ALLOWED_EMAILS (coma-separado; vacío = sin restricción)
     public: {
       emailjsServiceId: '',
       emailjsTemplateId: '',
