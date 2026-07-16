@@ -4,7 +4,7 @@
 # En el VPS (una sola vez):  docker network create web
 # Desplegar:                 docker compose -f docker-compose.prod.yml up -d --build
 #
-# Variables de entorno: .env junto a este fichero (ver .env.example).
+# Variables de entorno: .env.production junto a este fichero (ver .env.example).
 # El panel /admin es una RUTA de la misma app: no necesita router propio.
 # Guía completa: docker/DEPLOY.md
 # ─────────────────────────────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     init: true # reaping de señales/zombies correcto con node como proceso principal
     env_file:
-      - path: .env
+      - path: .env.production
         required: false # en el VPS puede inyectarse el entorno por otros medios
     environment:
       # Nuxt solo mapea variables NUXT_* sobre runtimeConfig en runtime (la

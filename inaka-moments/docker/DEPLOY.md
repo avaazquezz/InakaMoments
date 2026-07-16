@@ -7,14 +7,15 @@ Docker Compose está integrado en la raíz del proyecto con dos entornos:
 | **Desarrollo** (por defecto) | `docker-compose.yml` | `docker compose up` |
 | **Producción** (Traefik+TLS) | `docker-compose.prod.yml` | `docker compose -f docker-compose.prod.yml up -d --build` |
 
-Atajos npm equivalentes (desde `inaka-moments/`):
+Atajos, ambos desde `inaka-moments/` (equivalentes, usa el que prefieras):
 
 ```bash
-npm run docker:dev         # desarrollo con hot reload → http://localhost:3000
-npm run docker:dev:down    # parar desarrollo
-npm run docker:build       # construir la imagen de producción
-npm run docker:prod        # levantar producción (build + up -d)
-npm run docker:prod:down   # parar producción
+make dev        # ó: npm run docker:dev        → desarrollo, http://localhost:3000
+make dev-down   # ó: npm run docker:dev:down   → parar desarrollo
+make build      # ó: npm run docker:build      → construir imagen de producción
+make prod       # ó: npm run docker:prod       → levantar producción (build + up -d)
+make prod-down  # ó: npm run docker:prod:down  → parar producción
+make logs       # logs de producción en vivo
 ```
 
 ---
@@ -74,9 +75,22 @@ Despliegue:
 
 ```bash
 cd inaka-moments
-# Crear .env de producción (ver .env.example) y luego:
-docker compose -f docker-compose.prod.yml up -d --build
+# Copiar .env.production al VPS (nunca por git — ver .env.example para los campos) y luego:
+make prod   # ó: docker compose -f docker-compose.prod.yml up -d --build
 ```
+
+### Checklist antes de ir a producción de verdad
+
+Ya confirmados (no requieren acción):
+- ✅ Red Docker de Traefik llamada `web`.
+- ✅ Certresolver de Traefik llamado `le` (coincide con `tls.certresolver=le` en las labels).
+- ✅ Widget real de Turnstile creado (Cloudflare, hostnames `inakamoments.com`/`www.`, modo Managed) — claves ya en `.env.production`.
+- ✅ `inakamoments.com` registrado en Hostinger (3 años, hasta 2029-07-16).
+- ✅ DNS: `A @` y `CNAME www` → `95.216.184.138` (VPS), propagado y verificado.
+- ✅ Dominio añadido en Resend con DKIM/SPF/DMARC (estado `Pending` → Resend lo verifica solo, hasta un par de horas; confirmar "Verified" en https://resend.com/domains antes de la primera campaña real). `NUXT_EMAIL_FROM` ya apunta a `hola@inakamoments.com` en `.env.production`.
+
+Pendiente manual (fuera de este repo, no automatizable):
+- `docker network create web` en el VPS si aún no existe (idempotente, falla sin más si ya está creada).
 
 El compose de producción define (vía labels de Traefik):
 - Router HTTPS para `inakamoments.com` y `www.` con Let's Encrypt (`certresolver=le`).
@@ -92,25 +106,38 @@ Copia `docker/traefik-dynamic.yml` al directorio dynamic de tu Traefik
 (p. ej. `/home/vazquezdev/servicios/traefik/dynamic/inaka-moments.yml`).
 **No uses ambos a la vez** (labels + file) o tendrás routers duplicados.
 
-## 4. Variables de entorno (runtime)
+## 4. Variables de entorno (runtime) — dos ficheros, uno por entorno
 
-Se leen del `.env` junto a `package.json` (ver `.env.example`):
+| Entorno | Fichero | Cargado por |
+|---|---|---|
+| Desarrollo | `.env` | `docker-compose.yml` |
+| Producción | `.env.production` | `docker-compose.prod.yml` |
+
+Ninguno de los dos se commitea (`.gitignore`: `.env` + `.env.*`, excepto `.env.example`).
+Plantilla de campos común: `.env.example`.
 
 ```bash
-# Supabase (proyecto inaka-moments, ref kdjsbvvmcilbcycgxygo)
+# Supabase (proyecto inaka-moments, ref kdjsbvvmcilbcycgxygo — mismo en ambos entornos)
 SUPABASE_URL=...
 SUPABASE_KEY=...              # publishable/anon (pública)
 SUPABASE_SERVICE_KEY=...      # service_role — SOLO servidor
 
 NUXT_PUBLIC_SITE_URL=https://inakamoments.com
 
-# EmailJS (legado/fallback)
+# Email (Resend) — el destinatario/reply-to difiere por entorno:
+NUXT_EMAIL_BUSINESS=...       # dev: tu correo · prod: nadine.tcae@gmail.com
+
+# EmailJS (legado/fallback) — mismo criterio que arriba
 NUXT_PUBLIC_EMAILJS_*=...
+
+# Acceso a /admin — lista de emails autorizados, coma-separada. Vacío = sin
+# restricción. dev: solo tu correo · prod: tu correo + nadine.tcae@gmail.com
+NUXT_ADMIN_ALLOWED_EMAILS=...
 ```
 
-En fases siguientes se añaden `STRIPE_*`, `RESEND_API_KEY`, `NUXT_TURNSTILE_*`, etc.
-(ver `docs/GUIA_DESARROLLO.md` §4). Regla de oro: los secretos de servidor van
-en `runtimeConfig` privado y **jamás** con prefijo `NUXT_PUBLIC_`.
+Regla de oro: los secretos de servidor van en `runtimeConfig` privado y
+**jamás** con prefijo `NUXT_PUBLIC_`. (Stripe se descartó en Fase 5 — señal
+por Bizum manual — así que no hay `STRIPE_*` que añadir.)
 
 ## 5. Healthcheck y operación
 
