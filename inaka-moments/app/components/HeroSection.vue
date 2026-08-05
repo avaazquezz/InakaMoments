@@ -1,6 +1,18 @@
 <template>
   <section class="flex min-h-screen items-center">
-    <div class="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
+    <div class="relative z-0 mx-auto w-full max-w-6xl px-4 py-24 sm:px-6 lg:px-8">
+      <!-- Fondo decorativo (Canva, extensión del logo: globos + guirnalda dorada).
+           mask-image difumina los bordes para que no se note el rectángulo de la imagen sobre el fondo crema. -->
+      <NuxtImg
+        src="/media/hero-bg.png"
+        alt=""
+        aria-hidden="true"
+        class="hero-bg pointer-events-none absolute inset-0 -z-10 h-full w-full select-none object-contain opacity-70"
+        format="webp"
+        quality="80"
+        loading="eager"
+      />
+
       <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         <!-- Text column (contenido editable desde el panel: site_content.hero) -->
         <div class="order-2 flex flex-col gap-6 lg:order-1">
@@ -18,7 +30,7 @@
           </p>
 
           <!-- CTA buttons -->
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="hero-enter hero-enter--cta flex flex-col gap-3 sm:flex-row sm:items-center">
             <BaseButtonLink
               to="/configurador"
               :icon="undefined"
@@ -41,7 +53,7 @@
              posicionado absolute respecto a este div que es relative -->
         <div
           ref="logoCol"
-          class="order-1 relative flex items-center justify-center lg:order-2"
+          class="hero-enter hero-enter--logo order-1 relative flex items-center justify-center lg:order-2"
         >
           <NuxtImg
             src="/logo.png"
@@ -188,3 +200,45 @@ onUnmounted(() => {
   if (animationId !== null) cancelAnimationFrame(animationId)
 })
 </script>
+
+<style scoped>
+/* Solo el racimo izquierdo (detrás del texto): el derecho queda oculto para no chocar
+   con el fondo blanco opaco del logo.png. */
+.hero-bg {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black 14%, black 32%, transparent 52%),
+    linear-gradient(to bottom, transparent, black 12%, black 85%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, black 14%, black 32%, transparent 52%),
+    linear-gradient(to bottom, transparent, black 12%, black 85%, transparent);
+  mask-composite: intersect;
+}
+
+.hero-enter {
+  animation: heroFadeUp 0.5s ease-out both;
+}
+.hero-enter--logo {
+  animation-delay: 0.1s;
+}
+.hero-enter--cta {
+  animation-delay: 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter {
+    animation: none;
+  }
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
