@@ -31,20 +31,23 @@
             ¿Tu evento es un poco más lejos?
             <NuxtLink
               to="/contacto"
-              class="rounded font-semibold text-inaka-gold outline-none hover:underline focus-visible:ring-2 focus-visible:ring-inaka-gold"
+              class="rounded text-base font-bold text-inaka-terra underline decoration-inaka-gold decoration-2 underline-offset-4 outline-none hover:text-inaka-gold focus-visible:ring-2 focus-visible:ring-inaka-gold"
             >Consúltanos sin compromiso</NuxtLink>, seguro que llegamos.
           </p>
         </div>
 
         <!-- Tarjeta decorativa -->
         <div class="relative overflow-hidden rounded-3xl bg-white p-10 shadow-sm ring-1 ring-inaka-nude">
-          <div
-            class="pointer-events-none absolute inset-0"
+          <!-- Acento decorativo (Canva): mismo grafismo que WhyInakaSection, mismo fondo blanco exacto -->
+          <NuxtImg
+            src="/media/why-inaka-accent.png"
+            alt=""
             aria-hidden="true"
-          >
-            <div class="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-inaka-mauve/15 blur-3xl" />
-            <div class="absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-inaka-gold/15 blur-3xl" />
-          </div>
+            class="pointer-events-none absolute -top-4 right-0 h-32 w-32 select-none object-cover object-[80%_50%] opacity-90"
+            format="webp"
+            quality="80"
+            loading="lazy"
+          />
           <div class="relative flex flex-col items-center gap-4 text-center">
             <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-inaka-cream shadow-sm ring-1 ring-inaka-nude">
               <Icon
