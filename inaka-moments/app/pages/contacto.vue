@@ -108,18 +108,12 @@
                 Horario de atención
               </h3>
               <div class="rounded-xl bg-inaka-cream p-6 ring-1 ring-inaka-nude">
-                <div class="flex justify-between items-center py-2 border-b border-inaka-nude last:border-0">
-                  <span class="text-sm text-inaka-terra/70">Lunes — Viernes</span>
-                  <span class="text-sm font-semibold text-inaka-terra">{{ contacto.horario.lunes_viernes }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-inaka-nude last:border-0">
-                  <span class="text-sm text-inaka-terra/70">Sábados</span>
-                  <span class="text-sm font-semibold text-inaka-terra">{{ contacto.horario.sabados }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2 last:border-0">
-                  <span class="text-sm text-inaka-terra/70">Domingos</span>
-                  <span class="text-sm text-inaka-terra/50">{{ contacto.horario.domingos }}</span>
-                </div>
+                <p class="text-sm font-semibold text-inaka-terra">
+                  {{ contacto.horario.disponibilidad }}
+                </p>
+                <p class="mt-1 text-sm text-inaka-terra/70">
+                  {{ contacto.horario.mensaje }}
+                </p>
               </div>
             </div>
           </div>
@@ -179,9 +173,8 @@ const { data: contacto } = useSiteSection('contacto', {
   // Sin teléfono público todavía — se añade aquí en cuanto exista.
   telefono: '',
   horario: {
-    lunes_viernes: '9:00 — 18:00',
-    sabados: '10:00 — 14:00',
-    domingos: 'Cerrado',
+    disponibilidad: 'Disponibles 24h, los 7 días de la semana',
+    mensaje: 'Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento.',
   },
 })
 

@@ -22,26 +22,14 @@ const { data: contacto } = useSiteSection('contacto', {
   // Sin teléfono público todavía — se añade aquí en cuanto exista.
   telefono: '',
   horario: {
-    lunes_viernes: '9:00 — 18:00',
-    sabados: '10:00 — 14:00',
-    domingos: 'Cerrado',
+    disponibilidad: 'Disponibles 24h, los 7 días de la semana',
+    mensaje: 'Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento.',
   },
 })
 
-/** "9:00 — 18:00" → { opens: "09:00", closes: "18:00" } (null si está cerrado ese tramo). */
-function parseHorario(texto: string): { opens: string, closes: string } | null {
-  const match = texto.match(/(\d{1,2}):(\d{2})\s*[—-]\s*(\d{1,2}):(\d{2})/)
-  if (!match) return null
-  const pad = (h: string, m: string) => `${h.padStart(2, '0')}:${m}`
-  return { opens: pad(match[1]!, match[2]!), closes: pad(match[3]!, match[4]!) }
-}
-
 useJsonLd('local-business', () => {
-  const laborables = parseHorario(contacto.value.horario.lunes_viernes)
-  const sabado = parseHorario(contacto.value.horario.sabados)
   const openingHours = [
-    ...(laborables ? [{ dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], ...laborables }] : []),
-    ...(sabado ? [{ dayOfWeek: ['Saturday'], ...sabado }] : []),
+    { dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '00:00', closes: '23:59' },
   ]
 
   return buildLocalBusinessSchema({
