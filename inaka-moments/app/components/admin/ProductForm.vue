@@ -5,8 +5,12 @@
   >
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Nombre <span class="text-inaka-mauve">*</span></label>
+        <label
+          for="admin-productform-1"
+          class="text-sm font-semibold text-inaka-terra"
+        >Nombre <span class="text-inaka-mauve">*</span></label>
         <input
+          id="admin-productform-1"
           v-model="form.name"
           type="text"
           required
@@ -14,27 +18,40 @@
         >
       </div>
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Categoría <span class="text-inaka-mauve">*</span></label>
-        <input
+        <label
+          for="admin-productform-2"
+          class="text-sm font-semibold text-inaka-terra"
+        >Categoría <span class="text-inaka-mauve">*</span></label>
+        <select
+          id="admin-productform-2"
           v-model="form.category"
-          type="text"
-          list="categorias"
           required
           class="rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
         >
-        <datalist id="categorias">
           <option
-            v-for="c in categoriasConocidas"
+            value=""
+            disabled
+          >
+            Elige una categoría
+          </option>
+          <option
+            v-for="c in categoriaOptions"
             :key="c"
             :value="c"
-          />
-        </datalist>
+          >
+            {{ CATEGORY_LABELS[c] ?? c }}
+          </option>
+        </select>
       </div>
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-semibold text-inaka-terra">Descripción</label>
+      <label
+        for="admin-productform-3"
+        class="text-sm font-semibold text-inaka-terra"
+      >Descripción</label>
       <textarea
+        id="admin-productform-3"
         v-model="form.description"
         rows="3"
         class="resize-none rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -43,13 +60,17 @@
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Precio base (€)</label>
+        <label
+          for="admin-productform-4"
+          class="text-sm font-semibold text-inaka-terra"
+        >Precio base (€)</label>
         <input
+          id="admin-productform-4"
           v-model.number="basePriceInput"
           type="number"
           min="0"
           step="0.5"
-          placeholder="A consultar si está vacío"
+          placeholder="Vacío = A consultar"
           class="rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
         >
       </div>
@@ -62,8 +83,12 @@
         <span class="text-sm text-inaka-terra">Mostrar "desde"</span>
       </label>
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Orden</label>
+        <label
+          for="admin-productform-5"
+          class="text-sm font-semibold text-inaka-terra"
+        >Orden</label>
         <input
+          id="admin-productform-5"
           v-model.number="form.sort_order"
           type="number"
           class="rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -73,7 +98,7 @@
 
     <!-- Tramos de precio -->
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-inaka-terra">Tramos de precio</label>
+      <p class="text-sm font-semibold text-inaka-terra">Tramos de precio</p>
       <div
         v-for="(tier, i) in form.pricing"
         :key="i"
@@ -95,7 +120,8 @@
         >
         <button
           type="button"
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-500 hover:bg-red-50"
+          aria-label="Quitar tramo"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-600 hover:bg-red-50"
           @click="form.pricing.splice(i, 1)"
         >
           <svg
@@ -135,7 +161,7 @@
 
     <!-- Ocasiones -->
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-inaka-terra">Ocasiones</label>
+      <p class="text-sm font-semibold text-inaka-terra">Ocasiones</p>
       <div class="flex flex-wrap gap-2">
         <label
           v-for="et in EVENT_TYPES"
@@ -170,8 +196,12 @@
         class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2"
       >
         <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-medium text-inaka-terra/70">Fianza (€)</label>
+          <label
+            for="admin-productform-6"
+            class="text-xs font-medium text-inaka-terra/70"
+          >Fianza (€)</label>
           <input
+            id="admin-productform-6"
             v-model.number="form.deposit"
             type="number"
             min="0"
@@ -180,8 +210,12 @@
           >
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-medium text-inaka-terra/70">Stock</label>
+          <label
+            for="admin-productform-7"
+            class="text-xs font-medium text-inaka-terra/70"
+          >Stock</label>
           <input
+            id="admin-productform-7"
             v-model.number="form.stock"
             type="number"
             min="0"
@@ -193,7 +227,7 @@
 
     <!-- Imágenes -->
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-inaka-terra">Fotos</label>
+      <p class="text-sm font-semibold text-inaka-terra">Fotos</p>
       <AdminImageUploader
         v-model="form.images"
         bucket="catalog-media"
@@ -254,8 +288,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{ submit: [ProductFormData] }>()
 
-const categoriasConocidas = ['estructuras', 'globos', 'extras', 'led', 'baby', 'flores', 'detalles', 'mesa-dulce']
-
 const form = reactive<ProductFormData>({
   name: props.initial?.name ?? '',
   category: props.initial?.category ?? '',
@@ -272,6 +304,13 @@ const form = reactive<ProductFormData>({
   images: props.initial?.images ? [...props.initial.images] : [],
   active: props.initial?.active ?? true,
   sort_order: props.initial?.sort_order ?? 0,
+})
+
+// Las 8 categorías del catálogo; si un producto antiguo trae otra distinta se
+// conserva como opción extra para no borrarla en silencio al editarlo.
+const categoriaOptions = computed(() => {
+  const known = Object.keys(CATEGORY_LABELS)
+  return form.category && !known.includes(form.category) ? [...known, form.category] : known
 })
 
 const basePriceInput = computed({

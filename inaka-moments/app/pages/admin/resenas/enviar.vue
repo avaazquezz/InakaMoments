@@ -11,12 +11,21 @@
           type="button"
           :disabled="selected.length === 0 || sending"
           class="shrink-0 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-          @click="sendSelected"
+          @click="confirming = true"
         >
           {{ sending ? 'Enviando…' : `Enviar solicitudes (${selected.length})` }}
         </button>
       </div>
     </div>
+
+    <AdminConfirmDialog
+      :open="confirming"
+      title="¿Enviar solicitudes de reseña?"
+      :message="confirmMessage"
+      confirm-label="Enviar emails"
+      @cancel="confirming = false"
+      @confirm="confirmSend"
+    />
 
     <p class="text-xs text-inaka-terra/50">
       Clientes con un evento ya celebrado que todavía no tienen una solicitud de reseña enviada (los más recientes ya los cubre el envío automático — aparecerán aquí más adelante si nadie responde).
@@ -145,6 +154,19 @@ const allSelected = computed(() => (data.value ?? []).length > 0 && selected.val
 
 function toggleAll() {
   selected.value = allSelected.value ? [] : (data.value ?? []).map(c => c.quoteId)
+}
+
+const confirming = ref(false)
+const confirmMessage = computed(() => {
+  const emails = (data.value ?? []).filter(c => selected.value.includes(c.quoteId)).map(c => c.clientEmail)
+  const shown = emails.slice(0, 5).join(', ')
+  const rest = emails.length > 5 ? ` y ${emails.length - 5} más` : ''
+  return `Se enviará un email real a ${emails.length} cliente${emails.length === 1 ? '' : 's'}: ${shown}${rest}.`
+})
+
+function confirmSend() {
+  confirming.value = false
+  return sendSelected()
 }
 
 const sending = ref(false)
