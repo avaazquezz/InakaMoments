@@ -43,7 +43,7 @@
         class="font-display text-3xl font-bold sm:text-4xl lg:text-5xl motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-safe:ease-out motion-safe:delay-100"
         :class="visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
       >
-        ¿List@ para diseñar tu evento?
+        ¿Preparada para diseñar tu evento?
       </h2>
       <p
         class="mx-auto mt-4 max-w-2xl text-lg text-inaka-cream/75 motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-safe:ease-out motion-safe:delay-150"
