@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     '@nuxtjs/turnstile',
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
-    '@sentry/nuxt/module',
+    // Sin DSN (NUXT_PUBLIC_SENTRY_DSN vacío) el módulo no aporta nada y solo
+    // añade ~197KB gzip a cada página — se registra solo con cuenta real.
+    ...(process.env.NUXT_PUBLIC_SENTRY_DSN ? ['@sentry/nuxt/module'] : []),
     [
       '@nuxtjs/sitemap',
       {
@@ -79,9 +81,9 @@ export default defineNuxtConfig({
     },
   },
   css: [
-    '@fontsource/fraunces/400.css',
-    '@fontsource/fraunces/500.css',
-    '@fontsource/fraunces/600.css',
+    // Solo el peso 700: font-display (Fraunces) se usa siempre con
+    // font-bold en todo el código, los pesos 400/500/600 no se usan en
+    // ningún sitio y solo añadían ~20KB woff2 cada uno al critical path.
     '@fontsource/fraunces/700.css',
     '@fontsource/inter/400.css',
     '@fontsource/inter/500.css',
@@ -179,6 +181,11 @@ export default defineNuxtConfig({
       // Amplía los patrones por defecto (js/css/html) para precachear también
       // iconos y fuentes autoalojadas.
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+      // Los PNG fuente sin comprimir (2.6MB) nunca se pintan tal cual: NuxtImg
+      // sirve siempre la variante webp, que runtimeCaching (CacheFirst,
+      // abajo) ya cachea bajo demanda. Sin esto el SW los descargaba enteros
+      // en segundo plano en la primera visita.
+      globIgnores: ['**/logo.png', '**/media/hero-bg.png', '**/media/final-cta-accent.png', '**/media/why-inaka-accent.png'],
       runtimeCaching: [
         // Datos de negocio del panel: nunca servir nada obsoleto sin avisar.
         {

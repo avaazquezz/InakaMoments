@@ -10,6 +10,7 @@
         class="hero-bg pointer-events-none absolute inset-0 -z-10 h-full w-full select-none object-contain opacity-70"
         format="webp"
         quality="80"
+        width="1200"
         loading="eager"
       />
 
