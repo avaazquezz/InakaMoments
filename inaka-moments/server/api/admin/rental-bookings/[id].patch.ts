@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
 
   const supabase = useSupabaseAdmin(event)
   if (await hasRentalOverlap(supabase, body.product_id, body.date_from, body.date_to, id)) {
-    throw createError({ statusCode: 409, statusMessage: 'Conflict', message: 'Ese producto ya está reservado en fechas que se solapan con estas.' })
+    throw createError({ statusCode: 409, statusMessage: 'Conflict', message: 'No quedan unidades libres de ese producto en esas fechas.' })
   }
 
   const { error } = await supabase.from('rental_bookings').update({ ...body, event_id: body.event_id || null }).eq('id', id)

@@ -17,6 +17,7 @@
     <AdminEmptyState
       v-else-if="(data ?? []).length === 0"
       title="Sin reservas de inventario"
+      message="Aquí se anotan las piezas de alquiler reservadas para cada evento, con su fianza. Pulsa «Nueva reserva» para añadir la primera."
     />
 
     <!-- Tarjetas (móvil/tablet) -->
@@ -45,6 +46,14 @@
           {{ b.event?.title ?? 'Sin evento vinculado' }}
         </p>
         <div class="mt-1 flex items-center gap-3">
+          <button
+            v-if="b.deposit_status === 'pagado'"
+            type="button"
+            class="text-xs font-semibold text-green-700 hover:underline"
+            @click="markDepositReturned(b)"
+          >
+            Fianza devuelta
+          </button>
           <button
             type="button"
             class="text-xs font-semibold text-inaka-gold hover:underline"
@@ -111,6 +120,14 @@
               </td>
               <td class="px-4 py-3 text-right">
                 <button
+                  v-if="b.deposit_status === 'pagado'"
+                  type="button"
+                  class="mr-3 text-xs font-semibold text-green-700 hover:underline"
+                  @click="markDepositReturned(b)"
+                >
+                  Fianza devuelta
+                </button>
+                <button
                   type="button"
                   class="mr-3 text-xs font-semibold text-inaka-gold hover:underline"
                   @click="openEdit(b)"
@@ -131,136 +148,159 @@
       </div>
     </div>
 
-    <Teleport to="body">
-      <div
+    <AdminModal
+      :open="!!editing"
+      :title="`${editing?.id ? 'Editar' : 'Nueva'} reserva`"
+      @close="editing = null"
+    >
+      <form
         v-if="editing"
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4"
+        class="flex flex-col gap-3"
+        @submit.prevent="save"
       >
-        <div
-          class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm"
-          @click="editing = null"
-        />
-        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-          <h2 class="mb-4 text-lg font-bold text-inaka-terra">
-            {{ editing.id ? 'Editar' : 'Nueva' }} reserva
-          </h2>
-          <form
-            class="flex flex-col gap-3"
-            @submit.prevent="save"
+        <AdminField
+          v-slot="{ id }"
+          label="Producto de alquiler"
+          required
+        >
+          <select
+            :id="id"
+            v-model="editing.product_id"
+            required
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            @change="onProductChange"
           >
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Producto de alquiler</label>
-              <select
-                v-model="editing.product_id"
-                required
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                @change="onProductChange"
-              >
-                <option
-                  value=""
-                  disabled
-                >
-                  Elige un producto…
-                </option>
-                <option
-                  v-for="p in rentalProducts"
-                  :key="p.id"
-                  :value="p.id"
-                >
-                  {{ p.name }}
-                </option>
-              </select>
-            </div>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-inaka-terra/70">Fecha de inicio</label>
-                <input
-                  v-model="editing.date_from"
-                  type="date"
-                  required
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-inaka-terra/70">Fecha de fin</label>
-                <input
-                  v-model="editing.date_to"
-                  type="date"
-                  required
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-              </div>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Evento vinculado (opcional)</label>
-              <select
-                v-model="editing.event_id"
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-                <option :value="null">
-                  Sin evento vinculado
-                </option>
-                <option
-                  v-for="ev in events"
-                  :key="ev.id"
-                  :value="ev.id"
-                >
-                  {{ ev.title }} ({{ ev.event_date }})
-                </option>
-              </select>
-            </div>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-inaka-terra/70">Fianza (€)</label>
-                <input
-                  v-model.number="editing.deposit_amount"
-                  type="number"
-                  min="0"
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-inaka-terra/70">Estado de la fianza</label>
-                <select
-                  v-model="editing.deposit_status"
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-                  <option
-                    v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']"
-                    :key="s"
-                    :value="s"
-                  >
-                    {{ s }}
-                  </option>
-                </select>
-              </div>
-            </div>
-            <p
-              v-if="saveError"
-              class="text-xs text-red-500"
+            <option
+              value=""
+              disabled
             >
-              {{ saveError }}
-            </p>
-            <div class="mt-2 flex flex-wrap justify-end gap-3">
-              <button
-                type="button"
-                class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50"
-                @click="editing = null"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="saving"
-                class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
-              >
-                Guardar
-              </button>
-            </div>
-          </form>
+              Elige un producto…
+            </option>
+            <option
+              v-for="p in rentalProducts"
+              :key="p.id"
+              :value="p.id"
+            >
+              {{ p.name }}
+            </option>
+          </select>
+        </AdminField>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <AdminField
+            v-slot="{ id }"
+            label="Fecha de inicio"
+            required
+          >
+            <input
+              :id="id"
+              v-model="editing.date_from"
+              type="date"
+              required
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
+          <AdminField
+            v-slot="{ id }"
+            label="Fecha de fin"
+            required
+          >
+            <input
+              :id="id"
+              v-model="editing.date_to"
+              type="date"
+              required
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
         </div>
-      </div>
-    </Teleport>
+        <p
+          v-if="selectedProduct"
+          class="text-xs"
+          :class="unitsFree <= 0 ? 'font-semibold text-red-600' : 'text-inaka-terra/80'"
+        >
+          Stock: {{ selectedProduct.stock }} · Reservadas en esas fechas: {{ bookedInRange ?? 0 }}
+          <template v-if="bookedInRange !== null">
+            · {{ unitsFree > 0 ? `Quedan ${unitsFree} libres` : 'No queda ninguna libre' }}
+          </template>
+        </p>
+        <AdminField
+          v-slot="{ id }"
+          label="Evento vinculado (opcional)"
+        >
+          <select
+            :id="id"
+            v-model="editing.event_id"
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          >
+            <option :value="null">
+              Sin evento vinculado
+            </option>
+            <option
+              v-for="ev in events"
+              :key="ev.id"
+              :value="ev.id"
+            >
+              {{ ev.title }} ({{ ev.event_date }})
+            </option>
+          </select>
+        </AdminField>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <AdminField
+            v-slot="{ id }"
+            label="Fianza (€)"
+          >
+            <input
+              :id="id"
+              v-model.number="editing.deposit_amount"
+              type="number"
+              min="0"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
+          <AdminField
+            v-slot="{ id }"
+            label="Estado de la fianza"
+          >
+            <select
+              :id="id"
+              v-model="editing.deposit_status"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+              <option
+                v-for="s in ['pendiente', 'pagado', 'reembolsado', 'fallido']"
+                :key="s"
+                :value="s"
+              >
+                {{ s }}
+              </option>
+            </select>
+          </AdminField>
+        </div>
+        <p
+          v-if="saveError"
+          role="alert"
+          class="text-xs text-red-600"
+        >
+          {{ saveError }}
+        </p>
+        <div class="mt-2 flex flex-wrap justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/80 hover:bg-inaka-nude/50"
+            @click="editing = null"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            :disabled="saving"
+            class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
+    </AdminModal>
 
     <AdminConfirmDialog
       :open="!!toDelete"
@@ -280,7 +320,7 @@ interface Booking {
   id: string, product_id: string, event_id: string | null, date_from: string, date_to: string
   deposit_amount: number, deposit_status: string, product?: { name: string } | null, event?: { title: string } | null
 }
-interface AdminProduct { id: string, name: string, is_rental: boolean, deposit: number }
+interface AdminProduct { id: string, name: string, is_rental: boolean, deposit: number, stock: number }
 interface AdminEventLite { id: string, title: string, event_date: string }
 
 const { data, pending, refresh } = await useFetch<Booking[]>('/api/admin/rental-bookings')
@@ -291,6 +331,19 @@ const toast = useToast()
 const rentalProducts = computed(() => (products.value ?? []).filter(p => p.is_rental))
 
 const editing = ref<Partial<Booking> | null>(null)
+
+// Disponibilidad en vivo del producto/fechas elegidos en el formulario (misma
+// regla que el servidor: cada reserva ocupa 1 unidad de `stock`).
+const selectedProduct = computed(() => (products.value ?? []).find(p => p.id === editing.value?.product_id))
+const bookedInRange = computed(() => {
+  const e = editing.value
+  if (!e?.product_id || !e.date_from || !e.date_to) return null
+  return (data.value ?? []).filter(b =>
+    b.product_id === e.product_id && b.id !== e.id && b.date_from <= e.date_to! && b.date_to >= e.date_from!,
+  ).length
+})
+const unitsFree = computed(() => (selectedProduct.value?.stock ?? 1) - (bookedInRange.value ?? 0))
+
 const saving = ref(false)
 const saveError = ref('')
 const toDelete = ref<Booking | null>(null)
@@ -328,6 +381,17 @@ async function save() {
   }
   finally {
     saving.value = false
+  }
+}
+
+async function markDepositReturned(b: Booking) {
+  try {
+    await $fetch(`/api/admin/rental-bookings/${b.id}`, { method: 'PATCH', body: { ...b, deposit_status: 'reembolsado' } })
+    toast.success('Fianza marcada como devuelta.')
+    await refresh()
+  }
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido actualizar la fianza.'))
   }
 }
 
