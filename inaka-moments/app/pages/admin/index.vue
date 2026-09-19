@@ -34,6 +34,12 @@
             <p class="text-xs font-semibold uppercase tracking-wide text-inaka-terra/60">Presupuestos por decidir</p>
             <p class="mt-2 text-3xl font-extrabold text-inaka-terra">{{ data.quotesEnviados }}</p>
             <p class="mt-1 text-xs text-inaka-terra/70">Esperando que el cliente confirme o tú actúes</p>
+            <p
+              v-if="data.quotesSinRespuesta.count > 0"
+              class="mt-1.5 text-xs font-semibold text-red-700"
+            >
+              {{ data.quotesSinRespuesta.count }} sin respuesta hace más de {{ data.quotesSinRespuesta.days }} días
+            </p>
           </NuxtLink>
           <NuxtLink
             to="/admin/resenas"
@@ -57,7 +63,7 @@
       <!-- Cómo va el negocio -->
       <div>
         <h2 class="mb-3 text-sm font-bold text-inaka-terra">
-          Cómo va el negocio
+          Cómo va el negocio este mes
         </h2>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div class="rounded-2xl bg-white p-5 ring-1 ring-inaka-nude">
@@ -277,6 +283,7 @@ useHead({ title: 'Inicio — Panel Inaka Moments' })
 interface DashboardData {
   leadsNuevos: number
   quotesEnviados: number
+  quotesSinRespuesta: { count: number, days: number }
   testimonialsPendientes: number
   proximosEventos: { id: string, title: string, event_date: string, event_type: string | null, status: string }[]
   eventosProximos7Dias: number
@@ -298,7 +305,7 @@ interface DeltaInfo { text: string, class: string }
 function delta(actual: number, anterior: number): DeltaInfo | null {
   if (anterior === 0) return actual > 0 ? { text: 'Más que el mes pasado', class: 'text-green-600' } : null
   const pct = Math.round(((actual - anterior) / anterior) * 100)
-  if (pct === 0) return { text: 'Igual que el mes pasado', class: 'text-inaka-terra/40' }
+  if (pct === 0) return { text: 'Igual que el mes pasado', class: 'text-inaka-terra/80' }
   return pct > 0
     ? { text: `▲ ${pct}% vs. mes pasado`, class: 'text-green-600' }
     : { text: `▼ ${Math.abs(pct)}% vs. mes pasado`, class: 'text-red-600' }

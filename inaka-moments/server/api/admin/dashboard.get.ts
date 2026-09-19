@@ -18,6 +18,9 @@ interface EventoResumen {
   status: string
 }
 
+/** Un presupuesto 'enviado' sin respuesta pasados estos días se destaca en el panel. */
+const QUOTE_STALE_DAYS = 7
+
 function startOfMonthISO(): string {
   const d = new Date()
   return formatISODate(new Date(d.getFullYear(), d.getMonth(), 1))
@@ -34,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
   const [
     leadsNuevos, quotesEnviados, testimonialsPendientes, proximosEventos, presupuestosMes, todosLeads, quoteItems,
-    presupuestosMesAnterior, depositosPendientes, eventosProximos7Dias, resenasPublicadas,
+    presupuestosMesAnterior, depositosPendientes, eventosProximos7Dias, resenasPublicadas, quotesSinRespuesta,
   ] = await Promise.all([
     supabase.from('leads').select('id', { count: 'exact', head: true }).eq('status', 'nuevo'),
     supabase.from('quotes').select('id', { count: 'exact', head: true }).eq('status', 'enviado'),
@@ -69,6 +72,10 @@ export default defineEventHandler(async (event) => {
       .gte('event_date', todayISO())
       .lte('event_date', addDaysISO(7)),
     supabase.from('testimonials').select('rating').eq('published', true),
+    supabase.from('quotes')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'enviado')
+      .lt('created_at', new Date(Date.now() - QUOTE_STALE_DAYS * 86_400_000).toISOString()),
   ])
 
   const funnelOrder = ['nuevo', 'contactado', 'presupuestado', 'ganado', 'perdido'] as const
@@ -104,6 +111,7 @@ export default defineEventHandler(async (event) => {
   return {
     leadsNuevos: leadsNuevos.count ?? 0,
     quotesEnviados: quotesEnviados.count ?? 0,
+    quotesSinRespuesta: { count: quotesSinRespuesta.count ?? 0, days: QUOTE_STALE_DAYS },
     testimonialsPendientes: testimonialsPendientes.count ?? 0,
     proximosEventos: (proximosEventos.data ?? []) as EventoResumen[],
     eventosProximos7Dias: eventosProximos7Dias.count ?? 0,
