@@ -23,16 +23,16 @@
       section="settings"
       title="Reglas de negocio"
       :fields="[
-        { key: 'desmontaje_precio', label: 'Precio desmontaje (€)', type: 'number' },
-        { key: 'km_incluidos', label: 'Km incluidos', type: 'number' },
-        { key: 'plus_gasolina', label: 'Texto plus de gasolina' },
-        { key: 'umbral_detallito', label: 'Umbral detallito gratis (€)', type: 'number' },
-        { key: 'antelacion_dias', label: 'Antelación mínima (días)', type: 'number' },
-        { key: 'pago_al_agendar', label: 'Pago al agendar', type: 'checkbox' },
-        { key: 'fianza_alquiler', label: 'Texto fianza alquiler' },
+        { key: 'desmontaje_precio', label: 'Precio desmontaje (€)', type: 'number', default: SETTINGS_DEFAULTS.desmontaje_precio },
+        { key: 'km_incluidos', label: 'Km incluidos', type: 'number', default: SETTINGS_DEFAULTS.km_incluidos },
+        { key: 'plus_gasolina', label: 'Texto plus de gasolina', default: SETTINGS_DEFAULTS.plus_gasolina },
+        { key: 'umbral_detallito', label: 'Umbral detallito gratis (€)', type: 'number', default: SETTINGS_DEFAULTS.umbral_detallito },
+        { key: 'antelacion_dias', label: 'Antelación mínima (días)', type: 'number', default: SETTINGS_DEFAULTS.antelacion_dias },
+        { key: 'pago_al_agendar', label: 'Pago al agendar', type: 'checkbox', default: SETTINGS_DEFAULTS.pago_al_agendar },
+        { key: 'fianza_alquiler', label: 'Texto fianza alquiler', default: SETTINGS_DEFAULTS.fianza_alquiler },
         { key: 'bizum_telefono', label: 'Teléfono Bizum (reserva)' },
-        { key: 'senal_porcentaje', label: 'Porcentaje de la reserva (%)', type: 'number' },
-        { key: 'moneda', label: 'Moneda' },
+        { key: 'senal_porcentaje', label: 'Porcentaje de la reserva (%)', type: 'number', default: 50 },
+        { key: 'moneda', label: 'Moneda', default: 'EUR' },
       ]"
     />
 
@@ -136,6 +136,7 @@
 
 <script setup lang="ts">
 import { CATALOG_PDF_PATH } from '~~/shared/catalogPdf'
+import { SETTINGS_DEFAULTS } from '~/composables/useBusinessRules'
 
 definePageMeta({ layout: 'admin' })
 useHead({ title: 'Contenido y ajustes — Panel Inaka Moments' })

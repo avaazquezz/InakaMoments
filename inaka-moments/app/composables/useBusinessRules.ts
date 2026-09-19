@@ -13,16 +13,23 @@ export interface BusinessRule {
   texto: string
 }
 
+/**
+ * Defaults reales de `site_content.settings`, compartidos por el sitio público
+ * (aquí) y por el formulario "Reglas de negocio" del admin (para precargarlo
+ * con los mismos valores que ya usa la web, en vez de mostrarlo en blanco).
+ */
+export const SETTINGS_DEFAULTS = {
+  desmontaje_precio: 15,
+  km_incluidos: 30,
+  plus_gasolina: 'a consultar según distancia',
+  umbral_detallito: 120,
+  antelacion_dias: 30,
+  pago_al_agendar: true,
+  fianza_alquiler: 'según estructura, reembolsable al comprobar el estado',
+}
+
 export function useBusinessRules() {
-  const { data: settings } = useSiteSection('settings', {
-    desmontaje_precio: 15,
-    km_incluidos: 30,
-    plus_gasolina: 'a consultar según distancia',
-    umbral_detallito: 120,
-    antelacion_dias: 30,
-    pago_al_agendar: true,
-    fianza_alquiler: 'según estructura, reembolsable al comprobar el estado',
-  })
+  const { data: settings } = useSiteSection('settings', SETTINGS_DEFAULTS)
 
   const rules = computed<BusinessRule[]>(() => [
     {

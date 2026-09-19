@@ -13,9 +13,13 @@
         class="flex flex-col gap-1.5"
         :class="f.type === 'textarea' ? 'sm:col-span-2' : ''"
       >
-        <label class="text-xs font-semibold text-inaka-terra/70">{{ f.label }}</label>
+        <label
+          :for="`${uid}-${f.key}`"
+          class="text-xs font-semibold text-inaka-terra/80"
+        >{{ f.label }}</label>
         <textarea
           v-if="f.type === 'textarea'"
+          :id="`${uid}-${f.key}`"
           v-model="values[f.key]"
           rows="3"
           class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -25,6 +29,7 @@
           class="flex items-center gap-2 py-2"
         >
           <input
+            :id="`${uid}-${f.key}`"
             v-model="values[f.key]"
             type="checkbox"
             class="h-4 w-4 accent-inaka-terra"
@@ -33,6 +38,7 @@
         </label>
         <input
           v-else
+          :id="`${uid}-${f.key}`"
           v-model="values[f.key]"
           :type="f.type === 'number' ? 'number' : 'text'"
           class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -54,6 +60,8 @@ export interface SiteContentField {
   key: string // admite notación con puntos, p. ej. 'horario.lunes_viernes'
   label: string
   type?: 'text' | 'textarea' | 'number' | 'checkbox'
+  /** Valor real que usa la web cuando la BD no tiene esta clave (evita mostrar 0/vacío como si nada estuviera configurado). */
+  default?: string | number | boolean
 }
 
 const props = defineProps<{
@@ -62,6 +70,7 @@ const props = defineProps<{
   fields: SiteContentField[]
 }>()
 
+const uid = useId()
 const toast = useToast()
 const { data } = await useFetch<{ section: string, data: Record<string, unknown> }>(`/api/admin/site-content/${props.section}`)
 
@@ -84,9 +93,9 @@ watchEffect(() => {
   if (!data.value?.data) return
   for (const f of props.fields) {
     const raw = getPath(data.value.data, f.key)
-    if (f.type === 'checkbox') values[f.key] = raw ?? false
-    else if (f.type === 'number') values[f.key] = raw ?? 0
-    else values[f.key] = raw ?? ''
+    if (f.type === 'checkbox') values[f.key] = raw ?? f.default ?? false
+    else if (f.type === 'number') values[f.key] = raw ?? f.default ?? 0
+    else values[f.key] = raw ?? f.default ?? ''
   }
 })
 
