@@ -95,7 +95,7 @@
     </div>
 
     <!-- Scroll hint -->
-    <div class="flex items-center justify-center gap-2 mt-5 text-xs text-inaka-terra/40 select-none">
+    <div class="flex items-center justify-center gap-2 mt-5 text-xs text-inaka-terra/80 select-none">
       <span>←</span>
       <span>Desliza para explorar</span>
       <span>→</span>

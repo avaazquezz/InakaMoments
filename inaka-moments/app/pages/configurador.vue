@@ -102,7 +102,7 @@
               :key="i"
               class="flex items-center justify-between gap-3 py-2 text-sm"
             >
-              <span class="min-w-0 flex-1 truncate text-inaka-terra/80">{{ l.label }} <span class="text-inaka-terra/40">× {{ l.qty }}</span></span>
+              <span class="min-w-0 flex-1 truncate text-inaka-terra/80">{{ l.label }} <span class="text-inaka-terra/80">× {{ l.qty }}</span></span>
               <span class="shrink-0 font-semibold text-inaka-terra">
                 <template v-if="l.consulta">A consultar</template>
                 <template v-else>{{ formatEUR(l.line_total!) }}</template>
@@ -226,7 +226,7 @@
                 <label
                   for="cfg-ubicacion"
                   class="text-sm font-semibold text-inaka-terra"
-                >Dirección del evento <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
+                >Dirección del evento <span class="ml-1 text-xs font-normal text-inaka-terra/80">(opcional)</span></label>
                 <input
                   id="cfg-ubicacion"
                   v-model="state.location"
@@ -285,7 +285,7 @@
                 <label
                   for="cfg-invitados"
                   class="text-sm font-semibold text-inaka-terra"
-                >Número de invitados <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
+                >Número de invitados <span class="ml-1 text-xs font-normal text-inaka-terra/80">(opcional)</span></label>
                 <div class="relative">
                   <select
                     id="cfg-invitados"
@@ -670,7 +670,7 @@
                 <label
                   for="cfg-msg"
                   class="text-sm font-semibold text-inaka-terra"
-                >Peticiones especiales <span class="ml-1 text-xs font-normal text-inaka-terra/40">(opcional)</span></label>
+                >Peticiones especiales <span class="ml-1 text-xs font-normal text-inaka-terra/80">(opcional)</span></label>
                 <textarea
                   id="cfg-msg"
                   v-model="contact.mensaje"

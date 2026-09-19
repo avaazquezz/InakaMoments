@@ -149,23 +149,23 @@
 
       <!-- Bottom bar -->
       <div class="flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
-        <p class="text-xs text-inaka-cream/40">
+        <p class="text-xs text-inaka-cream/75">
           © {{ new Date().getFullYear() }} Inaka Moments x <a
             href="https://www.vazquezdev.pro"
             target="_blank"
             rel="noopener noreferrer"
-            class="transition-colors hover:text-inaka-cream/70 underline underline-offset-2"
+            class="transition-colors hover:text-inaka-cream underline underline-offset-2"
           >VazquezDev</a>. Todos los derechos reservados.
         </p>
         <div class="flex items-center gap-5">
           <NuxtLink
             to="/politica-privacidad"
-            class="rounded text-xs text-inaka-cream/40 outline-none transition-colors hover:text-inaka-cream/70 focus-visible:ring-2 focus-visible:ring-inaka-gold"
+            class="rounded text-xs text-inaka-cream/75 outline-none transition-colors hover:text-inaka-cream focus-visible:ring-2 focus-visible:ring-inaka-gold"
           >Política de privacidad</NuxtLink>
           <span class="h-3 w-px bg-inaka-cream/20" />
           <NuxtLink
             to="/aviso-legal"
-            class="rounded text-xs text-inaka-cream/40 outline-none transition-colors hover:text-inaka-cream/70 focus-visible:ring-2 focus-visible:ring-inaka-gold"
+            class="rounded text-xs text-inaka-cream/75 outline-none transition-colors hover:text-inaka-cream focus-visible:ring-2 focus-visible:ring-inaka-gold"
           >Aviso legal</NuxtLink>
         </div>
       </div>
