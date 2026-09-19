@@ -14,32 +14,48 @@
         >
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Nombre</label>
+              <label
+                for="leads-id-1"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Nombre</label>
               <input
+                id="leads-id-1"
                 v-model="form.nombre"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Email</label>
+              <label
+                for="leads-id-2"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Email</label>
               <input
+                id="leads-id-2"
                 v-model="form.email"
                 type="email"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Teléfono</label>
+              <label
+                for="leads-id-3"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Teléfono</label>
               <input
+                id="leads-id-3"
                 v-model="form.telefono"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Estado</label>
+              <label
+                for="leads-id-4"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Estado</label>
               <select
+                id="leads-id-4"
                 v-model="form.status"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
@@ -53,8 +69,12 @@
               </select>
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Tipo de evento</label>
+              <label
+                for="leads-id-5"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Tipo de evento</label>
               <input
+                id="leads-id-5"
                 v-model="form.tipo"
                 type="text"
                 list="tipos-evento"
@@ -69,16 +89,24 @@
               </datalist>
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Fecha aproximada</label>
+              <label
+                for="leads-id-6"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Fecha aproximada</label>
               <input
+                id="leads-id-6"
                 v-model="form.fecha"
                 type="date"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5 sm:col-span-2">
-              <label class="text-xs font-semibold text-inaka-terra/70">Invitados</label>
+              <label
+                for="leads-id-7"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Invitados</label>
               <input
+                id="leads-id-7"
                 v-model="form.invitados"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -86,16 +114,24 @@
             </div>
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-inaka-terra/70">Ideas / peticiones del cliente</label>
+            <label
+              for="leads-id-8"
+              class="text-xs font-semibold text-inaka-terra/70"
+            >Ideas / peticiones del cliente</label>
             <textarea
+              id="leads-id-8"
               v-model="form.ideas_extra"
               rows="2"
               class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
             />
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-inaka-terra/70">Notas internas</label>
+            <label
+              for="leads-id-9"
+              class="text-xs font-semibold text-inaka-terra/70"
+            >Notas internas</label>
             <textarea
+              id="leads-id-9"
               v-model="form.notes"
               rows="2"
               class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -168,10 +204,16 @@
                 </NuxtLink>
               </li>
             </ul>
-            <NuxtLink
-              :to="`/admin/presupuestos?lead=${lead.id}`"
-              class="mt-3 inline-block text-xs font-semibold text-inaka-gold hover:underline"
-            >Ver en Presupuestos</NuxtLink>
+            <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <NuxtLink
+                :to="`/admin/presupuestos?nuevo=${lead.id}`"
+                class="rounded-lg bg-inaka-terra px-3 py-1.5 text-xs font-semibold text-inaka-cream hover:opacity-90"
+              >+ Nuevo presupuesto</NuxtLink>
+              <NuxtLink
+                :to="`/admin/presupuestos?lead=${lead.id}`"
+                class="text-xs font-semibold text-inaka-gold hover:underline"
+              >Ver en Presupuestos</NuxtLink>
+            </div>
           </div>
         </div>
       </div>
@@ -214,7 +256,7 @@
             <p class="text-inaka-terra">
               {{ a.note }}
             </p>
-            <p class="text-xs text-inaka-terra/40">
+            <p class="text-xs text-inaka-terra/80">
               {{ formatFecha(a.created_at) }}
             </p>
           </li>

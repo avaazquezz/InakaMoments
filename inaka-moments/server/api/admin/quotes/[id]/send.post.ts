@@ -43,5 +43,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'No se ha podido enviar el email (revisa que Resend esté configurado).' })
   }
 
+  // Un borrador que ya salió por email pasa a "enviado": si no, nunca contaría
+  // como "por decidir" en el panel ni podría caducar.
+  if (q.status === 'borrador') {
+    const { error: statusErr } = await supabase.from('quotes').update({ status: 'enviado' }).eq('id', q.id)
+    if (statusErr) console.error('[admin/quotes/send] email enviado pero no se pudo marcar como enviado:', statusErr)
+  }
+
   return { ok: true }
 })

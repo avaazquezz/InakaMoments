@@ -27,7 +27,7 @@
             class="rounded-lg border border-inaka-beige px-3 py-1.5 text-xs font-semibold text-inaka-terra hover:bg-inaka-nude/40"
             @click="sendToClient"
           >
-            Reenviar email
+            {{ quote.status === 'borrador' ? 'Enviar por email' : 'Reenviar email' }}
           </button>
           <button
             v-if="quote.status !== 'aceptado'"
@@ -56,40 +56,60 @@
         >
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Nombre</label>
+              <label
+                for="presupuestos-id-1"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Nombre</label>
               <input
+                id="presupuestos-id-1"
                 v-model="infoForm.client_name"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Email</label>
+              <label
+                for="presupuestos-id-2"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Email</label>
               <input
+                id="presupuestos-id-2"
                 v-model="infoForm.client_email"
                 type="email"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Teléfono</label>
+              <label
+                for="presupuestos-id-3"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Teléfono</label>
               <input
+                id="presupuestos-id-3"
                 v-model="infoForm.client_phone"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-semibold text-inaka-terra/70">Fecha del evento</label>
+              <label
+                for="presupuestos-id-4"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Fecha del evento</label>
               <input
+                id="presupuestos-id-4"
                 v-model="infoForm.event_date"
                 type="date"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
               >
             </div>
             <div class="flex flex-col gap-1.5 sm:col-span-2">
-              <label class="text-xs font-semibold text-inaka-terra/70">Dirección</label>
+              <label
+                for="presupuestos-id-5"
+                class="text-xs font-semibold text-inaka-terra/70"
+              >Dirección</label>
               <input
+                id="presupuestos-id-5"
                 v-model="infoForm.location"
                 type="text"
                 class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -97,8 +117,12 @@
             </div>
           </div>
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-semibold text-inaka-terra/70">Notas internas</label>
+            <label
+              for="presupuestos-id-6"
+              class="text-xs font-semibold text-inaka-terra/70"
+            >Notas internas</label>
             <textarea
+              id="presupuestos-id-6"
               v-model="infoForm.notes"
               rows="2"
               class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -212,7 +236,8 @@
             >
             <button
               type="button"
-              class="text-red-500"
+              :aria-label="`Quitar ${lineLabel(line)}`"
+              class="text-red-600"
               @click="draftLines.splice(i, 1)"
             >
               <svg
@@ -304,7 +329,8 @@
           >
           <button
             type="button"
-            class="text-red-500"
+            aria-label="Quitar ajuste"
+            class="text-red-600"
             @click="manualAdjustments.splice(i, 1)"
           >
             <svg
@@ -341,61 +367,56 @@
     </template>
 
     <!-- Modal Aceptar -->
-    <Teleport to="body">
-      <div
-        v-if="accepting"
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4"
-      >
-        <div
-          class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm"
-          @click="accepting = false"
-        />
-        <div class="relative max-h-[90vh] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-          <h2 class="mb-4 text-lg font-bold text-inaka-terra">
-            Aceptar presupuesto
-          </h2>
-          <div class="flex flex-col gap-4">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-inaka-terra">Fecha del evento</label>
-              <input
-                v-model="acceptForm.event_date"
-                type="date"
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-            </div>
-            <div class="rounded-lg bg-inaka-cream px-3 py-2.5 text-sm text-inaka-terra">
-              Reserva a abonar (<strong>{{ senalPorcentaje }}%</strong> del total): <strong>{{ quote ? formatEUR(round2(quote.total * senalPorcentaje / 100)) : '—' }}</strong>
-              <p class="mt-0.5 text-xs text-inaka-terra/50">
-                Se calcula sola según el % fijado en Contenido → Reglas de negocio.
-              </p>
-            </div>
-            <p
-              v-if="acceptError"
-              class="text-xs text-red-500"
-            >
-              {{ acceptError }}
-            </p>
-            <div class="mt-2 flex flex-wrap justify-end gap-3">
-              <button
-                type="button"
-                class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50"
-                @click="accepting = false"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                :disabled="acceptSubmitting"
-                class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
-                @click="confirmAccept"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
+    <AdminModal
+      :open="accepting"
+      title="Aceptar presupuesto"
+      size="sm"
+      @close="accepting = false"
+    >
+      <div class="flex flex-col gap-4">
+        <AdminField
+          v-slot="{ id }"
+          label="Fecha del evento"
+        >
+          <input
+            :id="id"
+            v-model="acceptForm.event_date"
+            type="date"
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          >
+        </AdminField>
+        <div class="rounded-lg bg-inaka-cream px-3 py-2.5 text-sm text-inaka-terra">
+          Reserva a abonar (<strong>{{ senalPorcentaje }}%</strong> del total): <strong>{{ quote ? formatEUR(round2(quote.total * senalPorcentaje / 100)) : '—' }}</strong>
+          <p class="mt-0.5 text-xs text-inaka-terra/80">
+            Se calcula sola según el % fijado en Contenido → Reglas de negocio.
+          </p>
+        </div>
+        <p
+          v-if="acceptError"
+          role="alert"
+          class="text-xs text-red-600"
+        >
+          {{ acceptError }}
+        </p>
+        <div class="mt-2 flex flex-wrap justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/80 hover:bg-inaka-nude/50"
+            @click="accepting = false"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            :disabled="acceptSubmitting"
+            class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
+            @click="confirmAccept"
+          >
+            Confirmar
+          </button>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <AdminConfirmDialog
       :open="confirmingDelete"
@@ -483,8 +504,10 @@ watchEffect(() => {
 })
 
 function lineLabel(line: DraftLine): string {
+  // Los packs no están en la lista de productos: se usa la etiqueta ya guardada en la línea.
+  const stored = quote.value?.items.find(it => (it.product_id ?? it.pack_id) === line.id)?.label
   const p = products.value?.find(x => x.id === line.id)
-  return p ? `${p.name}${line.tier ? ` (${line.tier})` : ''}` : line.id
+  return p ? `${p.name}${line.tier ? ` (${line.tier})` : ''}` : (stored ?? line.id)
 }
 
 function addLine() {
@@ -553,8 +576,13 @@ async function confirmAccept() {
   acceptSubmitting.value = true
   acceptError.value = ''
   try {
-    await $fetch(`/api/admin/quotes/${route.params.id}/accept`, { method: 'POST', body: acceptForm })
-    toast.success('Presupuesto aceptado. Evento confirmado en Agenda.')
+    const res = await $fetch<{ rental: { booked: number, notBooked: string[] } }>(`/api/admin/quotes/${route.params.id}/accept`, { method: 'POST', body: acceptForm })
+    toast.success(res.rental.booked > 0
+      ? `Presupuesto aceptado. Evento confirmado en Agenda y ${res.rental.booked} pieza(s) de alquiler reservada(s) en Inventario.`
+      : 'Presupuesto aceptado. Evento confirmado en Agenda.')
+    if (res.rental.notBooked.length) {
+      toast.error(`Sin unidades libres en Inventario para: ${res.rental.notBooked.join(', ')}. Revísalo en Inventario alquiler.`)
+    }
     accepting.value = false
     await refresh()
   }
@@ -579,9 +607,11 @@ async function updateDepositStatus() {
 }
 
 async function sendToClient() {
+  const firstSend = quote.value?.status === 'borrador'
   try {
     await $fetch(`/api/admin/quotes/${route.params.id}/send`, { method: 'POST' })
-    toast.success('Email reenviado.')
+    toast.success(firstSend ? 'Email enviado.' : 'Email reenviado.')
+    await refresh()
   }
   catch (err) { toast.error(apiErrorMessage(err, 'No se ha podido enviar.')) }
 }
