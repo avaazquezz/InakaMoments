@@ -21,13 +21,29 @@
           v-for="p in destacados"
           :key="p.id"
           :to="`/catalogo/${p.slug}`"
-          class="group rounded-2xl bg-inaka-cream p-6 ring-1 ring-inaka-nude transition-all hover:shadow-md hover:-translate-y-0.5"
+          class="group overflow-hidden rounded-2xl bg-inaka-cream ring-1 ring-inaka-nude transition-all hover:shadow-md hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-inaka-gold"
         >
-          <p class="text-[11px] font-semibold uppercase tracking-widest text-inaka-gold mb-2">
-            {{ CATEGORY_LABELS[p.category] ?? p.category }}
-          </p>
-          <h3 class="font-bold text-inaka-terra leading-snug group-hover:text-inaka-gold transition-colors">{{ p.name }}</h3>
-          <p class="mt-3 text-sm font-bold text-inaka-terra">{{ productPriceLabel(p) }}</p>
+          <div class="relative aspect-[4/3] overflow-hidden bg-inaka-nude/40">
+            <NuxtImg
+              v-if="productImage(p)"
+              :src="productImage(p)!"
+              :alt="p.name"
+              loading="lazy"
+              sizes="sm:100vw md:50vw lg:280px"
+              class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <ProductImagePlaceholder
+              v-else
+              :category="p.category"
+            />
+          </div>
+          <div class="p-6">
+            <p class="text-[11px] font-semibold uppercase tracking-widest text-inaka-gold mb-2">
+              {{ CATEGORY_LABELS[p.category] ?? p.category }}
+            </p>
+            <h3 class="font-bold text-inaka-terra leading-snug group-hover:text-inaka-gold transition-colors">{{ p.name }}</h3>
+            <p class="mt-3 text-sm font-bold text-inaka-terra">{{ productPriceLabel(p) }}</p>
+          </div>
         </NuxtLink>
       </div>
 
@@ -49,4 +65,9 @@
 <script setup lang="ts">
 const { data: productos } = useProducts()
 const destacados = computed(() => productos.value.slice(0, 4))
+
+function productImage(p: Product): string | null {
+  const imgs = jsonArray(p.images)
+  return imgs.length ? storagePublicUrl('catalog-media', imgs[0]!) : null
+}
 </script>
