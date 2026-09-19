@@ -90,7 +90,9 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <p class="text-sm font-semibold text-inaka-terra">Productos destacados</p>
+        <p class="text-sm font-semibold text-inaka-terra">
+          Productos destacados
+        </p>
         <div class="max-h-56 overflow-y-auto rounded-lg border border-inaka-beige p-2">
           <label
             v-for="p in products"

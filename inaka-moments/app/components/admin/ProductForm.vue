@@ -98,7 +98,9 @@
 
     <!-- Tramos de precio -->
     <div class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-inaka-terra">Tramos de precio</p>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Tramos de precio
+      </p>
       <div
         v-for="(tier, i) in form.pricing"
         :key="i"
@@ -161,7 +163,9 @@
 
     <!-- Ocasiones -->
     <div class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-inaka-terra">Ocasiones</p>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Ocasiones
+      </p>
       <div class="flex flex-wrap gap-2">
         <label
           v-for="et in EVENT_TYPES"
@@ -227,7 +231,9 @@
 
     <!-- Imágenes -->
     <div class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-inaka-terra">Fotos</p>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Fotos
+      </p>
       <AdminImageUploader
         v-model="form.images"
         bucket="catalog-media"

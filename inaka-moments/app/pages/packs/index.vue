@@ -40,38 +40,38 @@
               <ProductImagePlaceholder v-else />
             </div>
             <div class="flex flex-1 flex-col p-8">
-            <div class="mb-4 flex items-start justify-between gap-4">
-              <h2 class="text-2xl font-bold text-inaka-terra">{{ pack.name }}</h2>
-              <span
-                v-if="pack.price != null"
-                class="shrink-0 rounded-full bg-inaka-terra px-4 py-1.5 text-sm font-bold text-inaka-cream"
-              >
-                {{ formatEUR(pack.price) }}
-              </span>
-            </div>
-            <p class="mb-5 text-inaka-terra/65 leading-relaxed">{{ pack.description }}</p>
-            <ul class="mb-6 flex flex-col gap-2">
-              <li
-                v-for="item in packIncludes(pack)"
-                :key="item"
-                class="flex items-start gap-2 text-sm text-inaka-terra/60"
-              >
+              <div class="mb-4 flex items-start justify-between gap-4">
+                <h2 class="text-2xl font-bold text-inaka-terra">{{ pack.name }}</h2>
+                <span
+                  v-if="pack.price != null"
+                  class="shrink-0 rounded-full bg-inaka-terra px-4 py-1.5 text-sm font-bold text-inaka-cream"
+                >
+                  {{ formatEUR(pack.price) }}
+                </span>
+              </div>
+              <p class="mb-5 text-inaka-terra/65 leading-relaxed">{{ pack.description }}</p>
+              <ul class="mb-6 flex flex-col gap-2">
+                <li
+                  v-for="item in packIncludes(pack)"
+                  :key="item"
+                  class="flex items-start gap-2 text-sm text-inaka-terra/60"
+                >
+                  <Icon
+                    name="lucide:check"
+                    class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold"
+                    aria-hidden="true"
+                  />
+                  {{ item }}
+                </li>
+              </ul>
+              <span class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-inaka-gold transition-transform group-hover:translate-x-0.5">
+                Ver pack completo
                 <Icon
-                  name="lucide:check"
-                  class="mt-0.5 h-4 w-4 shrink-0 text-inaka-gold"
+                  name="lucide:arrow-right"
+                  class="h-4 w-4"
                   aria-hidden="true"
                 />
-                {{ item }}
-              </li>
-            </ul>
-            <span class="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-inaka-gold transition-transform group-hover:translate-x-0.5">
-              Ver pack completo
-              <Icon
-                name="lucide:arrow-right"
-                class="h-4 w-4"
-                aria-hidden="true"
-              />
-            </span>
+              </span>
             </div>
           </NuxtLink>
         </div>

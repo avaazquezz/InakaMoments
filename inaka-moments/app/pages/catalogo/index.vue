@@ -183,5 +183,4 @@ function productImage(p: Product): string | null {
   const imgs = jsonArray(p.images)
   return imgs.length ? storagePublicUrl('catalog-media', imgs[0]!) : null
 }
-
 </script>

@@ -67,7 +67,9 @@
     />
 
     <div class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-inaka-terra">Ocasiones</p>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Ocasiones
+      </p>
       <div class="flex flex-wrap gap-2">
         <label
           v-for="et in EVENT_TYPES"
@@ -88,7 +90,9 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-inaka-terra">Fotos</p>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Fotos
+      </p>
       <AdminImageUploader
         v-model="form.images"
         bucket="catalog-media"
