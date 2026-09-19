@@ -5,11 +5,15 @@
       :key="path"
       class="group relative aspect-square overflow-hidden rounded-xl border border-inaka-beige bg-inaka-nude/30"
     >
-      <img
+      <NuxtImg
         :src="storagePublicUrl(bucket, path)"
         class="h-full w-full object-cover"
         :alt="`Imagen ${i + 1}`"
-      >
+        width="200"
+        height="200"
+        format="webp"
+        loading="lazy"
+      />
       <span
         v-if="i === 0"
         class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream"
@@ -106,7 +110,7 @@
 
     <label
       v-if="!max || modelValue.length + uploading.length < max"
-      class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/40 transition-colors hover:border-inaka-terra/50 hover:text-inaka-terra/70"
+      class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/80 transition-colors hover:border-inaka-terra/50 hover:text-inaka-terra"
       @dragover.prevent
       @drop.prevent="onDrop"
     >

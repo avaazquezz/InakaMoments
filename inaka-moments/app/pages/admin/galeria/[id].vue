@@ -12,16 +12,24 @@
         @submit.prevent="saveAlbum"
       >
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Título</label>
+          <label
+            for="galeria-id-1"
+            class="text-sm font-semibold text-inaka-terra"
+          >Título</label>
           <input
+            id="galeria-id-1"
             v-model="form.title"
             type="text"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
           >
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Ocasión</label>
+          <label
+            for="galeria-id-2"
+            class="text-sm font-semibold text-inaka-terra"
+          >Ocasión</label>
           <select
+            id="galeria-id-2"
             v-model="form.event_type"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
           >
@@ -35,8 +43,12 @@
           </select>
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Fecha</label>
+          <label
+            for="galeria-id-3"
+            class="text-sm font-semibold text-inaka-terra"
+          >Fecha</label>
           <input
+            id="galeria-id-3"
             v-model="form.event_date"
             type="date"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -79,11 +91,15 @@
             :key="img.id"
             class="group relative aspect-square overflow-hidden rounded-xl border border-inaka-beige bg-inaka-nude/30"
           >
-            <img
+            <NuxtImg
               :src="storagePublicUrl('gallery', img.storage_path)"
               class="h-full w-full object-cover"
               :alt="img.alt ?? ''"
-            >
+              width="200"
+              height="200"
+              format="webp"
+              loading="lazy"
+            />
             <span
               v-if="album.cover_image_id === img.id"
               class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream"
@@ -158,7 +174,7 @@
             </div>
           </div>
 
-          <label class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/40 hover:border-inaka-terra/50 hover:text-inaka-terra/70">
+          <label class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/80 hover:border-inaka-terra/50 hover:text-inaka-terra">
             <svg
               class="h-6 w-6"
               fill="none"

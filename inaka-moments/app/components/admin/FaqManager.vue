@@ -53,87 +53,93 @@
       </li>
     </ul>
 
-    <Teleport to="body">
-      <div
+    <AdminModal
+      :open="!!editing"
+      :title="`${editing?.id ? 'Editar' : 'Nueva'} pregunta`"
+      size="lg"
+      @close="editing = null"
+    >
+      <form
         v-if="editing"
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4"
+        class="flex flex-col gap-4"
+        @submit.prevent="save"
       >
-        <div
-          class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm"
-          @click="editing = null"
-        />
-        <div class="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-          <h2 class="mb-4 text-lg font-bold text-inaka-terra">
-            {{ editing.id ? 'Editar' : 'Nueva' }} pregunta
-          </h2>
-          <form
-            class="flex flex-col gap-4"
-            @submit.prevent="save"
+        <AdminField
+          v-slot="{ id }"
+          label="Pregunta"
+          required
+        >
+          <input
+            :id="id"
+            v-model="editing.question"
+            type="text"
+            required
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
           >
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-inaka-terra">Pregunta</label>
-              <input
-                v-model="editing.question"
-                type="text"
-                required
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-sm font-semibold text-inaka-terra">Respuesta</label>
-              <textarea
-                v-model="editing.answer"
-                rows="4"
-                required
-                class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              />
-            </div>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-inaka-terra">Categoría</label>
-                <input
-                  v-model="editing.category"
-                  type="text"
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-semibold text-inaka-terra">Orden</label>
-                <input
-                  v-model.number="editing.sort_order"
-                  type="number"
-                  class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-                >
-              </div>
-            </div>
-            <label class="flex items-center gap-2">
-              <input
-                v-model="editing.published"
-                type="checkbox"
-                class="h-4 w-4 accent-inaka-terra"
-              >
-              <span class="text-sm text-inaka-terra">Publicada</span>
-            </label>
-            <div class="mt-2 flex flex-wrap justify-end gap-3">
-              <button
-                type="button"
-                class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50"
-                @click="editing = null"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="saving"
-                class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
-              >
-                Guardar
-              </button>
-            </div>
-          </form>
+        </AdminField>
+        <AdminField
+          v-slot="{ id }"
+          label="Respuesta"
+          required
+        >
+          <textarea
+            :id="id"
+            v-model="editing.answer"
+            rows="4"
+            required
+            class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          />
+        </AdminField>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <AdminField
+            v-slot="{ id }"
+            label="Categoría"
+          >
+            <input
+              :id="id"
+              v-model="editing.category"
+              type="text"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
+          <AdminField
+            v-slot="{ id }"
+            label="Orden"
+          >
+            <input
+              :id="id"
+              v-model.number="editing.sort_order"
+              type="number"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
         </div>
-      </div>
-    </Teleport>
+        <label class="flex items-center gap-2">
+          <input
+            v-model="editing.published"
+            type="checkbox"
+            class="h-4 w-4 accent-inaka-terra"
+          >
+          <span class="text-sm text-inaka-terra">Publicada</span>
+        </label>
+        <div class="mt-2 flex flex-wrap justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/80 hover:bg-inaka-nude/50"
+            @click="editing = null"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            :disabled="saving"
+            class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
+    </AdminModal>
 
     <AdminConfirmDialog
       :open="!!toDelete"

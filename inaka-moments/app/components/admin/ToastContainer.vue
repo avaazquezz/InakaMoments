@@ -1,6 +1,10 @@
 <template>
   <Teleport to="body">
-    <div class="fixed bottom-4 inset-x-4 z-[200] flex flex-col gap-2 sm:inset-x-auto sm:left-auto sm:right-4 sm:w-full sm:max-w-sm">
+    <div
+      role="status"
+      aria-live="polite"
+      class="fixed bottom-4 inset-x-4 z-[200] flex flex-col gap-2 sm:inset-x-auto sm:left-auto sm:right-4 sm:w-full sm:max-w-sm"
+    >
       <TransitionGroup name="toast">
         <div
           v-for="toast in toasts"
@@ -17,7 +21,7 @@
           </p>
           <button
             type="button"
-            class="shrink-0 text-inaka-terra/40 hover:text-inaka-terra"
+            class="shrink-0 text-inaka-terra/80 hover:text-inaka-terra"
             aria-label="Cerrar"
             @click="dismiss(toast.id)"
           >
