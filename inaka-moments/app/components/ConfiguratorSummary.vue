@@ -12,7 +12,7 @@
       <button
         v-if="count > 0"
         type="button"
-        class="text-xs font-medium text-inaka-terra/80transition-colors hover:text-red-500"
+        class="text-xs font-medium text-inaka-terra/80 transition-colors hover:text-red-500"
         @click="clear"
       >
         Vaciar
@@ -89,7 +89,7 @@
             </div>
             <button
               type="button"
-              class="rounded text-xs font-medium text-inaka-terra/80outline-none transition-colors hover:text-red-500 focus-visible:ring-2 focus-visible:ring-inaka-gold"
+              class="rounded text-xs font-medium text-inaka-terra/80 outline-none transition-colors hover:text-red-500 focus-visible:ring-2 focus-visible:ring-inaka-gold"
               @click="removeAt(i)"
             >
               Quitar
