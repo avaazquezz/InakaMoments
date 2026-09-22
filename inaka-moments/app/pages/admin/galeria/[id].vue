@@ -87,7 +87,7 @@
         </h2>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div
-            v-for="img in album.gallery_images"
+            v-for="(img, idx) in album.gallery_images"
             :key="img.id"
             class="group relative aspect-square overflow-hidden rounded-xl border border-inaka-beige bg-inaka-nude/30"
           >
@@ -109,6 +109,32 @@
               class="absolute right-1.5 top-1.5 rounded bg-inaka-gold px-1.5 py-0.5 text-[10px] font-bold text-inaka-terra"
             >★</span>
             <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-inaka-terra/60 p-1.5 transition-all md:bg-inaka-terra/0 md:opacity-0 md:group-hover:bg-inaka-terra/60 md:group-hover:opacity-100 md:focus-within:opacity-100">
+              <button
+                type="button"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra disabled:opacity-30"
+                :disabled="idx === 0"
+                aria-label="Mover antes"
+                @click="moveImage(idx, -1)"
+              >
+                <Icon
+                  name="lucide:chevron-left"
+                  class="h-3.5 w-3.5"
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                type="button"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra disabled:opacity-30"
+                :disabled="idx === album.gallery_images.length - 1"
+                aria-label="Mover después"
+                @click="moveImage(idx, 1)"
+              >
+                <Icon
+                  name="lucide:chevron-right"
+                  class="h-3.5 w-3.5"
+                  aria-hidden="true"
+                />
+              </button>
               <button
                 type="button"
                 class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra"
@@ -328,6 +354,25 @@ async function setCover(imageId: string) {
   }
   catch (err) {
     toast.error(apiErrorMessage(err, 'No se ha podido actualizar la portada.'))
+  }
+}
+
+async function moveImage(idx: number, direction: -1 | 1) {
+  const images = album.value?.gallery_images
+  if (!images) return
+  const target = idx + direction
+  if (target < 0 || target >= images.length) return
+  const a = images[idx]!
+  const b = images[target]!
+  try {
+    await Promise.all([
+      $fetch(`/api/admin/images/${a.id}`, { method: 'PATCH', body: { sort_order: b.sort_order } }),
+      $fetch(`/api/admin/images/${b.id}`, { method: 'PATCH', body: { sort_order: a.sort_order } }),
+    ])
+    await refresh()
+  }
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido reordenar la foto.'))
   }
 }
 
