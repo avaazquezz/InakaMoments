@@ -22,16 +22,16 @@ const { data: contacto } = useSiteSection('contacto', {
   // Sin teléfono público todavía — se añade aquí en cuanto exista.
   telefono: '',
   horario: {
-    disponibilidad: 'Disponibles 24h, los 7 días de la semana',
+    disponibilidad: 'Respondemos en menos de 24 horas, todos los días',
     mensaje: 'Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento.',
   },
 })
 
 useJsonLd('local-business', () => {
-  const openingHours = [
-    { dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '00:00', closes: '23:59' },
-  ]
-
+  // Sin horas de apertura reales que declarar (no hay local físico con
+  // horario fijo): mejor omitir openingHoursSpecification que inventar un
+  // horario, y "00:00–23:59 todos los días" que Google leía como 24/7 real
+  // contradecía directamente "respondemos en menos de 24h" en /contacto.
   return buildLocalBusinessSchema({
     name: 'Inaka Moments',
     url: 'https://inakamoments.com',
@@ -47,7 +47,6 @@ useJsonLd('local-business', () => {
       'Baix Llobregat', 'Barcelona',
     ],
     sameAs: [contacto.value.instagram],
-    openingHours,
   })
 })
 </script>

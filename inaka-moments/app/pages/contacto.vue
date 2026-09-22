@@ -173,7 +173,7 @@ const { data: contacto } = useSiteSection('contacto', {
   // Sin teléfono público todavía — se añade aquí en cuanto exista.
   telefono: '',
   horario: {
-    disponibilidad: 'Disponibles 24h, los 7 días de la semana',
+    disponibilidad: 'Respondemos en menos de 24 horas, todos los días',
     mensaje: 'Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento.',
   },
 })
@@ -189,7 +189,7 @@ useHead({
     },
     { property: 'og:title', content: 'Contacto — Inaka Moments' },
     { property: 'og:description', content: 'Contacta con Inaka Moments. Estamos aquí para ayudarte a diseñar la celebración perfecta.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 </script>
