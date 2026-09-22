@@ -10,8 +10,12 @@
       @submit.prevent="save"
     >
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Título</label>
+        <label
+          for="ocasiones-slug-1"
+          class="text-sm font-semibold text-inaka-terra"
+        >Título</label>
         <input
+          id="ocasiones-slug-1"
           v-model="form.title"
           type="text"
           class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -19,8 +23,12 @@
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Ocasión (event_type)</label>
+        <label
+          for="ocasiones-slug-2"
+          class="text-sm font-semibold text-inaka-terra"
+        >Ocasión (event_type)</label>
         <select
+          id="ocasiones-slug-2"
           v-model="form.event_type"
           class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
         >
@@ -35,16 +43,56 @@
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Introducción</label>
+        <label
+          for="ocasiones-slug-3"
+          class="text-sm font-semibold text-inaka-terra"
+        >Introducción</label>
         <textarea
+          id="ocasiones-slug-3"
           v-model="form.intro"
           rows="4"
           class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
         />
       </div>
 
+      <div class="flex flex-col gap-1.5">
+        <label
+          for="seo-title"
+          class="flex items-baseline justify-between text-sm font-semibold text-inaka-terra"
+        >
+          Título SEO
+          <span class="text-xs font-normal text-inaka-terra/80">{{ (form.seo_title ?? '').length }}/60</span>
+        </label>
+        <input
+          id="seo-title"
+          v-model="form.seo_title"
+          type="text"
+          placeholder="Título que aparece en Google (recomendado ≤ 60)"
+          class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        >
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label
+          for="seo-description"
+          class="flex items-baseline justify-between text-sm font-semibold text-inaka-terra"
+        >
+          Meta descripción
+          <span class="text-xs font-normal text-inaka-terra/80">{{ (form.seo_description ?? '').length }}/155</span>
+        </label>
+        <textarea
+          id="seo-description"
+          v-model="form.seo_description"
+          rows="3"
+          placeholder="Resumen que aparece bajo el título en Google (recomendado ≤ 155)"
+          class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+        />
+      </div>
+
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-semibold text-inaka-terra">Productos destacados</label>
+        <p class="text-sm font-semibold text-inaka-terra">
+          Productos destacados
+        </p>
         <div class="max-h-56 overflow-y-auto rounded-lg border border-inaka-beige p-2">
           <label
             v-for="p in products"
@@ -73,8 +121,12 @@
           <span class="text-sm text-inaka-terra">Publicada</span>
         </label>
         <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-semibold text-inaka-terra/70">Orden</label>
+          <label
+            for="ocasiones-slug-4"
+            class="text-xs font-semibold text-inaka-terra/70"
+          >Orden</label>
           <input
+            id="ocasiones-slug-4"
             v-model.number="form.sort_order"
             type="number"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"

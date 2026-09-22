@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen bg-inaka-cream font-sans text-inaka-terra">
+  <div class="admin-root flex min-h-screen bg-inaka-cream font-sans text-inaka-terra">
     <OfflineBanner />
     <!-- Sidebar (desktop) -->
     <aside class="hidden w-64 shrink-0 flex-col border-r border-inaka-beige bg-white md:flex md:sticky md:top-0 md:h-screen">
@@ -8,11 +8,14 @@
           to="/admin"
           class="flex items-center gap-2"
         >
-          <img
+          <NuxtImg
             src="/logo.png"
             alt="Inaka Moments"
             class="h-9 w-auto"
-          >
+            width="36"
+            height="36"
+            format="webp"
+          />
           <span class="text-sm font-bold text-inaka-terra">Panel</span>
         </NuxtLink>
       </div>
@@ -23,7 +26,7 @@
         >
           <p
             v-if="item.sectionLabel"
-            class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0"
+            class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/80 first:mt-0"
           >
             {{ item.sectionLabel }}
           </p>
@@ -149,7 +152,7 @@
           >
             <p
               v-if="item.sectionLabel"
-              class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/40 first:mt-0"
+              class="mb-1.5 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wider text-inaka-terra/80 first:mt-0"
             >
               {{ item.sectionLabel }}
             </p>
@@ -180,7 +183,10 @@
 // web pública) — cada layout monta solo el suyo, sin colisión entre ambos.
 useHead({
   link: [{ rel: 'manifest', href: '/admin-manifest.webmanifest' }],
-  meta: [{ name: 'apple-mobile-web-app-title', content: 'Inaka Panel' }],
+  meta: [
+    { name: 'apple-mobile-web-app-title', content: 'Inaka Panel' },
+    { name: 'robots', content: 'noindex, nofollow' },
+  ],
 })
 
 const route = useRoute()
@@ -235,6 +241,18 @@ async function signOut() {
   await navigateTo('/admin/login')
 }
 </script>
+
+<style>
+/* Foco de teclado visible en TODO el panel (botones, enlaces, inputs, chips)
+   con una sola regla — antes ningún control del admin lo tenía. Cubre también
+   los diálogos, que se teletransportan fuera de .admin-root. Especificidad
+   mayor que la utilidad `outline-none` de Tailwind, que lo anulaba. */
+.admin-root :focus-visible,
+[role='dialog'] :focus-visible {
+  outline: 2px solid #c9a96e;
+  outline-offset: 2px;
+}
+</style>
 
 <style scoped>
 .menu-fade-enter-active,

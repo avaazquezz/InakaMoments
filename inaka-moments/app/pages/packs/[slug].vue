@@ -15,6 +15,17 @@
         </nav>
 
         <div class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-inaka-nude sm:p-12">
+          <div class="relative mb-8 aspect-[16/9] overflow-hidden rounded-2xl bg-inaka-nude/40">
+            <NuxtImg
+              v-if="imagen"
+              :src="imagen"
+              :alt="pack.name"
+              sizes="sm:100vw lg:768px"
+              class="h-full w-full object-cover"
+            />
+            <ProductImagePlaceholder v-else />
+          </div>
+
           <div class="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <h1 class="font-display text-3xl font-bold text-inaka-terra sm:text-4xl">
               {{ pack.name }}
@@ -71,6 +82,18 @@
           <p class="mt-6 text-xs text-inaka-terra/50">
             Montaje incluido · Reserva con mínimo 1 mes de antelación · El pago se realiza al agendar
           </p>
+
+          <NuxtLink
+            to="/galeria"
+            class="mt-4 inline-flex items-center gap-1.5 rounded text-xs font-semibold text-inaka-gold outline-none transition-colors hover:text-inaka-terra focus-visible:ring-2 focus-visible:ring-inaka-gold"
+          >
+            <Icon
+              name="lucide:images"
+              class="h-3.5 w-3.5"
+              aria-hidden="true"
+            />
+            Ver más momentos en nuestra galería
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -100,9 +123,9 @@ useHead(() => ({
   meta: [
     { name: 'description', content: `${pack.value?.description ?? ''} ${pack.value?.price != null ? formatEUR(pack.value.price) : ''}. Decoración de eventos en Abrera y Barcelona.` },
     { property: 'og:title', content: `${pack.value?.name} — Inaka Moments` },
-    { property: 'og:description', content: pack.value?.description ?? '' },
-    { property: 'og:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
-    { name: 'twitter:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
+    { property: 'og:description', content: `${pack.value?.description ?? ''} ${pack.value?.price != null ? formatEUR(pack.value.price) : ''}. Decoración de eventos en Abrera y Barcelona.` },
+    { property: 'og:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
+    { name: 'twitter:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
   ],
 }))
 

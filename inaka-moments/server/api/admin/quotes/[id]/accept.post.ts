@@ -95,7 +95,42 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 3 — Email best-effort (no revierte nada si falla; el evento y el presupuesto ya están a salvo).
+  // 3 — Reservar en Inventario las piezas de alquiler (1 reserva por unidad,
+  // el día del evento). Igual que el email, va DESPUÉS de confirmar evento y
+  // presupuesto y no revierte nada: lo que no se pueda reservar (sin unidades
+  // libres) se devuelve en `rental.notBooked` para que la dueña lo resuelva a mano.
+  const { data: quoteItems } = await supabase
+    .from('quote_items')
+    .select('label, qty, product:products(id, is_rental, deposit)')
+    .eq('quote_id', id)
+  let rentalBooked = 0
+  const rentalNotBooked: string[] = []
+  for (const it of quoteItems ?? []) {
+    const product = it.product as unknown as { id: string, is_rental: boolean, deposit: number | null } | null
+    if (!product?.is_rental) continue
+    for (let unit = 0; unit < it.qty; unit++) {
+      if (await hasRentalOverlap(supabase, product.id, effectiveDate, effectiveDate)) {
+        rentalNotBooked.push(it.label)
+        break
+      }
+      const { error: bookErr } = await supabase.from('rental_bookings').insert({
+        product_id: product.id,
+        event_id: createdEvent.id,
+        date_from: effectiveDate,
+        date_to: effectiveDate,
+        deposit_amount: product.deposit ?? 0,
+        deposit_status: 'pendiente',
+      })
+      if (bookErr) {
+        console.error('[admin/quotes/accept] no se pudo reservar la pieza de alquiler:', bookErr)
+        rentalNotBooked.push(it.label)
+        break
+      }
+      rentalBooked++
+    }
+  }
+
+  // 4 — Email best-effort (no revierte nada si falla; el evento y el presupuesto ya están a salvo).
   let notified = false
   if (quote.client_email) {
     notified = await sendReservationConfirmedEmail({
@@ -115,6 +150,7 @@ export default defineEventHandler(async (event) => {
   return {
     ok: true,
     notified,
+    rental: { booked: rentalBooked, notBooked: rentalNotBooked },
     event: createdEvent,
     quote: { id: quote.id, status: 'aceptado' as const },
   }

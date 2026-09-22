@@ -12,16 +12,24 @@
         @submit.prevent="saveAlbum"
       >
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Título</label>
+          <label
+            for="galeria-id-1"
+            class="text-sm font-semibold text-inaka-terra"
+          >Título</label>
           <input
+            id="galeria-id-1"
             v-model="form.title"
             type="text"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
           >
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Ocasión</label>
+          <label
+            for="galeria-id-2"
+            class="text-sm font-semibold text-inaka-terra"
+          >Ocasión</label>
           <select
+            id="galeria-id-2"
             v-model="form.event_type"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
           >
@@ -35,8 +43,12 @@
           </select>
         </div>
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-semibold text-inaka-terra">Fecha</label>
+          <label
+            for="galeria-id-3"
+            class="text-sm font-semibold text-inaka-terra"
+          >Fecha</label>
           <input
+            id="galeria-id-3"
             v-model="form.event_date"
             type="date"
             class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -75,15 +87,19 @@
         </h2>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div
-            v-for="img in album.gallery_images"
+            v-for="(img, idx) in album.gallery_images"
             :key="img.id"
             class="group relative aspect-square overflow-hidden rounded-xl border border-inaka-beige bg-inaka-nude/30"
           >
-            <img
+            <NuxtImg
               :src="storagePublicUrl('gallery', img.storage_path)"
               class="h-full w-full object-cover"
               :alt="img.alt ?? ''"
-            >
+              width="200"
+              height="200"
+              format="webp"
+              loading="lazy"
+            />
             <span
               v-if="album.cover_image_id === img.id"
               class="absolute left-1.5 top-1.5 rounded bg-inaka-terra px-1.5 py-0.5 text-[10px] font-bold text-inaka-cream"
@@ -93,6 +109,32 @@
               class="absolute right-1.5 top-1.5 rounded bg-inaka-gold px-1.5 py-0.5 text-[10px] font-bold text-inaka-terra"
             >★</span>
             <div class="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1.5 bg-inaka-terra/60 p-1.5 transition-all md:bg-inaka-terra/0 md:opacity-0 md:group-hover:bg-inaka-terra/60 md:group-hover:opacity-100 md:focus-within:opacity-100">
+              <button
+                type="button"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra disabled:opacity-30"
+                :disabled="idx === 0"
+                aria-label="Mover antes"
+                @click="moveImage(idx, -1)"
+              >
+                <Icon
+                  name="lucide:chevron-left"
+                  class="h-3.5 w-3.5"
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                type="button"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra disabled:opacity-30"
+                :disabled="idx === album.gallery_images.length - 1"
+                aria-label="Mover después"
+                @click="moveImage(idx, 1)"
+              >
+                <Icon
+                  name="lucide:chevron-right"
+                  class="h-3.5 w-3.5"
+                  aria-hidden="true"
+                />
+              </button>
               <button
                 type="button"
                 class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/90 text-inaka-terra"
@@ -158,7 +200,7 @@
             </div>
           </div>
 
-          <label class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/40 hover:border-inaka-terra/50 hover:text-inaka-terra/70">
+          <label class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-inaka-beige text-inaka-terra/80 hover:border-inaka-terra/50 hover:text-inaka-terra">
             <svg
               class="h-6 w-6"
               fill="none"
@@ -312,6 +354,25 @@ async function setCover(imageId: string) {
   }
   catch (err) {
     toast.error(apiErrorMessage(err, 'No se ha podido actualizar la portada.'))
+  }
+}
+
+async function moveImage(idx: number, direction: -1 | 1) {
+  const images = album.value?.gallery_images
+  if (!images) return
+  const target = idx + direction
+  if (target < 0 || target >= images.length) return
+  const a = images[idx]!
+  const b = images[target]!
+  try {
+    await Promise.all([
+      $fetch(`/api/admin/images/${a.id}`, { method: 'PATCH', body: { sort_order: b.sort_order } }),
+      $fetch(`/api/admin/images/${b.id}`, { method: 'PATCH', body: { sort_order: a.sort_order } }),
+    ])
+    await refresh()
+  }
+  catch (err) {
+    toast.error(apiErrorMessage(err, 'No se ha podido reordenar la foto.'))
   }
 }
 

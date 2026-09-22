@@ -14,6 +14,7 @@
             v-for="cat in categorias"
             :key="cat.value"
             type="button"
+            :aria-pressed="categoriaActiva === cat.value"
             class="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
             :class="categoriaActiva === cat.value
               ? 'bg-inaka-terra text-inaka-cream'
@@ -23,6 +24,13 @@
             {{ cat.label }}
           </button>
         </div>
+        <p
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+        >
+          {{ productosFiltrados.length }} producto{{ productosFiltrados.length === 1 ? '' : 's' }} encontrado{{ productosFiltrados.length === 1 ? '' : 's' }}
+        </p>
       </div>
     </section>
 
@@ -56,12 +64,10 @@
                 sizes="sm:100vw md:50vw lg:400px"
                 class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div
+              <ProductImagePlaceholder
                 v-else
-                class="flex h-full w-full items-center justify-center"
-              >
-                <span class="text-6xl opacity-70">{{ categoryEmoji(p.category) }}</span>
-              </div>
+                :category="p.category"
+              />
               <span
                 v-if="p.is_rental"
                 class="absolute top-3 right-3 rounded-full bg-inaka-terra/90 px-3 py-1 text-[11px] font-semibold text-inaka-cream"
@@ -137,16 +143,25 @@
 </template>
 
 <script setup lang="ts">
+import { buildItemListSchema } from '~~/shared/schema'
+
 useHead({
   title: 'Catálogo de productos — Inaka Moments',
   meta: [
     { name: 'description', content: 'Catálogo de decoración con globos: arcos, columnas, aros 360º, wall balloons, letreros LED, candy bar y más. Precios claros y todo combinable. Abrera y Barcelona.' },
     { property: 'og:title', content: 'Catálogo — Inaka Moments' },
     { property: 'og:description', content: 'Tú eliges, nosotros creamos. Descubre todos nuestros productos de decoración de eventos.' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
   ],
 })
 
 const { data: productos, pending } = useProducts()
+
+useJsonLd('catalog-list', () => buildItemListSchema(
+  productos.value.map(p => ({ name: p.name, url: `https://inakamoments.com/catalogo/${p.slug}` })),
+))
 
 const categoriaActiva = ref('todos')
 
@@ -167,13 +182,5 @@ const productosFiltrados = computed(() =>
 function productImage(p: Product): string | null {
   const imgs = jsonArray(p.images)
   return imgs.length ? storagePublicUrl('catalog-media', imgs[0]!) : null
-}
-
-function categoryEmoji(cat: string): string {
-  const map: Record<string, string> = {
-    'estructuras': '🎈', 'globos': '🎈', 'led': '💡', 'baby': '🍼',
-    'flores': '🌸', 'extras': '✨', 'detalles': '🎁', 'mesa-dulce': '🍬',
-  }
-  return map[cat] ?? '🎈'
 }
 </script>

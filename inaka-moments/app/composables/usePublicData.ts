@@ -145,21 +145,35 @@ export function useFeaturedImages() {
 }
 
 /**
+ * TODAS las filas de site_content en una sola consulta, compartida (misma
+ * key de useAsyncData) por cada llamada a useSiteSection sin importar la
+ * sección que pida — antes cada sección (hero/about/contacto/footer/
+ * settings) disparaba su propio round-trip a Supabase en el SSR de la home
+ * (5 consultas a la misma tabla); ahora es 1, sin tocar ninguna llamada.
+ */
+function useAllSiteContent() {
+  const supabase = useSupabaseClient<Database>()
+  return useAsyncData('site-content-all', async () => {
+    try {
+      const { data, error } = await supabase.from('site_content').select('section, data')
+      if (error) throw error
+      const bySection: Record<string, Record<string, unknown>> = {}
+      for (const row of data ?? []) bySection[row.section] = (row.data as Record<string, unknown> | null) ?? {}
+      return bySection
+    }
+    catch (err) {
+      console.error('[site_content:all]', err)
+      return {} as Record<string, Record<string, unknown>>
+    }
+  }, { default: () => ({}) as Record<string, Record<string, unknown>>, getCachedData: alwaysFreshAfterHydration })
+}
+
+/**
  * Sección de site_content mezclada con defaults del componente.
  * NUNCA rompe la página: ante error devuelve los defaults.
  */
 export function useSiteSection<T extends Record<string, unknown>>(section: string, defaults: T) {
-  const supabase = useSupabaseClient<Database>()
-  return useAsyncData(`site-content-${section}`, async () => {
-    try {
-      const { data, error } = await supabase
-        .from('site_content').select('data').eq('section', section).maybeSingle()
-      if (error) throw error
-      return { ...defaults, ...((data?.data as object | null) ?? {}) } as T
-    }
-    catch (err) {
-      console.error(`[site_content:${section}]`, err)
-      return defaults
-    }
-  }, { default: () => defaults, getCachedData: alwaysFreshAfterHydration })
+  const { data: all } = useAllSiteContent()
+  const data = computed(() => ({ ...defaults, ...(all.value[section] ?? {}) }) as T)
+  return { data }
 }

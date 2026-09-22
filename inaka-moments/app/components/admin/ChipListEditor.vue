@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-col gap-2">
-    <label class="text-sm font-semibold text-inaka-terra">{{ label }}</label>
+    <label
+      :for="inputId"
+      class="text-sm font-semibold text-inaka-terra"
+    >{{ label }}</label>
     <div class="flex flex-wrap gap-2">
       <span
         v-for="(item, i) in modelValue"
@@ -10,7 +13,8 @@
         {{ item }}
         <button
           type="button"
-          class="text-inaka-terra/50 hover:text-red-600"
+          :aria-label="`Quitar ${item}`"
+          class="text-inaka-terra/80 hover:text-red-600"
           @click="remove(i)"
         >
           <svg
@@ -29,6 +33,7 @@
     </div>
     <div class="flex flex-wrap gap-2">
       <input
+        :id="inputId"
         v-model="draft"
         type="text"
         :placeholder="placeholder"
@@ -55,6 +60,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'update:modelValue': [string[]] }>()
 
+const inputId = useId()
 const draft = ref('')
 
 function add() {

@@ -20,7 +20,7 @@
             1. Responsable del tratamiento
           </h2>
           <p>
-            El responsable del tratamiento de los datos personales facilitados a través de este sitio web es <strong>{{ LEGAL_ENTITY.name }}</strong> ({{ LEGAL_ENTITY.legalForm }}, NIF/CIF {{ LEGAL_ENTITY.nif }}) — en adelante, "la empresa" —, con domicilio en {{ LEGAL_ENTITY.address }}, y correo electrónico de contacto: <a
+            El responsable del tratamiento de los datos personales facilitados a través de este sitio web es <strong>Inaka Moments</strong> — en adelante, "la empresa" —, con correo electrónico de contacto: <a
               href="mailto:nadine.tcae@gmail.com"
               class="text-inaka-gold hover:underline"
             >nadine.tcae@gmail.com</a>.
@@ -129,8 +129,6 @@
 </template>
 
 <script setup lang="ts">
-import { LEGAL_ENTITY } from '~/constants/legalEntity'
-
 useHead({
   title: 'Política de privacidad — Inaka Moments',
   meta: [
@@ -138,6 +136,9 @@ useHead({
       name: 'description',
       content: 'Política de privacidad de Inaka Moments. Información sobre cómo recopilamos, usamos y protegemos tus datos personales.',
     },
+    { property: 'og:title', content: 'Política de privacidad — Inaka Moments' },
+    { property: 'og:description', content: 'Cómo recopilamos, usamos y protegemos tus datos personales.' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 </script>

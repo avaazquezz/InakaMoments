@@ -1,5 +1,13 @@
 // Contenido estático reutilizable entre la home y páginas internas.
 
+/**
+ * og:image por defecto para páginas sin foto propia. Pasa por IPX (mismo
+ * pipeline que NuxtImg) para no compartir el logo.png crudo de 1.1MB tal
+ * cual: recortado a 1200x630 (tamaño estándar de preview de WhatsApp/
+ * Facebook/Instagram) y servido en webp.
+ */
+export const DEFAULT_OG_IMAGE = 'https://inakamoments.com/_ipx/f_webp&s_1200x630&q_82/logo.png'
+
 export interface ProcesoPaso {
   icono: string
   titulo: string

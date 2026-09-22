@@ -33,5 +33,17 @@ export default defineEventHandler(async (event) => {
     console.error('[admin/events] error actualizando:', error)
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'No se ha podido guardar el evento.' })
   }
+
+  // Un evento cancelado no debe seguir bloqueando el stock de alquiler: sin
+  // esto, hasRentalOverlap contaba para siempre reservas de un evento que ya
+  // no va a celebrarse.
+  if (body.status === 'cancelado') {
+    const { error: releaseError } = await supabase.from('rental_bookings').delete().eq('event_id', id)
+    if (releaseError) {
+      console.error('[admin/events] error liberando reservas de alquiler tras cancelar:', releaseError)
+      throw createError({ statusCode: 500, statusMessage: 'Internal Server Error', message: 'El evento se canceló pero no se pudieron liberar sus reservas de alquiler. Bórralas a mano desde Inventario.' })
+    }
+  }
+
   return { ok: true }
 })

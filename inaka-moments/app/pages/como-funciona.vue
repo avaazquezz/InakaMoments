@@ -90,13 +90,17 @@
 </template>
 
 <script setup lang="ts">
+import { buildHowToSchema } from '~~/shared/schema'
+
 useHead({
   title: 'Cómo funciona — Inaka Moments',
   meta: [
     { name: 'description', content: 'Cómo trabajamos: eliges del catálogo, pedimos presupuesto, confirmas con la señal y montamos el día del evento. Montaje incluido, condiciones claras.' },
     { property: 'og:title', content: 'Cómo funciona — Inaka Moments' },
     { property: 'og:description', content: 'Eliges del catálogo, pedimos presupuesto, confirmas con la señal y montamos el día del evento. Montaje incluido, condiciones claras.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
   ],
 })
 
@@ -104,4 +108,6 @@ useHead({
 // site_content.settings, editables por la dueña en el admin).
 const pasos = PROCESO_PASOS
 const { rules: reglas } = useBusinessRules()
+
+useJsonLd('como-funciona', () => buildHowToSchema('Cómo contratar la decoración de tu evento con Inaka Moments', pasos))
 </script>

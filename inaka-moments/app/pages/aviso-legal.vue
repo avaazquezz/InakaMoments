@@ -16,7 +16,7 @@
             1. Datos identificativos
           </h2>
           <p>
-            En cumplimiento con el deber de información recogido en el artículo 10 de la Ley 34/2002, de 11 de julio, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), le informamos de que la empresa titular del sitio web <strong>inakamoments.com</strong> es <strong>{{ LEGAL_ENTITY.name }}</strong> ({{ LEGAL_ENTITY.legalForm }}), con NIF/CIF <strong>{{ LEGAL_ENTITY.nif }}</strong> y domicilio en {{ LEGAL_ENTITY.address }}, y correo electrónico de contacto: <a
+            En cumplimiento con el deber de información recogido en el artículo 10 de la Ley 34/2002, de 11 de julio, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), le informamos de que el sitio web <strong>inakamoments.com</strong> es operado bajo el nombre comercial <strong>Inaka Moments</strong>, con correo electrónico de contacto: <a
               href="mailto:nadine.tcae@gmail.com"
               class="text-inaka-gold hover:underline"
             >nadine.tcae@gmail.com</a>.
@@ -64,8 +64,6 @@
 </template>
 
 <script setup lang="ts">
-import { LEGAL_ENTITY } from '~/constants/legalEntity'
-
 useHead({
   title: 'Aviso legal — Inaka Moments',
   meta: [
@@ -73,6 +71,9 @@ useHead({
       name: 'description',
       content: 'Aviso legal de Inaka Moments. Información sobre propiedad intelectual, exención de responsabilidad y legislación aplicable.',
     },
+    { property: 'og:title', content: 'Aviso legal — Inaka Moments' },
+    { property: 'og:description', content: 'Información sobre propiedad intelectual, exención de responsabilidad y legislación aplicable.' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 </script>

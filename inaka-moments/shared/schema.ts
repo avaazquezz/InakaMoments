@@ -138,6 +138,36 @@ export function buildFaqPageSchema(faqs: SchemaFaq[]): Record<string, unknown> |
   }
 }
 
+/** HowTo con los pasos del proceso de contratación (usado en /como-funciona). */
+export function buildHowToSchema(name: string, steps: { titulo: string, descripcion: string }[]): Record<string, unknown> | null {
+  if (!steps.length) return null
+  return {
+    '@context': CONTEXT,
+    '@type': 'HowTo',
+    'name': name,
+    'step': steps.map(s => ({
+      '@type': 'HowToStep',
+      'name': s.titulo,
+      'text': s.descripcion,
+    })),
+  }
+}
+
+/** ItemList básico para páginas "hub" de listado (catálogo, packs). */
+export function buildItemListSchema(items: { name: string, url: string }[]): Record<string, unknown> | null {
+  if (!items.length) return null
+  return {
+    '@context': CONTEXT,
+    '@type': 'ItemList',
+    'itemListElement': items.map((item, i) => ({
+      '@type': 'ListItem',
+      'position': i + 1,
+      'name': item.name,
+      'url': item.url,
+    })),
+  }
+}
+
 export function buildBreadcrumbSchema(items: BreadcrumbItem[]): Record<string, unknown> {
   return {
     '@context': CONTEXT,
@@ -185,6 +215,9 @@ export function buildBusinessReviewsSchema(
   return {
     '@context': CONTEXT,
     '@type': 'LocalBusiness',
+    // Mismo @id que buildLocalBusinessSchema (layouts/default.vue): sin esto
+    // Google veía dos LocalBusiness sin relación en vez de una sola entidad.
+    '@id': `${businessUrl}/#negocio`,
     'name': businessName,
     'url': businessUrl,
     aggregateRating,

@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     '@nuxtjs/turnstile',
     '@vite-pwa/nuxt',
     '@nuxt/eslint',
-    '@sentry/nuxt/module',
+    // Sin DSN (NUXT_PUBLIC_SENTRY_DSN vacío) el módulo no aporta nada y solo
+    // añade ~197KB gzip a cada página — se registra solo con cuenta real.
+    ...(process.env.NUXT_PUBLIC_SENTRY_DSN ? ['@sentry/nuxt/module'] : []),
     [
       '@nuxtjs/sitemap',
       {
@@ -55,7 +57,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
         { property: 'og:site_name', content: 'Inaka Moments' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://inakamoments.com' },
+        { property: 'og:locale', content: 'es_ES' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'theme-color', content: '#8B3A2A' },
         { name: 'mobile-web-app-capable', content: 'yes' },
@@ -64,9 +66,11 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-title', content: 'Inaka Moments' },
       ],
       link: [
-        // Canonical dinámico por ruta: ver app/composables/useCanonical.ts,
-        // llamado desde app/layouts/default.vue. Fijarlo aquí a la home
-        // hacía que Google tratase el resto del sitio como duplicado.
+        // Canonical + og:url dinámicos por ruta: ver
+        // app/composables/useCanonical.ts, llamado desde
+        // app/layouts/default.vue. Fijarlos aquí a la home hacía que Google
+        // tratase el resto del sitio como duplicado y que compartir un
+        // producto/pack en redes mostrase siempre la preview de la home.
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
@@ -78,9 +82,9 @@ export default defineNuxtConfig({
     },
   },
   css: [
-    '@fontsource/fraunces/400.css',
-    '@fontsource/fraunces/500.css',
-    '@fontsource/fraunces/600.css',
+    // Solo el peso 700: font-display (Fraunces) se usa siempre con
+    // font-bold en todo el código, los pesos 400/500/600 no se usan en
+    // ningún sitio y solo añadían ~20KB woff2 cada uno al critical path.
     '@fontsource/fraunces/700.css',
     '@fontsource/inter/400.css',
     '@fontsource/inter/500.css',
@@ -178,6 +182,11 @@ export default defineNuxtConfig({
       // Amplía los patrones por defecto (js/css/html) para precachear también
       // iconos y fuentes autoalojadas.
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+      // Los PNG fuente sin comprimir (2.6MB) nunca se pintan tal cual: NuxtImg
+      // sirve siempre la variante webp, que runtimeCaching (CacheFirst,
+      // abajo) ya cachea bajo demanda. Sin esto el SW los descargaba enteros
+      // en segundo plano en la primera visita.
+      globIgnores: ['**/logo.png', '**/media/hero-bg.png', '**/media/final-cta-accent.png', '**/media/why-inaka-accent.png'],
       runtimeCaching: [
         // Datos de negocio del panel: nunca servir nada obsoleto sin avisar.
         {

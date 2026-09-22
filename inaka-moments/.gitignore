@@ -18,6 +18,12 @@ test-results
 playwright-report
 storage-backup
 backup.sql
+# Plugins locales de un solo uso (nunca deben llegar a un build real)
+server/plugins/zz-test-*
+
+# Supabase CLI local (estado de la stack local, sin secretos)
+supabase/.branches/
+supabase/.temp/
 
 # Misc
 .DS_Store

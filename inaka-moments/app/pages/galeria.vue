@@ -3,7 +3,7 @@
     <PageHero
       eyebrow="Nuestros trabajos"
       title="Galería de momentos"
-      subtitle="Cada evento que decoramos es una historia única. Explora nuestra colección de trabajos reales."
+      subtitle="Cada evento que decoramos es una historia única. Explora nuestra colección de trabajos."
     />
 
     <!-- Filters -->
@@ -14,6 +14,7 @@
             v-for="filtro in filtros"
             :key="filtro.value"
             type="button"
+            :aria-pressed="filtroActivo === filtro.value"
             class="rounded-full px-5 py-2 text-sm font-medium transition-all duration-200"
             :class="filtroActivo === filtro.value
               ? 'bg-inaka-terra text-inaka-cream'
@@ -23,6 +24,13 @@
             {{ filtro.label }}
           </button>
         </div>
+        <p
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+        >
+          {{ albumesFiltrados.length }} álbum{{ albumesFiltrados.length === 1 ? '' : 'es' }} encontrado{{ albumesFiltrados.length === 1 ? '' : 's' }}
+        </p>
       </div>
     </section>
 
@@ -190,8 +198,8 @@ useHead({
   meta: [
     { name: 'description', content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.' },
     { property: 'og:title', content: 'Galería — Inaka Moments' },
-    { property: 'og:description', content: 'Descubre los trabajos reales de Inaka Moments.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:description', content: 'Descubre los trabajos de Inaka Moments.' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 

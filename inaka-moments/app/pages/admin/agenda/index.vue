@@ -93,113 +93,144 @@
     </div>
 
     <!-- Modal crear/editar -->
-    <Teleport to="body">
-      <div
+    <AdminModal
+      :open="!!editing"
+      :title="editing?.id ? 'Editar evento' : 'Nuevo evento'"
+      @close="editing = null"
+    >
+      <form
         v-if="editing"
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4"
+        class="flex flex-col gap-3"
+        @submit.prevent="save"
       >
-        <div
-          class="absolute inset-0 bg-inaka-terra/40 backdrop-blur-sm"
-          @click="editing = null"
-        />
-        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
-          <h2 class="mb-4 text-lg font-bold text-inaka-terra">
-            {{ editing.id ? 'Editar evento' : 'Nuevo evento' }}
-          </h2>
-          <form
-            class="flex flex-col gap-3"
-            @submit.prevent="save"
+        <AdminField
+          v-slot="{ id }"
+          label="Título"
+          required
+        >
+          <input
+            :id="id"
+            v-model="editing.title"
+            type="text"
+            required
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          >
+        </AdminField>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <AdminField
+            v-slot="{ id }"
+            label="Fecha"
+            required
           >
             <input
-              v-model="editing.title"
-              type="text"
-              placeholder="Título"
+              :id="id"
+              v-model="editing.event_date"
+              type="date"
               required
               class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
             >
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <input
-                v-model="editing.event_date"
-                type="date"
-                required
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-              <select
-                v-model="editing.status"
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-                <option
-                  v-for="s in EVENT_STATUSES"
-                  :key="s"
-                  :value="s"
-                >
-                  {{ EVENT_STATUS_LABELS[s] }}
-                </option>
-              </select>
-            </div>
-            <input
-              v-model="editing.location"
-              type="text"
-              placeholder="Ubicación (opcional)"
+          </AdminField>
+          <AdminField
+            v-slot="{ id }"
+            label="Estado"
+          >
+            <select
+              :id="id"
+              v-model="editing.status"
               class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
             >
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <input
-                v-model="editing.client_name"
-                type="text"
-                placeholder="Cliente"
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+              <option
+                v-for="s in EVENT_STATUSES"
+                :key="s"
+                :value="s"
               >
-              <input
-                v-model="editing.client_contact"
-                type="text"
-                placeholder="Contacto"
-                class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-              >
-            </div>
-            <textarea
-              v-model="editing.notes"
-              rows="2"
-              placeholder="Notas"
-              class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
-            />
-            <p
-              v-if="saveError"
-              class="text-xs text-red-500"
-            >
-              {{ saveError }}
-            </p>
-            <div class="mt-2 flex justify-between">
-              <button
-                v-if="editing.id"
-                type="button"
-                class="text-xs font-semibold text-red-500 hover:underline"
-                @click="confirmingDeleteEvent = true"
-              >
-                Borrar
-              </button>
-              <span v-else />
-              <div class="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/70 hover:bg-inaka-nude/50"
-                  @click="editing = null"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  :disabled="saving"
-                  class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
-                >
-                  Guardar
-                </button>
-              </div>
-            </div>
-          </form>
+                {{ EVENT_STATUS_LABELS[s] }}
+              </option>
+            </select>
+          </AdminField>
         </div>
-      </div>
-    </Teleport>
+        <AdminField
+          v-slot="{ id }"
+          label="Ubicación (opcional)"
+        >
+          <input
+            :id="id"
+            v-model="editing.location"
+            type="text"
+            class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          >
+        </AdminField>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <AdminField
+            v-slot="{ id }"
+            label="Cliente"
+          >
+            <input
+              :id="id"
+              v-model="editing.client_name"
+              type="text"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
+          <AdminField
+            v-slot="{ id }"
+            label="Contacto"
+          >
+            <input
+              :id="id"
+              v-model="editing.client_contact"
+              type="text"
+              class="rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+            >
+          </AdminField>
+        </div>
+        <AdminField
+          v-slot="{ id }"
+          label="Notas"
+        >
+          <textarea
+            :id="id"
+            v-model="editing.notes"
+            rows="2"
+            class="resize-none rounded-lg border border-inaka-beige bg-white px-3 py-2 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
+          />
+        </AdminField>
+        <p
+          v-if="saveError"
+          role="alert"
+          class="text-xs text-red-600"
+        >
+          {{ saveError }}
+        </p>
+        <div class="mt-2 flex justify-between">
+          <button
+            v-if="editing.id"
+            type="button"
+            class="text-xs font-semibold text-red-600 hover:underline"
+            @click="confirmingDeleteEvent = true"
+          >
+            Borrar
+          </button>
+          <span v-else />
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="rounded-lg border border-inaka-beige px-4 py-2 text-sm font-medium text-inaka-terra/80 hover:bg-inaka-nude/50"
+              @click="editing = null"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              :disabled="saving"
+              class="rounded-lg bg-inaka-terra px-4 py-2 text-sm font-semibold text-inaka-cream hover:opacity-90"
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+      </form>
+    </AdminModal>
 
     <AdminConfirmDialog
       :open="confirmingDeleteEvent"

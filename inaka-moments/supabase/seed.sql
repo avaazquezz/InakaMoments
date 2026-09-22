@@ -33,9 +33,8 @@ insert into public.site_content (section, data) values
   "ubicacion": "Abrera, Cataluña, España",
   "instagram": "https://www.instagram.com/inaka.moments",
   "horario": {
-    "lunes_viernes": "9:00 — 18:00",
-    "sabados": "10:00 — 14:00",
-    "domingos": "Cerrado"
+    "disponibilidad": "Disponibles 24h, los 7 días de la semana",
+    "mensaje": "Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento."
   }
 }'),
 ('settings', '{

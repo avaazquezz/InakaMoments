@@ -19,10 +19,10 @@ const adjustmentSchema = z.object({
 
 const updateSchema = z.object({
   client_name: z.string().max(160).optional(),
-  client_email: z.string().email().max(200).optional(),
+  client_email: z.string().email().max(200).or(z.literal('')).optional(),
   client_phone: z.string().max(30).optional(),
   event_type: z.enum(EVENT_TYPES).nullable().optional(),
-  event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal('')).nullable().optional(),
   location: z.string().max(300).nullable().optional(),
   notes: z.string().max(2000).nullable().optional(),
   valid_until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
@@ -45,6 +45,11 @@ export default defineEventHandler(async (event) => {
   const supabase = useSupabaseAdmin(event)
 
   const update: Record<string, unknown> = { ...body }
+  // El formulario envía '' para los campos vacíos (presupuestos sin email o sin
+  // fecha, p. ej. los creados a mano): en BD son NULL, no cadena vacía.
+  for (const key of ['client_email', 'client_phone', 'event_date', 'location', 'notes'] as const) {
+    if (update[key] === '') update[key] = null
+  }
 
   if (body.adjustments) {
     const { data: current, error: fetchErr } = await supabase.from('quotes').select('subtotal').eq('id', id).maybeSingle()

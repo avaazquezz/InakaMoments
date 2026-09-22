@@ -4,10 +4,10 @@
     <!-- Header -->
     <div class="text-center px-4 mb-12">
       <p class="text-sm font-semibold uppercase tracking-widest text-inaka-gold mb-3">
-        Momentos reales
+        Momentos Inaka
       </p>
       <h2 class="font-display text-3xl font-bold text-inaka-terra md:text-4xl mb-3">
-        Magia en la vida real
+        Magia hecha realidad
       </h2>
       <p class="text-inaka-terra/70 text-base max-w-md mx-auto">
         Explora algunos de los momentos Inaka que hemos creado.
@@ -95,7 +95,7 @@
     </div>
 
     <!-- Scroll hint -->
-    <div class="flex items-center justify-center gap-2 mt-5 text-xs text-inaka-terra/40 select-none">
+    <div class="flex items-center justify-center gap-2 mt-5 text-xs text-inaka-terra/80 select-none">
       <span>←</span>
       <span>Desliza para explorar</span>
       <span>→</span>

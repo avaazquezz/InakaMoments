@@ -25,12 +25,10 @@
               sizes="sm:100vw lg:600px"
               class="h-full w-full object-cover"
             />
-            <div
+            <ProductImagePlaceholder
               v-else
-              class="flex h-full w-full items-center justify-center"
-            >
-              <span class="text-8xl opacity-70">🎈</span>
-            </div>
+              :category="producto.category"
+            />
             <span
               v-if="producto.is_rental"
               class="absolute top-4 right-4 rounded-full bg-inaka-terra/90 px-4 py-1.5 text-xs font-semibold text-inaka-cream"
@@ -204,9 +202,9 @@ useHead(() => ({
   meta: [
     { name: 'description', content: `${producto.value?.description ?? ''} ${productPriceLabel(producto.value!)}. Decoración de eventos en Abrera y Barcelona.` },
     { property: 'og:title', content: `${producto.value?.name} — Inaka Moments` },
-    { property: 'og:description', content: producto.value?.description ?? '' },
-    { property: 'og:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
-    { name: 'twitter:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
+    { property: 'og:description', content: `${producto.value?.description ?? ''} ${productPriceLabel(producto.value!)}. Decoración de eventos en Abrera y Barcelona.` },
+    { property: 'og:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
+    { name: 'twitter:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
   ],
 }))
 

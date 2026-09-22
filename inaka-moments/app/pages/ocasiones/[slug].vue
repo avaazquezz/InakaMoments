@@ -6,7 +6,7 @@
       :subtitle="ocasion.intro ?? undefined"
     >
       <BaseButtonLink :to="`/configurador?ocasion=${ocasion.event_type}`">
-        Diseñar mi {{ (EVENT_TYPE_LABELS[ocasion.event_type] ?? 'evento').toLowerCase() }}
+        {{ ctaLabel }}
       </BaseButtonLink>
     </PageHero>
 
@@ -24,7 +24,7 @@
             v-for="pack in packsOcasion"
             :key="pack.id"
             :to="`/packs/${pack.slug}`"
-            class="group flex flex-col items-start justify-between gap-4 rounded-2xl bg-inaka-cream/10 p-8 ring-1 ring-inaka-cream/20 transition-colors hover:bg-inaka-cream/15 sm:flex-row sm:items-center"
+            class="group flex flex-col items-start justify-between gap-4 rounded-2xl bg-inaka-cream/10 p-8 ring-1 ring-inaka-cream/20 transition-colors hover:bg-inaka-cream/15 focus-visible:ring-2 focus-visible:ring-inaka-gold sm:flex-row sm:items-center"
           >
             <div>
               <h3 class="text-xl font-bold">{{ pack.name }}</h3>
@@ -52,14 +52,30 @@
             v-for="p in productosOcasion"
             :key="p.id"
             :to="`/catalogo/${p.slug}`"
-            class="group rounded-2xl bg-inaka-cream p-6 ring-1 ring-inaka-nude transition-all hover:shadow-md"
+            class="group overflow-hidden rounded-2xl bg-inaka-cream ring-1 ring-inaka-nude transition-all hover:shadow-md focus-visible:ring-2 focus-visible:ring-inaka-gold"
           >
-            <p class="text-[11px] font-semibold uppercase tracking-widest text-inaka-gold mb-2">
-              {{ CATEGORY_LABELS[p.category] ?? p.category }}
-            </p>
-            <h3 class="font-bold text-inaka-terra group-hover:text-inaka-gold transition-colors">{{ p.name }}</h3>
-            <p class="mt-1 text-sm text-inaka-terra/60 line-clamp-2">{{ p.description }}</p>
-            <p class="mt-3 text-sm font-bold text-inaka-terra">{{ productPriceLabel(p) }}</p>
+            <div class="relative aspect-[4/3] overflow-hidden bg-inaka-nude/40">
+              <NuxtImg
+                v-if="productImage(p)"
+                :src="productImage(p)!"
+                :alt="p.name"
+                loading="lazy"
+                sizes="sm:100vw md:50vw lg:350px"
+                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <ProductImagePlaceholder
+                v-else
+                :category="p.category"
+              />
+            </div>
+            <div class="p-6">
+              <p class="text-[11px] font-semibold uppercase tracking-widest text-inaka-gold mb-2">
+                {{ CATEGORY_LABELS[p.category] ?? p.category }}
+              </p>
+              <h3 class="font-bold text-inaka-terra group-hover:text-inaka-gold transition-colors">{{ p.name }}</h3>
+              <p class="mt-1 text-sm text-inaka-terra/60 line-clamp-2">{{ p.description }}</p>
+              <p class="mt-3 text-sm font-bold text-inaka-terra">{{ productPriceLabel(p) }}</p>
+            </div>
           </NuxtLink>
         </div>
         <div class="mt-10 text-center">
@@ -72,6 +88,8 @@
         </div>
       </div>
     </section>
+
+    <FaqTeaserSection />
 
     <!-- CTA final -->
     <section class="py-20 bg-inaka-cream">
@@ -95,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { buildBreadcrumbSchema } from '~~/shared/schema'
+import { buildBreadcrumbSchema, buildFaqPageSchema } from '~~/shared/schema'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -108,6 +126,7 @@ if (!ocasion.value) {
 
 const { data: productos } = useProducts()
 const { data: packs } = usePacks()
+const { data: faqs } = useFaqs()
 
 const productosOcasion = computed(() =>
   productos.value.filter(p => productMatchesEventType(p, ocasion.value!.event_type)).slice(0, 6),
@@ -120,20 +139,39 @@ const packsOcasion = computed(() =>
   }),
 )
 
+// "Diseñar mi cumpleaños/bautizo/..." funciona con toLowerCase() para casi
+// todas las ocasiones (son sustantivos), pero "corporativo" es adjetivo —
+// única excepción explícita para no leerse mal en español.
+const ctaLabel = computed(() => {
+  const label = EVENT_TYPE_LABELS[ocasion.value!.event_type] ?? 'evento'
+  return ocasion.value!.event_type === 'corporativo' ? 'Diseñar mi evento corporativo' : `Diseñar mi ${label.toLowerCase()}`
+})
+
+function productImage(p: Product): string | null {
+  const imgs = jsonArray(p.images)
+  return imgs.length ? storagePublicUrl('catalog-media', imgs[0]!) : null
+}
+
 useHead(() => ({
   title: ocasion.value?.seo_title ?? `${ocasion.value?.title} — Inaka Moments`,
   meta: [
     { name: 'description', content: ocasion.value?.seo_description ?? ocasion.value?.intro ?? '' },
     { property: 'og:title', content: ocasion.value?.seo_title ?? ocasion.value?.title ?? '' },
-    { property: 'og:description', content: ocasion.value?.seo_description ?? '' },
+    { property: 'og:description', content: ocasion.value?.seo_description ?? ocasion.value?.intro ?? '' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
   ],
 }))
 
 useJsonLd('occasion', () => {
   if (!ocasion.value) return null
-  return buildBreadcrumbSchema([
-    { name: 'Ocasiones', url: 'https://inakamoments.com/#ocasiones' },
-    { name: ocasion.value.title, url: `https://inakamoments.com/ocasiones/${slug}` },
-  ])
+  return [
+    buildBreadcrumbSchema([
+      { name: 'Ocasiones', url: 'https://inakamoments.com/#ocasiones' },
+      { name: ocasion.value.title, url: `https://inakamoments.com/ocasiones/${slug}` },
+    ]),
+    buildFaqPageSchema(faqs.value.slice(0, 4)),
+  ].filter((s): s is Record<string, unknown> => s !== null)
 })
 </script>

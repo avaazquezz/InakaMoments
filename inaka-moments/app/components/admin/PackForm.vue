@@ -4,8 +4,12 @@
     @submit.prevent="submit"
   >
     <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-semibold text-inaka-terra">Nombre <span class="text-inaka-mauve">*</span></label>
+      <label
+        for="admin-packform-1"
+        class="text-sm font-semibold text-inaka-terra"
+      >Nombre <span class="text-inaka-mauve">*</span></label>
       <input
+        id="admin-packform-1"
         v-model="form.name"
         type="text"
         required
@@ -14,8 +18,12 @@
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-semibold text-inaka-terra">Descripción</label>
+      <label
+        for="admin-packform-2"
+        class="text-sm font-semibold text-inaka-terra"
+      >Descripción</label>
       <textarea
+        id="admin-packform-2"
         v-model="form.description"
         rows="3"
         class="resize-none rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -24,8 +32,12 @@
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Precio (€)</label>
+        <label
+          for="admin-packform-3"
+          class="text-sm font-semibold text-inaka-terra"
+        >Precio (€)</label>
         <input
+          id="admin-packform-3"
           v-model.number="priceInput"
           type="number"
           min="0"
@@ -35,8 +47,12 @@
         >
       </div>
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-semibold text-inaka-terra">Orden</label>
+        <label
+          for="admin-packform-4"
+          class="text-sm font-semibold text-inaka-terra"
+        >Orden</label>
         <input
+          id="admin-packform-4"
           v-model.number="form.sort_order"
           type="number"
           class="rounded-xl border border-inaka-beige bg-white px-4 py-2.5 text-sm text-inaka-terra outline-none focus:border-inaka-terra"
@@ -51,7 +67,9 @@
     />
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-inaka-terra">Ocasiones</label>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Ocasiones
+      </p>
       <div class="flex flex-wrap gap-2">
         <label
           v-for="et in EVENT_TYPES"
@@ -72,7 +90,9 @@
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-semibold text-inaka-terra">Fotos</label>
+      <p class="text-sm font-semibold text-inaka-terra">
+        Fotos
+      </p>
       <AdminImageUploader
         v-model="form.images"
         bucket="catalog-media"

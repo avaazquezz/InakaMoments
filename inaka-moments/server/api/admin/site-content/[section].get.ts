@@ -1,3 +1,5 @@
+import { ADMIN_EDITABLE_SITE_CONTENT_SECTIONS } from '~~/server/utils/adminSchemas'
+
 export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
   const section = getRouterParam(event, 'section')
