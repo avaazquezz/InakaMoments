@@ -158,7 +158,7 @@ function useAllSiteContent() {
       const { data, error } = await supabase.from('site_content').select('section, data')
       if (error) throw error
       const bySection: Record<string, Record<string, unknown>> = {}
-      for (const row of data ?? []) bySection[row.section] = (row.data as object | null) ?? {}
+      for (const row of data ?? []) bySection[row.section] = (row.data as Record<string, unknown> | null) ?? {}
       return bySection
     }
     catch (err) {
