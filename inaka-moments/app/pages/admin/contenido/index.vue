@@ -36,45 +36,6 @@
       ]"
     />
 
-    <!-- Hero (home) -->
-    <AdminSiteContentEditor
-      v-if="activeTab === 'hero'"
-      section="hero"
-      title="Portada (hero)"
-      :fields="[
-        { key: 'tagline', label: 'Etiqueta pequeña', default: 'Eventos con alma' },
-        { key: 'titulo', label: 'Título', default: 'Momentos que ' },
-        { key: 'titulo_span', label: 'Título (resaltado)', default: 'perduran' },
-        { key: 'subtitulo', label: 'Subtítulo', type: 'textarea', default: 'Diseñamos experiencias únicas para cumpleaños, baby showers, comuniones y toda celebración que merezca ser recordada. Cada detalle cuidado con mimo para que tu historia sea inolvidable.' },
-        { key: 'cta_principal', label: 'Botón principal', default: 'Diseñar mi evento' },
-        { key: 'cta_secundario', label: 'Botón secundario', default: 'Descargar Catálogo' },
-      ]"
-    />
-
-    <!-- Sobre nosotros (home) -->
-    <AdminSiteContentEditor
-      v-if="activeTab === 'about'"
-      section="about"
-      title="Sobre nosotros (home)"
-      :fields="[
-        { key: 'titulo_principal', label: 'Título', default: 'Cada momento,' },
-        { key: 'titulo_secundario', label: 'Título (resaltado)', default: 'una obra de arte.' },
-        { key: 'quote', label: 'Cita', type: 'textarea', default: 'Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo.' },
-      ]"
-    />
-
-    <!-- Footer -->
-    <AdminSiteContentEditor
-      v-if="activeTab === 'footer'"
-      section="footer"
-      title="Pie de página"
-      :fields="[
-        { key: 'tagline_titulo', label: 'Frase (línea 1)', default: 'Cada detalle,' },
-        { key: 'tagline_span', label: 'Frase (línea 2, resaltada)', default: 'una historia.' },
-        { key: 'tagline_sub', label: 'Frase (descripción)', type: 'textarea', default: 'Creamos experiencias únicas para los momentos más importantes de tu vida. Con alma, con mimo, con arte.' },
-      ]"
-    />
-
     <!-- Contacto -->
     <AdminSiteContentEditor
       v-if="activeTab === 'contacto'"
@@ -235,9 +196,6 @@ useHead({ title: 'Contenido y ajustes — Panel Inaka Moments' })
 const tabs = [
   { id: 'faqs', label: 'FAQs' },
   { id: 'reglas', label: 'Reglas de negocio' },
-  { id: 'hero', label: 'Portada' },
-  { id: 'about', label: 'Sobre nosotros' },
-  { id: 'footer', label: 'Pie de página' },
   { id: 'contacto', label: 'Contacto' },
   { id: 'ocasiones', label: 'Ocasiones' },
   { id: 'pdf', label: 'PDF catálogo' },
