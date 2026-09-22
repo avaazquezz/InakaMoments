@@ -27,3 +27,7 @@ supabase
 docker-compose*.yml
 docker/DEPLOY.md
 docker/traefik-dynamic.yml
+
+# Plugins locales de un solo uso (COPY . . los metería igual sin esto,
+# git-untracked o no — ver server/plugins/zz-test-mock-resend.ts)
+server/plugins/zz-test-*
