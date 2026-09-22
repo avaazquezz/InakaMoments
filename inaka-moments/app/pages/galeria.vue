@@ -199,7 +199,7 @@ useHead({
     { name: 'description', content: 'Explora la galería de trabajos de Inaka Moments. Cumpleaños, baby showers, bautizos, comuniones y eventos corporativos decorados con alma.' },
     { property: 'og:title', content: 'Galería — Inaka Moments' },
     { property: 'og:description', content: 'Descubre los trabajos de Inaka Moments.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 

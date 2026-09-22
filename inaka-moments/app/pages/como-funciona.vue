@@ -98,7 +98,7 @@ useHead({
     { name: 'description', content: 'Cómo trabajamos: eliges del catálogo, pedimos presupuesto, confirmas con la señal y montamos el día del evento. Montaje incluido, condiciones claras.' },
     { property: 'og:title', content: 'Cómo funciona — Inaka Moments' },
     { property: 'og:description', content: 'Eliges del catálogo, pedimos presupuesto, confirmas con la señal y montamos el día del evento. Montaje incluido, condiciones claras.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ],

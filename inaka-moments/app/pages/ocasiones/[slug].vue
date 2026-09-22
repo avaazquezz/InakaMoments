@@ -157,8 +157,8 @@ useHead(() => ({
   meta: [
     { name: 'description', content: ocasion.value?.seo_description ?? ocasion.value?.intro ?? '' },
     { property: 'og:title', content: ocasion.value?.seo_title ?? ocasion.value?.title ?? '' },
-    { property: 'og:description', content: ocasion.value?.seo_description ?? '' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:description', content: ocasion.value?.seo_description ?? ocasion.value?.intro ?? '' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ],
@@ -172,6 +172,6 @@ useJsonLd('occasion', () => {
       { name: ocasion.value.title, url: `https://inakamoments.com/ocasiones/${slug}` },
     ]),
     buildFaqPageSchema(faqs.value.slice(0, 4)),
-  ]
+  ].filter((s): s is Record<string, unknown> => s !== null)
 })
 </script>

@@ -215,6 +215,9 @@ export function buildBusinessReviewsSchema(
   return {
     '@context': CONTEXT,
     '@type': 'LocalBusiness',
+    // Mismo @id que buildLocalBusinessSchema (layouts/default.vue): sin esto
+    // Google veía dos LocalBusiness sin relación en vez de una sola entidad.
+    '@id': `${businessUrl}/#negocio`,
     'name': businessName,
     'url': businessUrl,
     aggregateRating,

@@ -57,6 +57,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos. Cada detalle cuidado con mimo.' },
         { property: 'og:site_name', content: 'Inaka Moments' },
         { property: 'og:type', content: 'website' },
+        { property: 'og:locale', content: 'es_ES' },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'theme-color', content: '#8B3A2A' },
         { name: 'mobile-web-app-capable', content: 'yes' },

@@ -69,7 +69,7 @@ useHead({
     { name: 'description', content: 'Dudas sobre decoración de eventos con globos: montaje incluido, desmontaje, desplazamiento, reservas con antelación, pagos y fianzas de alquiler.' },
     { property: 'og:title', content: 'FAQ — Inaka Moments' },
     { property: 'og:description', content: 'Resolvemos tus dudas sobre precios, reservas, montaje y alquiler de estructuras.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 

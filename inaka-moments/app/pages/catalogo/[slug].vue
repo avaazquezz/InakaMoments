@@ -202,9 +202,9 @@ useHead(() => ({
   meta: [
     { name: 'description', content: `${producto.value?.description ?? ''} ${productPriceLabel(producto.value!)}. Decoración de eventos en Abrera y Barcelona.` },
     { property: 'og:title', content: `${producto.value?.name} — Inaka Moments` },
-    { property: 'og:description', content: producto.value?.description ?? '' },
-    { property: 'og:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
-    { name: 'twitter:image', content: imagen.value ?? 'https://inakamoments.com/logo.png' },
+    { property: 'og:description', content: `${producto.value?.description ?? ''} ${productPriceLabel(producto.value!)}. Decoración de eventos en Abrera y Barcelona.` },
+    { property: 'og:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
+    { name: 'twitter:image', content: imagen.value ?? DEFAULT_OG_IMAGE },
   ],
 }))
 

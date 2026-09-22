@@ -47,7 +47,7 @@ useHead({
     },
     { property: 'og:title', content: 'Inaka Moments — Decoración de eventos con alma' },
     { property: 'og:description', content: 'Diseñamos experiencias únicas para cumpleaños, baby showers, bautizos, comuniones y eventos corporativos en Abrera y Barcelona.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 

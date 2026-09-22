@@ -73,7 +73,7 @@ useHead({
     },
     { property: 'og:title', content: 'Aviso legal — Inaka Moments' },
     { property: 'og:description', content: 'Información sobre propiedad intelectual, exención de responsabilidad y legislación aplicable.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 </script>

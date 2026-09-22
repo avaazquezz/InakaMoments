@@ -106,7 +106,7 @@ useHead({
     { name: 'description', content: 'Opiniones y reseñas de clientes de Inaka Moments, decoración de eventos con globos en Abrera y Barcelona.' },
     { property: 'og:title', content: 'Reseñas — Inaka Moments' },
     { property: 'og:description', content: 'La mejor recompensa: las palabras de quienes ya celebraron con Inaka Moments.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 

@@ -138,7 +138,7 @@ useHead({
     },
     { property: 'og:title', content: 'Política de privacidad — Inaka Moments' },
     { property: 'og:description', content: 'Cómo recopilamos, usamos y protegemos tus datos personales.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
   ],
 })
 </script>

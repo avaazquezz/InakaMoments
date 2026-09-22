@@ -151,7 +151,7 @@ useHead({
     { name: 'description', content: 'Catálogo de decoración con globos: arcos, columnas, aros 360º, wall balloons, letreros LED, candy bar y más. Precios claros y todo combinable. Abrera y Barcelona.' },
     { property: 'og:title', content: 'Catálogo — Inaka Moments' },
     { property: 'og:description', content: 'Tú eliges, nosotros creamos. Descubre todos nuestros productos de decoración de eventos.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ],

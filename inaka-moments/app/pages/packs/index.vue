@@ -122,7 +122,7 @@ useHead({
     { name: 'description', content: 'Packs cerrados de decoración con globos, como el Pack Baby "Dulce Espera" por 130€: cajas BABY, osito, cartel LED, arco y guirnalda. Abrera y Barcelona.' },
     { property: 'og:title', content: 'Packs — Inaka Moments' },
     { property: 'og:description', content: 'Combinaciones completas listas para tu evento a precio redondo.' },
-    { property: 'og:image', content: 'https://inakamoments.com/logo.png' },
+    { property: 'og:image', content: DEFAULT_OG_IMAGE },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary_large_image' },
   ],
