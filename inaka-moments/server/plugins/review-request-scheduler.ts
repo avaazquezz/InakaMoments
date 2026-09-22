@@ -21,8 +21,11 @@ export default defineNitroPlugin(() => {
     // No hay un H3Event real fuera de una petición entrante. useSupabaseAdmin
     // solo necesita `event.context` (caché del cliente) y reenvía `event` a
     // useRuntimeConfig, que en este despliegue self-hosted no depende de la
-    // request — un objeto mínimo con `context` vale como sustituto.
-    const fakeEvent = { context: {} } as unknown as H3Event
+    // request — un objeto mínimo vale como sustituto, pero `context.nitro`
+    // tiene que ser un objeto real: useRuntimeConfig(event) lee
+    // event.context.nitro.runtimeConfig y, si no existe, lo calcula y lo
+    // cachea ahí mismo — con `context: {}` a secas, `.nitro` es undefined y truena.
+    const fakeEvent = { context: { nitro: {} } } as unknown as H3Event
 
     try {
       const candidates = await findReviewCandidates(fakeEvent, {

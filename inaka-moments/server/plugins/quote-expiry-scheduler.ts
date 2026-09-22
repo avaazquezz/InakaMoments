@@ -17,7 +17,10 @@ const STARTUP_DELAY_MS = 45_000
 
 export default defineNitroPlugin(() => {
   async function tick() {
-    const fakeEvent = { context: {} } as unknown as H3Event
+    // `context.nitro` tiene que ser un objeto real: useRuntimeConfig(event) lee
+    // event.context.nitro.runtimeConfig y, si no existe, lo calcula y lo cachea
+    // ahí mismo — con `context: {}` a secas, `.nitro` es undefined y truena.
+    const fakeEvent = { context: { nitro: {} } } as unknown as H3Event
 
     try {
       const supabase = useSupabaseAdmin(fakeEvent)
