@@ -133,5 +133,7 @@ export const siteContentSchema = z.object({
 })
 
 // Secciones de site_content editables desde el panel; este guard cierra
-// también la API para que no sea saltable con una llamada directa.
-export const ADMIN_EDITABLE_SITE_CONTENT_SECTIONS = ['settings', 'hero', 'about', 'footer', 'contacto'] as const
+// también la API para que no sea saltable con una llamada directa. Portada
+// (hero), Sobre nosotros (about) y Pie de página (footer) se retiraron
+// deliberadamente de la UI a petición del dueño — solo se tocan por código.
+export const ADMIN_EDITABLE_SITE_CONTENT_SECTIONS = ['settings', 'contacto'] as const
