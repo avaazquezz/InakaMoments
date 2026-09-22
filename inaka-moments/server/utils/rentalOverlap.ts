@@ -19,7 +19,9 @@ export async function hasRentalOverlap(
   excludeId?: string,
 ): Promise<boolean> {
   const { data: product } = await supabase.from('products').select('stock').eq('id', productId).maybeSingle()
-  const stock = Math.max(1, product?.stock ?? 1)
+  // Solo null/undefined caen al valor por defecto: un 0 explícito (sin unidades
+  // libres) debe bloquear cualquier reserva, no comportarse como stock=1.
+  const stock = product?.stock ?? 1
 
   let q = supabase
     .from('rental_bookings')
