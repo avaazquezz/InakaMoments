@@ -36,6 +36,97 @@
       ]"
     />
 
+    <!-- Hero (home) -->
+    <AdminSiteContentEditor
+      v-if="activeTab === 'hero'"
+      section="hero"
+      title="Portada (hero)"
+      :fields="[
+        { key: 'tagline', label: 'Etiqueta pequeña', default: 'Eventos con alma' },
+        { key: 'titulo', label: 'Título', default: 'Momentos que ' },
+        { key: 'titulo_span', label: 'Título (resaltado)', default: 'perduran' },
+        { key: 'subtitulo', label: 'Subtítulo', type: 'textarea', default: 'Diseñamos experiencias únicas para cumpleaños, baby showers, comuniones y toda celebración que merezca ser recordada. Cada detalle cuidado con mimo para que tu historia sea inolvidable.' },
+        { key: 'cta_principal', label: 'Botón principal', default: 'Diseñar mi evento' },
+        { key: 'cta_secundario', label: 'Botón secundario', default: 'Descargar Catálogo' },
+      ]"
+    />
+
+    <!-- Sobre nosotros (home) -->
+    <AdminSiteContentEditor
+      v-if="activeTab === 'about'"
+      section="about"
+      title="Sobre nosotros (home)"
+      :fields="[
+        { key: 'titulo_principal', label: 'Título', default: 'Cada momento,' },
+        { key: 'titulo_secundario', label: 'Título (resaltado)', default: 'una obra de arte.' },
+        { key: 'quote', label: 'Cita', type: 'textarea', default: 'Nació de la pasión por transformar espacios en recuerdos. De la creencia de que los detalles lo son todo.' },
+      ]"
+    />
+
+    <!-- Footer -->
+    <AdminSiteContentEditor
+      v-if="activeTab === 'footer'"
+      section="footer"
+      title="Pie de página"
+      :fields="[
+        { key: 'tagline_titulo', label: 'Frase (línea 1)', default: 'Cada detalle,' },
+        { key: 'tagline_span', label: 'Frase (línea 2, resaltada)', default: 'una historia.' },
+        { key: 'tagline_sub', label: 'Frase (descripción)', type: 'textarea', default: 'Creamos experiencias únicas para los momentos más importantes de tu vida. Con alma, con mimo, con arte.' },
+      ]"
+    />
+
+    <!-- Contacto -->
+    <AdminSiteContentEditor
+      v-if="activeTab === 'contacto'"
+      section="contacto"
+      title="Datos de contacto"
+      :fields="[
+        { key: 'email', label: 'Email de contacto', default: 'nadine.tcae@gmail.com' },
+        { key: 'telefono', label: 'Teléfono público (vacío = oculto en la web)', default: '' },
+        { key: 'ubicacion', label: 'Ubicación', default: 'Abrera, Cataluña, España' },
+        { key: 'instagram', label: 'URL de Instagram', default: 'https://www.instagram.com/inaka.moments' },
+        { key: 'horario.disponibilidad', label: 'Disponibilidad (línea corta)', default: 'Respondemos en menos de 24 horas, todos los días' },
+        { key: 'horario.mensaje', label: 'Mensaje de horario', type: 'textarea', default: 'Ofrecemos la máxima calidad de servicio a nuestros clientes en todo momento.' },
+      ]"
+    />
+
+    <!-- Ocasiones (SEO por landing) -->
+    <div
+      v-if="activeTab === 'ocasiones'"
+      class="max-w-2xl rounded-2xl bg-white p-5 ring-1 ring-inaka-nude"
+    >
+      <h3 class="mb-1 text-sm font-bold text-inaka-terra">
+        Landings de ocasiones
+      </h3>
+      <p class="mb-4 text-xs text-inaka-terra/50">
+        Título, introducción, SEO y productos destacados de cada página /ocasiones/&lt;slug&gt;.
+      </p>
+      <div
+        v-if="pendingOccasions"
+        class="h-24 animate-pulse rounded-xl bg-inaka-cream"
+      />
+      <ul
+        v-else
+        class="divide-y divide-inaka-nude/70"
+      >
+        <li
+          v-for="oc in occasions"
+          :key="oc.slug"
+        >
+          <NuxtLink
+            :to="`/admin/contenido/ocasiones/${oc.slug}`"
+            class="flex items-center justify-between gap-3 py-3 text-sm text-inaka-terra hover:text-inaka-gold"
+          >
+            <span class="font-medium">{{ oc.title }}</span>
+            <span
+              class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+              :class="oc.published ? 'bg-inaka-gold/20 text-inaka-terra' : 'bg-inaka-nude/60 text-inaka-terra/50'"
+            >{{ oc.published ? 'Publicada' : 'Borrador' }}</span>
+          </NuxtLink>
+        </li>
+      </ul>
+    </div>
+
     <!-- PDF del catálogo -->
     <div
       v-if="activeTab === 'pdf'"
@@ -144,12 +235,20 @@ useHead({ title: 'Contenido y ajustes — Panel Inaka Moments' })
 const tabs = [
   { id: 'faqs', label: 'FAQs' },
   { id: 'reglas', label: 'Reglas de negocio' },
+  { id: 'hero', label: 'Portada' },
+  { id: 'about', label: 'Sobre nosotros' },
+  { id: 'footer', label: 'Pie de página' },
+  { id: 'contacto', label: 'Contacto' },
+  { id: 'ocasiones', label: 'Ocasiones' },
   { id: 'pdf', label: 'PDF catálogo' },
 ] as const
 
 const activeTab = ref<(typeof tabs)[number]['id']>('faqs')
 
 const toast = useToast()
+
+interface AdminOccasion { slug: string, title: string, published: boolean }
+const { data: occasions, pending: pendingOccasions } = await useFetch<AdminOccasion[]>('/api/admin/occasions')
 const uploadingPdf = ref(false)
 const catalogPdfUrl = storagePublicUrl('catalog', CATALOG_PDF_PATH)
 
