@@ -10,8 +10,89 @@
       @submit.prevent="create"
     >
       <p class="text-sm text-inaka-terra/70">
-        Crea un enlace al formulario de opinión y envíaselo a un cliente por WhatsApp, Instagram o email.
+        Elige un evento reciente o escribe el nombre del cliente, crea el enlace y envíaselo por WhatsApp, Instagram o email.
       </p>
+
+      <div class="flex flex-col gap-1.5">
+        <p class="text-xs font-semibold text-inaka-terra/80">
+          Eventos de los últimos 14 días
+        </p>
+        <p
+          v-if="recentPending"
+          class="text-xs text-inaka-terra/55"
+        >
+          Cargando…
+        </p>
+        <p
+          v-else-if="recentError"
+          class="text-xs text-red-500"
+        >
+          {{ recentError }}
+        </p>
+        <p
+          v-else-if="recent.length === 0"
+          class="text-xs text-inaka-terra/55"
+        >
+          No hay eventos celebrados en los últimos 14 días: escribe el nombre a mano.
+        </p>
+        <ul
+          v-else
+          class="max-h-60 divide-y divide-inaka-nude/70 overflow-y-auto rounded-xl ring-1 ring-inaka-nude"
+        >
+          <li
+            v-for="e in recent"
+            :key="e.eventId"
+          >
+            <button
+              v-if="!e.request"
+              type="button"
+              class="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors"
+              :class="selectedEventId === e.eventId ? 'bg-inaka-nude/40' : 'hover:bg-inaka-cream'"
+              :aria-pressed="selectedEventId === e.eventId"
+              @click="selectEvent(e)"
+            >
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-medium text-inaka-terra">{{ e.clientName || e.title }}</span>
+                <span class="block text-xs text-inaka-terra/55">{{ eventMeta(e) }}</span>
+              </span>
+              <span
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2"
+                :class="selectedEventId === e.eventId ? 'border-inaka-terra' : 'border-inaka-beige'"
+                aria-hidden="true"
+              >
+                <span
+                  v-if="selectedEventId === e.eventId"
+                  class="h-2.5 w-2.5 rounded-full bg-inaka-terra"
+                />
+              </span>
+            </button>
+            <div
+              v-else
+              class="flex items-center justify-between gap-3 px-3 py-2.5"
+            >
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-medium text-inaka-terra/60">{{ e.clientName || e.title }}</span>
+                <span class="block text-xs text-inaka-terra/45">{{ eventMeta(e) }}</span>
+              </span>
+              <span
+                v-if="e.request.responded"
+                class="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-700"
+              >
+                Ya respondió
+              </span>
+              <button
+                v-else
+                type="button"
+                class="shrink-0 text-xs font-semibold text-inaka-gold hover:underline"
+                @click="showLink(e.request.token, e.clientName)"
+              >
+                Enlace ya creado · Reenviar
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
       <AdminField
         v-slot="{ id }"
         label="Nombre del cliente"
@@ -225,7 +306,20 @@ const EMAIL_SUBJECT = '¿Qué tal fue tu celebración con Inaka Moments?'
 const toast = useToast()
 const canShare = import.meta.client && typeof navigator.share === 'function'
 
+interface RecentEvent {
+  eventId: string
+  title: string
+  clientName: string | null
+  eventType: EventType | null
+  eventDate: string
+  request: { token: string, responded: boolean } | null
+}
+
 const form = reactive({ author: '', event_type: null as EventType | null })
+const selectedEventId = ref<string | null>(null)
+const recent = ref<RecentEvent[]>([])
+const recentPending = ref(false)
+const recentError = ref('')
 const token = ref<string | null>(null)
 const message = ref('')
 const creating = ref(false)
@@ -246,6 +340,40 @@ function reset() {
   message.value = ''
   form.author = ''
   form.event_type = null
+  selectedEventId.value = null
+  loadRecent()
+}
+
+async function loadRecent() {
+  recentPending.value = true
+  recentError.value = ''
+  try {
+    recent.value = await $fetch<RecentEvent[]>('/api/admin/testimonials/eventos-recientes')
+  }
+  catch (err) {
+    recentError.value = apiErrorMessage(err, 'No se han podido cargar los eventos recientes.')
+  }
+  finally {
+    recentPending.value = false
+  }
+}
+
+// Un clic rellena nombre y ocasión (editables); otro clic lo deselecciona.
+function selectEvent(e: RecentEvent) {
+  if (selectedEventId.value === e.eventId) {
+    selectedEventId.value = null
+    form.author = ''
+    form.event_type = null
+    return
+  }
+  selectedEventId.value = e.eventId
+  form.author = e.clientName ?? ''
+  form.event_type = e.eventType === 'otro' ? null : e.eventType
+}
+
+function eventMeta(e: RecentEvent) {
+  const date = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(`${e.eventDate}T00:00:00`))
+  return e.eventType ? `${EVENT_TYPE_LABELS[e.eventType]} · ${date}` : date
 }
 
 function showLink(newToken: string, author: string | null) {
@@ -259,7 +387,7 @@ async function create() {
   try {
     const res = await $fetch<{ token: string }>('/api/admin/testimonials/enlace', {
       method: 'POST',
-      body: { author: form.author, event_type: form.event_type },
+      body: { author: form.author, event_type: form.event_type, event_id: selectedEventId.value },
     })
     showLink(res.token, form.author)
     emit('created')
