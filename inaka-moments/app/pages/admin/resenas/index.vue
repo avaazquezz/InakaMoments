@@ -1,15 +1,12 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex items-center justify-end gap-3">
-      <NuxtLink
-        to="/admin/resenas/enviar"
-        class="rounded-xl border border-inaka-beige px-4 py-2.5 text-sm font-semibold text-inaka-terra hover:bg-inaka-nude/40"
-      >
-        Enviar solicitudes
-      </NuxtLink>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-inaka-terra/55">
+        Pide la reseña con un enlace por WhatsApp, Instagram o email. Al crearlo te propone los clientes con eventos de los últimos 14 días.
+      </p>
       <button
         type="button"
-        class="flex items-center gap-2 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
+        class="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
         @click="openLink(null)"
       >
         <Icon
@@ -106,12 +103,35 @@
           <p class="mt-1 line-clamp-2 text-sm text-inaka-terra/70">
             {{ t.quote }}
           </p>
-          <span
-            class="mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold"
-            :class="t.published ? 'bg-green-100 text-green-700' : (t.responded_at ? 'bg-inaka-gold/20 text-inaka-terra' : 'bg-gray-100 text-gray-500')"
-          >
-            {{ t.published ? 'Publicada' : (t.responded_at ? 'Pendiente de aprobar' : 'Oculta') }}
-          </span>
+          <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <label class="inline-flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                role="switch"
+                class="peer sr-only"
+                :checked="t.published"
+                :disabled="togglingId === t.id"
+                :aria-label="`Publicar en la web la reseña de ${t.author}`"
+                @change="togglePublished(t)"
+              >
+              <span
+                class="relative h-6 w-11 shrink-0 rounded-full bg-inaka-nude transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:bg-green-600 peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-inaka-gold peer-focus-visible:ring-offset-2 peer-disabled:opacity-50"
+                aria-hidden="true"
+              />
+              <span
+                class="text-xs font-semibold"
+                :class="t.published ? 'text-green-700' : 'text-inaka-terra/60'"
+              >
+                {{ t.published ? 'Publicada en la web' : 'Oculta' }}
+              </span>
+            </label>
+            <span
+              v-if="t.responded_at && !t.published"
+              class="rounded-full bg-inaka-gold/20 px-2 py-0.5 text-[11px] font-semibold text-inaka-terra"
+            >
+              Pendiente de aprobar
+            </span>
+          </div>
         </div>
         <div class="flex shrink-0 flex-col items-end gap-2">
           <div class="flex gap-1">
@@ -373,6 +393,27 @@ async function save() {
   }
   finally {
     saving.value = false
+  }
+}
+
+// Optimista: el interruptor cambia al instante y se revierte si falla el PATCH.
+// `data` es shallowRef (Nuxt 4: deep=false), de ahí el triggerRef tras mutar.
+const togglingId = ref<string | null>(null)
+async function togglePublished(t: Testimonial) {
+  togglingId.value = t.id
+  t.published = !t.published
+  triggerRef(data)
+  try {
+    await $fetch(`/api/admin/testimonials/${t.id}`, { method: 'PATCH', body: t })
+    toast.success(t.published ? 'Reseña publicada en la web.' : 'Reseña ocultada de la web.')
+  }
+  catch (err) {
+    t.published = !t.published
+    triggerRef(data)
+    toast.error(apiErrorMessage(err, 'No se ha podido cambiar la publicación.'))
+  }
+  finally {
+    togglingId.value = null
   }
 }
 

@@ -8,8 +8,9 @@ import { todayISO } from '~~/shared/dates'
  * que uno de ayer en "Presupuestos por decidir". 'caducado' no es un callejón
  * sin salida: desde el panel sigue pudiéndose aceptar o reactivar.
  *
- * Mismo patrón y mismas limitaciones (un único contenedor self-hosted) que
- * review-request-scheduler.ts. Idempotente: repetir el chequeo no cambia nada.
+ * Chequeo horario dentro del propio servidor: válido solo con un único
+ * contenedor self-hosted (con réplicas habría que pasar a un cron real).
+ * Idempotente: repetir el chequeo no cambia nada.
  */
 
 const POLL_INTERVAL_MS = 60 * 60 * 1000 // cada hora

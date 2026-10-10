@@ -75,22 +75,43 @@
 
             <div class="flex flex-col gap-1.5">
               <label class="text-sm font-semibold text-inaka-terra">Puntuación</label>
-              <div class="flex gap-1">
-                <button
-                  v-for="s in 5"
-                  :key="s"
-                  type="button"
-                  class="rounded p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold"
-                  :aria-label="`${s} de 5 estrellas`"
-                  @click="form.rating = s"
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <div
+                  class="flex gap-1"
+                  @mouseleave="hoverRating = null"
                 >
-                  <Icon
-                    name="lucide:star"
-                    class="h-8 w-8 transition-colors"
-                    :class="s <= (form.rating ?? 0) ? 'text-inaka-gold' : 'text-inaka-nude'"
-                    aria-hidden="true"
-                  />
-                </button>
+                  <!-- SVG en línea (no <Icon>): el icono va como máscara CSS y
+                       no se puede rellenar; relleno vs contorno es lo que deja
+                       claro cuántas estrellas hay marcadas. -->
+                  <button
+                    v-for="s in 5"
+                    :key="s"
+                    type="button"
+                    class="rounded p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-inaka-gold"
+                    :aria-label="`${s} de 5 estrellas`"
+                    :aria-pressed="form.rating === s"
+                    @mouseenter="hoverRating = s"
+                    @click="form.rating = s"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      class="h-9 w-9 transition-transform duration-150"
+                      :class="s <= shownRating ? 'scale-110 fill-inaka-gold stroke-inaka-gold' : 'fill-transparent stroke-inaka-beige'"
+                      stroke-width="1.75"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.12 2.12 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.12 2.12 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.12 2.12 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.12 2.12 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.12 2.12 0 0 0 1.597-1.16z" />
+                    </svg>
+                  </button>
+                </div>
+                <span
+                  class="text-sm font-semibold"
+                  :class="shownRating ? 'text-inaka-terra' : 'text-inaka-terra/50'"
+                  aria-live="polite"
+                >
+                  {{ shownRating ? `${shownRating} de 5 · ${RATING_LABELS[shownRating - 1]}` : 'Toca una estrella' }}
+                </span>
               </div>
             </div>
 
@@ -159,6 +180,11 @@ const token = route.params.token as string
 const { data: info, pending } = await useFetch<ReviewRequestInfo>(`/api/resena/${token}`)
 
 const form = reactive({ author: '', rating: null as number | null, quote: '', website: '' })
+
+const RATING_LABELS = ['Mejorable', 'Regular', 'Bien', 'Muy bien', '¡Excelente!']
+// El hover solo previsualiza; lo que se envía es siempre form.rating.
+const hoverRating = ref<number | null>(null)
+const shownRating = computed(() => hoverRating.value ?? form.rating ?? 0)
 watchEffect(() => {
   if (info.value?.authorDefault) form.author = info.value.authorDefault
 })

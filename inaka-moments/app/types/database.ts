@@ -724,6 +724,7 @@ export type Database = {
           author: string | null
           client_email: string | null
           created_at: string
+          event_id: string | null
           event_type: Database['public']['Enums']['event_type'] | null
           id: string
           published: boolean
@@ -741,6 +742,7 @@ export type Database = {
           author?: string | null
           client_email?: string | null
           created_at?: string
+          event_id?: string | null
           event_type?: Database['public']['Enums']['event_type'] | null
           id?: string
           published?: boolean
@@ -758,6 +760,7 @@ export type Database = {
           author?: string | null
           client_email?: string | null
           created_at?: string
+          event_id?: string | null
           event_type?: Database['public']['Enums']['event_type'] | null
           id?: string
           published?: boolean
@@ -772,6 +775,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: 'testimonials_event_id_fkey'
+            columns: ['event_id']
+            isOneToOne: true
+            referencedRelation: 'events'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'testimonials_quote_id_fkey'
             columns: ['quote_id']
