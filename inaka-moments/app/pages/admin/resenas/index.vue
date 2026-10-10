@@ -9,21 +9,79 @@
       </NuxtLink>
       <button
         type="button"
-        class="rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
-        @click="openNew"
+        class="flex items-center gap-2 rounded-xl bg-inaka-terra px-4 py-2.5 text-sm font-semibold text-inaka-cream hover:opacity-90"
+        @click="openLink(null)"
       >
-        + Nueva reseña
+        <Icon
+          name="lucide:link"
+          class="h-4 w-4"
+          aria-hidden="true"
+        />
+        Enlace de reseña
       </button>
     </div>
+
+    <details
+      v-if="pendingRequests.length"
+      class="group rounded-2xl bg-white ring-1 ring-inaka-nude"
+    >
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-inaka-terra">
+        <span class="flex items-center gap-2">
+          <Icon
+            name="lucide:hourglass"
+            class="h-4 w-4 text-inaka-gold"
+            aria-hidden="true"
+          />
+          Esperando respuesta ({{ pendingRequests.length }})
+        </span>
+        <Icon
+          name="lucide:chevron-down"
+          class="h-4 w-4 text-inaka-terra/60 transition-transform group-open:rotate-180"
+          aria-hidden="true"
+        />
+      </summary>
+      <ul class="divide-y divide-inaka-nude/70 border-t border-inaka-nude/70">
+        <li
+          v-for="t in pendingRequests"
+          :key="t.id"
+          class="flex items-center justify-between gap-3 px-4 py-3"
+        >
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium text-inaka-terra">
+              {{ t.author || t.client_email || 'Sin nombre' }}
+            </p>
+            <p class="text-xs text-inaka-terra/55">
+              {{ t.client_email ? 'Email enviado' : 'Enlace creado' }} el {{ formatDate(t.requested_at!) }}{{ t.event_type ? ` · ${EVENT_TYPE_LABELS[t.event_type]}` : '' }}
+            </p>
+          </div>
+          <div class="flex shrink-0 gap-3">
+            <button
+              type="button"
+              class="text-xs font-semibold text-inaka-gold hover:underline"
+              @click="openLink(t)"
+            >
+              Reenviar
+            </button>
+            <button
+              type="button"
+              class="text-xs font-semibold text-red-500 hover:underline"
+              @click="askDelete(t)"
+            >
+              Anular
+            </button>
+          </div>
+        </li>
+      </ul>
+    </details>
 
     <div
       v-if="pending"
       class="h-64 animate-pulse rounded-2xl bg-white ring-1 ring-inaka-nude"
     />
     <AdminEmptyState
-      v-else-if="(data ?? []).length === 0"
+      v-else-if="reviews.length === 0"
       title="Sin reseñas todavía"
-      message="La sección de reseñas del home aparece sola en cuanto publiques la primera."
+      message="Crea un enlace de reseña y envíaselo a tus clientes. La sección de reseñas del home aparece sola en cuanto publiques la primera."
     />
 
     <div
@@ -31,7 +89,7 @@
       class="flex flex-col gap-3"
     >
       <div
-        v-for="t in data"
+        v-for="t in reviews"
         :key="t.id"
         class="flex items-start justify-between gap-3 rounded-2xl bg-white p-4 ring-1 ring-inaka-nude"
       >
@@ -114,7 +172,7 @@
 
     <AdminModal
       :open="!!editing"
-      :title="`${editing?.id ? 'Editar' : 'Nueva'} reseña`"
+      title="Editar reseña"
       size="lg"
       @close="editing = null"
     >
@@ -236,10 +294,19 @@
 
     <AdminConfirmDialog
       :open="!!toDelete"
-      title="¿Borrar esta reseña?"
+      :title="toDelete && isPending(toDelete) ? '¿Anular esta solicitud?' : '¿Borrar esta reseña?'"
+      :message="toDelete && isPending(toDelete) ? 'El enlace dejará de funcionar y el cliente ya no podrá dejar su opinión con él.' : undefined"
+      :confirm-label="toDelete && isPending(toDelete) ? 'Anular' : 'Borrar'"
       danger
       @cancel="toDelete = null"
       @confirm="confirmDelete"
+    />
+
+    <AdminReviewLinkDialog
+      :open="linkOpen"
+      :existing="linkExisting"
+      @close="linkOpen = false"
+      @created="refresh"
     />
   </div>
 </template>
@@ -259,27 +326,44 @@ interface Testimonial {
   source: string | null
   published: boolean
   sort_order: number
+  token: string | null
+  client_email: string | null
+  requested_at: string | null
   responded_at: string | null
 }
 
 const { data, pending, refresh } = await useFetch<Testimonial[]>('/api/admin/testimonials')
 const toast = useToast()
 
+// Solicitud enviada (email o enlace) que el cliente aún no ha contestado.
+function isPending(t: Testimonial) { return !!t.requested_at && !t.responded_at }
+const reviews = computed(() => (data.value ?? []).filter(t => !isPending(t)))
+const pendingRequests = computed(() => (data.value ?? [])
+  .filter(isPending)
+  .sort((a, b) => b.requested_at!.localeCompare(a.requested_at!)))
+
+function formatDate(iso: string) {
+  return new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium' }).format(new Date(iso))
+}
+
+const linkOpen = ref(false)
+const linkExisting = ref<{ token: string, author: string | null } | null>(null)
+function openLink(t: Testimonial | null) {
+  linkExisting.value = t?.token ? { token: t.token, author: t.author } : null
+  linkOpen.value = true
+}
+
 const editing = ref<Partial<Testimonial> | null>(null)
 const saving = ref(false)
 const toDelete = ref<Testimonial | null>(null)
 
-function openNew() {
-  editing.value = { author: '', event_type: null, quote: '', rating: null, source: '', published: false, sort_order: 0 }
-}
 function openEdit(t: Testimonial) { editing.value = { ...t } }
 
 async function save() {
   if (!editing.value) return
   saving.value = true
   try {
-    if (editing.value.id) await $fetch(`/api/admin/testimonials/${editing.value.id}`, { method: 'PATCH', body: editing.value })
-    else await $fetch('/api/admin/testimonials', { method: 'POST', body: editing.value })
+    await $fetch(`/api/admin/testimonials/${editing.value.id}`, { method: 'PATCH', body: editing.value })
     toast.success('Reseña guardada.')
     editing.value = null
     await refresh()
@@ -297,7 +381,7 @@ async function confirmDelete() {
   if (!toDelete.value) return
   try {
     await $fetch(`/api/admin/testimonials/${toDelete.value.id}`, { method: 'DELETE' })
-    toast.success('Reseña borrada.')
+    toast.success(isPending(toDelete.value) ? 'Solicitud anulada.' : 'Reseña borrada.')
     await refresh()
   }
   catch (err) {
@@ -309,7 +393,7 @@ async function confirmDelete() {
 }
 
 async function move(t: Testimonial, dir: -1 | 1) {
-  const list = data.value ?? []
+  const list = reviews.value
   const idx = list.findIndex(x => x.id === t.id)
   const swapIdx = idx + dir
   if (swapIdx < 0 || swapIdx >= list.length) return

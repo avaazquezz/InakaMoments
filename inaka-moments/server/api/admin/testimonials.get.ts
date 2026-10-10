@@ -1,12 +1,11 @@
 export default defineEventHandler(async (event) => {
   await requireAdminUser(event)
   const supabase = useSupabaseAdmin(event)
-  // Excluye solicitudes enviadas y aún sin respuesta del cliente — solo
-  // interesan aquí las reseñas manuales o ya respondidas (a moderar).
+  // Incluye las solicitudes aún sin respuesta: /admin/resenas las separa de
+  // las reseñas (requested_at && !responded_at) para poder reenviarlas o anularlas.
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
-    .or('requested_at.is.null,responded_at.not.is.null')
     .order('sort_order', { ascending: true })
   if (error) {
     console.error('[admin/testimonials] error listando:', error)
